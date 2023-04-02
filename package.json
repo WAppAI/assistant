@@ -1,0 +1,22 @@
+{
+  "name": "sydney-whatsapp-bot",
+  "version": "1.0.0",
+  "description": "WhatsApp chatbot",
+  "main": "src/index.ts",
+  "scripts": {
+    "start": "yarn ts-node src/index.ts",
+    "dev": "yarn nodemon src/index.ts"
+  },
+  "repository": "https://github.com/veigamann/sydney-whatsapp-chatbot.git",
+  "author": "Matheus Veiga <veigamann@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^18.15.11",
+    "nodemon": "^2.0.22",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.3"
+  },
+  "dependencies": {
+    "whatsapp-web.js": "^1.19.5"
+  }
+}
