@@ -1,7 +1,10 @@
+import cli from "./clients/cli";
 import { whatsapp } from "./clients/whatsapp";
 
 async function main() {
-  whatsapp.initialize()
+  cli.printIntro();
+
+  whatsapp.initialize();
 }
 
-main().catch(console.log)
+main().catch(console.log);
