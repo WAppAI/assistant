@@ -9,11 +9,15 @@ async function handleIncomingMessageImpl(message: Message) {
 
   chat.sendSeen();
 
-  const sydneyResponse = await promiseTracker.track(prompt, chat, askSydney(prompt, chat.id._serialized));
-  console.log("Sydney's response: ", sydneyResponse.response);
+  try {
+    const sydneyResponse = await promiseTracker.track(prompt, chat, askSydney(prompt, chat.id._serialized));
+    console.log("Sydney's response: ", sydneyResponse.response);
 
-  await message.reply(sydneyResponse.response);
-  chat.clearState();
+    await message.reply(sydneyResponse.response);
+    chat.clearState();
+  } catch (error) {
+    await message.reply(`Error when answering this message.\n\nDetails: ${JSON.stringify(error)}`);
+  }
 }
 
 async function askSydney(prompt: string, chatId: string) {
