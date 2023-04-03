@@ -1,5 +1,6 @@
 import { Chat, Message } from "whatsapp-web.js";
 import { promiseTracker } from "../clients/prompt";
+import { sydney } from "../clients/sydney";
 import { config } from "../config";
 import { getAvailableTones } from "../utils";
 
@@ -12,12 +13,17 @@ async function getPendingPromptsForChat(chat: Chat) {
 }
 
 export async function handleCommand(message: Message, command: string, args?: string) {
+  const chat = await message.getChat();
+
   switch (command.toLowerCase()) {
     case "!ping":
       await message.reply("pong!");
       break;
+    case "!reset":
+      await sydney.conversationsCache.delete(chat.id._serialized);
+      await message.reply("Conversation history reset.");
+      break;
     case "!pending":
-      const chat = await message.getChat();
       const pendingPromptsForChat = await getPendingPromptsForChat(chat);
 
       if (pendingPromptsForChat.length === 0) {
@@ -53,8 +59,9 @@ export async function handleCommand(message: Message, command: string, args?: st
         "These are the available commands:\n\n" +
           "*!help* -> returns this help message.\n" +
           "*!ping* -> returns *pong!* if the bot is still working; this should be almost instant.\n" +
-          "*!tone _args_?* -> returns the current tone or sets a new one if you pass it as *_args_*\n" +
-          "*!pending* -> returns a list of all current pending prompts for this chat"
+          "*!tone _args_?* -> returns the current tone or sets a new one if you pass it as *_args_*.\n" +
+          "*!pending* -> returns a list of all current pending prompts for this chat.\n" +
+          "*!reset* -> clears this conversation's history.\n"
       );
       break;
     default:
