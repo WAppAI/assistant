@@ -1,7 +1,6 @@
 import { Message } from "whatsapp-web.js";
 import { config } from "../config";
 
-const availableTones = `Available options are ${format("creative", "md")}, ${format("balanced", "md")} and ${format("precise", "md")}.`;
 const formatters = {
   bold: "*",
   md: "```"
@@ -10,6 +9,8 @@ const formatters = {
 function format(text: string, format: "bold" | "md") {
   return formatters[format] + text + formatters[format];
 }
+
+const availableTones = `Available options are ${format("creative", "md")}, ${format("balanced", "md")} and ${format("precise", "md")}.`;
 
 export async function handleCommand(message: Message, command: string, args?: string) {
   switch (command.toLowerCase()) {
