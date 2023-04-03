@@ -1,3 +1,6 @@
 node_modules/
 puppeteer/
+
 .env
+
+conversations_cache.sqlite

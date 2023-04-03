@@ -5,26 +5,34 @@ import { config } from "../config";
 
 async function handleIncomingMessageImpl(message: Message) {
   const chat = await message.getChat();
-  const text = message.body;
+  const prompt = message.body;
 
   chat.sendSeen();
-  const sydneyResponse = await promiseTracker.track(text, chat, askSydney(text));
+
+  const sydneyResponse = await promiseTracker.track(prompt, chat, askSydney(prompt, chat.id._serialized));
+  console.log("Sydney's response: ", sydneyResponse.response);
+
   await message.reply(sydneyResponse.response);
   chat.clearState();
 }
 
-async function askSydney(prompt: string) {
-  const response = await sydney.sendMessage(prompt, {
+async function askSydney(prompt: string, chatId: string) {
+  let options: IOptions = {
     toneStyle: config.toneStyle,
-    systemMessage: undefined,
-    jailbreakConversationId: undefined,
-    parentMessageId: undefined,
+    jailbreakConversationId: chatId,
     onProgress: (token: string) => {
-      // for debug purposes only
       process.stdout.write(token);
     }
-  });
+  };
 
+  const onGoingConversation = await sydney.conversationsCache.get(chatId);
+
+  if (onGoingConversation) {
+    const [{ parentMessageId }] = onGoingConversation.messages.slice(-1);
+    options.parentMessageId = parentMessageId;
+  }
+
+  const response = await sydney.sendMessage(prompt, options);
   return response;
 }
 
@@ -53,3 +61,11 @@ function typingIndicatorWrapper(fn: (message: Message) => Promise<void>) {
 }
 
 export const handleIncomingMessage = typingIndicatorWrapper(handleIncomingMessageImpl);
+
+interface IOptions {
+  toneStyle: typeof config.VALID_TONES[number];
+  systemMessage?: string;
+  jailbreakConversationId?: string;
+  parentMessageId?: string;
+  onProgress?: (token: string) => void;
+}
