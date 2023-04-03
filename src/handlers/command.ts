@@ -1,5 +1,6 @@
 import { Chat, Message } from "whatsapp-web.js";
 import { promiseTracker } from "../clients/prompt";
+import { sydney } from "../clients/sydney";
 import { config } from "../config";
 import { getAvailableTones } from "../utils";
 
@@ -12,12 +13,17 @@ async function getPendingPromptsForChat(chat: Chat) {
 }
 
 export async function handleCommand(message: Message, command: string, args?: string) {
+  const chat = await message.getChat();
+
   switch (command.toLowerCase()) {
     case "!ping":
       await message.reply("pong!");
       break;
+    case "!reset":
+      await sydney.conversationsCache.delete(chat.id._serialized);
+      await message.reply("Conversation history reset.");
+      break;
     case "!pending":
-      const chat = await message.getChat();
       const pendingPromptsForChat = await getPendingPromptsForChat(chat);
 
       if (pendingPromptsForChat.length === 0) {
