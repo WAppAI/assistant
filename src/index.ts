@@ -7,4 +7,4 @@ async function main() {
   whatsapp.initialize();
 }
 
-main().catch(console.log);
+main();

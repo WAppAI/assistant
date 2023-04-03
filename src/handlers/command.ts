@@ -1,51 +1,43 @@
 import { Message } from "whatsapp-web.js";
 import { config } from "../config";
+import { getAvailableTones } from "../utils";
 
-const formatters = {
-  bold: "*",
-  md: "```"
-};
-
-function format(text: string, format: "bold" | "md") {
-  return formatters[format] + text + formatters[format];
-}
-
-const availableTones = `Available options are ${format("creative", "md")}, ${format("balanced", "md")} and ${format("precise", "md")}.`;
+const AVAILABLE_TONES = getAvailableTones();
 
 export async function handleCommand(message: Message, command: string, args?: string) {
   switch (command.toLowerCase()) {
     case "!ping":
       await message.reply("pong!");
       break;
-    case "!help":
-      await message.reply(`These are the available commands:
-
-- ${format("!help", "md")} -> returns this help message.
-- ${format("!ping", "md")} -> returns ${format("pong!", "md")} if the bot is still working, should be almost instant.
-- ${format("!tone args?", "md")} -> returns the current toneStyle or sets a new one if you pass it as ${format("args", "md")}`);
-      break;
     case "!tone":
       if (!args)
         await message.reply(
-          `Current toneStyle: ${format(config.toneStyle, "md")}.
-
-To set a different toneStyle, pass it as a parameter to the ${format("!tone", "md")} command (eg.: ${format("!tone precise", "md")}).
-
-${availableTones}`
+          `Current tone: *${config.toneStyle}*.\n\n` +
+            "To set a different tone, pass it as a parameter to the *!tone* command (eg.: *!tone precise*).\n\n" +
+            AVAILABLE_TONES
         );
       else {
-        const isValidToneStyle = ["creative", "balanced", "precise"].includes(args.trim().toLowerCase());
+        const tone = args.trim().toLowerCase();
+        const isValidTone = config.VALID_TONES.includes(tone as typeof config.VALID_TONES[number]);
 
-        if (isValidToneStyle) {
-          config.toneStyle = args as typeof config.toneStyle;
-          await message.reply(`toneStyle set to: ${format(config.toneStyle, "md")}`);
+        if (isValidTone) {
+          config.toneStyle = tone as typeof config.toneStyle;
+          await message.reply(`Tone set to: *${config.toneStyle}*`);
         } else {
-          await message.reply(`toneStyle ${format(args, "md")} is invalid. ${availableTones}`);
+          await message.reply(`Tone *${tone}* is invalid.` + AVAILABLE_TONES);
         }
       }
       break;
+    case "!help":
+      await message.reply(
+        "These are the available commands:\n\n" +
+          "*!help* -> returns this help message.\n" +
+          "*!ping* -> returns *pong!* if the bot is still working; this should be almost instant.\n" +
+          "*!tone _args_?* -> returns the current tone or sets a new one if you pass it as *_args_*"
+      );
+      break;
     default:
-      await message.reply(`Command ${format(command, "md")} unknown.`);
+      await message.reply(`Command *${command}* unknown.`);
       break;
   }
 }
