@@ -2,6 +2,21 @@
 
 This project utilizes [waylaidwanderer/node-chatgpt-api](https://github.com/waylaidwanderer/node-chatgpt-api/)'s BingAIClient (see [here](https://github.com/waylaidwanderer/node-chatgpt-api/blob/main/demos/use-bing-client.js)) to generate conversational responses to user queries. This chatbot is designed to work with WhatsApp, making it easy for users to interact with Bing AI's "jailbroken" alter-ego, Sydney, using the popular messaging platform.
 
+### Table of Contents
+
+1. [Introduction](#introduction)
+2. [Getting Started](#getting-started)
+    1. [Prerequisites](#prerequisites)
+    2. [Installation](#installation)
+3. [Demo](#demo)
+4. [Usage](#usage)
+    1. [Example Queries](#example-queries)
+    2. [Available Commands](#available-commands)
+5. [Caveats](#caveats)
+6. [Contributing](#contributing)
+7. [License](#license)
+
+
 ## Getting Started
 
 ### Prerequisites
@@ -49,6 +64,8 @@ https://user-images.githubusercontent.com/50471205/230191169-2e3bff68-2b25-4e32-
 
 
 ## Usage
+
+### Example Queries
 
 Sydney is designed to respond to natural language queries from users. You can ask Sydney questions, or just have a casual conversation. Here are some example queries that Sydney can respond to:
 
