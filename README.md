@@ -1,4 +1,4 @@
-# Sydney - a WhatsApp Chatbot using Bing's ChatGPT
+## Introduction
 
 This project utilizes [waylaidwanderer/node-chatgpt-api](https://github.com/waylaidwanderer/node-chatgpt-api/)'s BingAIClient (see [here](https://github.com/waylaidwanderer/node-chatgpt-api/blob/main/demos/use-bing-client.js)) to generate conversational responses to user queries. This chatbot is designed to work with WhatsApp, making it easy for users to interact with Bing AI's "jailbroken" alter-ego, Sydney, using the popular messaging platform.
 
@@ -57,7 +57,7 @@ Sydney is designed to respond to natural language queries from users. You can as
 - "Can you recommend a good Italian restaurant?"
 - "What's the meaning of life?"
 
-Conversations with Sydney will be stored on the `./conversations_cache.sqlite` file.
+Conversations with Sydney will be stored on the `./conversations_cache.sqlite` file (created automatically after Sydney's first response to a new chat).
 
 ### Available commands
 
@@ -69,7 +69,7 @@ Conversations with Sydney will be stored on the `./conversations_cache.sqlite` f
 
 ## Caveats
 
-- The `!tone` command uses a plain JS object to store Sydney's tone. That means the tone is global for every chat you have with Sydney. If UserA and UserB are talking with Sydney, and UserA sends a `!tone balanced` command, UserB's tone will also be affected. This is very simple to resolve by storing the tone within the conversation history in the Keyv adapter to sqlite, but truth is I did'nt bother to do this yet.
+- The `!tone` command uses a plain JS object to store Sydney's tone. That means the tone is global for every chat you have with Sydney. If UserA and UserB are talking with Sydney, and UserA sends a `!tone balanced` command, UserB's tone will also be affected. This is very simple to resolve by storing the tone within the conversation history in the Keyv adapter to sqlite, but truth is I didnt bother to do this yet.
 - I have seen reports of overusage, resulting in a temporary "ban" (kind of) to Bing Chat. That means your account will temporarily (or for an undetermined amount of time) lose access to Bing, so you'll need to make a new account and change the BING_TOKEN env variable.
 
 ## Contributing
