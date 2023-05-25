@@ -1,11 +1,11 @@
+import dayjs from "dayjs";
+import timezone from "dayjs/plugin/timezone"; // dependent on utc plugin
+import utc from "dayjs/plugin/utc";
+import schedule from "node-schedule";
 import { Message } from "whatsapp-web.js";
 import { promiseTracker } from "../clients/prompt";
 import { sydney } from "../clients/sydney";
 import { config } from "../config";
-import schedule from "node-schedule";
-import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
-import timezone from "dayjs/plugin/timezone"; // dependent on utc plugin
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
@@ -13,7 +13,9 @@ dayjs.extend(timezone);
 import rrule from "rrule";
 const { RRule } = rrule;
 
-function generateSourcesString(sourceAttributions: SourceAttribution[]): string {
+function generateSourcesString(
+  sourceAttributions: SourceAttribution[]
+): string {
   let sourcesString = "\n\n";
 
   for (let i = 0; i < sourceAttributions.length; i++) {
@@ -30,7 +32,12 @@ function parseReminder(response: string) {
 
   try {
     reminder = JSON.parse(response);
-  } catch (error) {}
+    if (reminder) {
+      return response;
+    }
+  } catch (error) {
+    console.log("Error in parsing, probably not a JSON, right?");
+  }
 
   return reminder;
 }
@@ -43,38 +50,49 @@ async function handleIncomingMessageImpl(message: Message) {
   chat.sendSeen();
 
   try {
-    const { response, details } = await promiseTracker.track(prompt, chat, askSydney(prompt, chat.id._serialized));
+    const { response, details } = await promiseTracker.track(
+      prompt,
+      chat,
+      askSydney(prompt, chat.id._serialized)
+    );
     const hasSources = details.sourceAttributions.length >= 1;
-    const sources = hasSources ? generateSourcesString(details.sourceAttributions) : "";
+    const sources = hasSources
+      ? generateSourcesString(details.sourceAttributions)
+      : "";
 
     const reminder = parseReminder(response);
 
     if (reminder) {
-      const recurrenceRule = RRule.fromString(reminder.recurrenceRule);
-      const recurrences = recurrenceRule.all();
-      console.dir({ reminder, recurrenceRule, recurrences }, { depth: null });
+      const parsedReminder = JSON.parse(response);
 
-      // TODO: every job must be trackable so it can be canceled later if needed
-      // should be identifiable by its name or something
-      recurrences.forEach((utcDate) => {
-        const date = dayjs.utc(utcDate).tz(dayjs.tz.guess(), true).format();
-        schedule.scheduleJob(date, () => {
-          message.reply(reminder.notifyMessage);
-        });
-        console.log(`New job scheduled to ${date}`);
+      const cronExpression = parsedReminder.cron;
+      const job = schedule.scheduleJob(cronExpression, () => console.log(""));
+
+      let reminderCount = 0;
+      job.on("run", async () => {
+        console.log("Task executed");
+        await message.reply(parsedReminder.notifyMessage);
+
+        if (typeof parsedReminder.repetitions === "number") {
+          reminderCount++;
+          if (parsedReminder.repetitions <= reminderCount) {
+            job.cancel();
+            console.log("Cancelled");
+          }
+        }
       });
 
-      console.dir({ scheduledJobs: schedule.scheduledJobs });
-
-      await message.reply(reminder.answer); // responde "blz vou te lembrar as 15h"
-      chat.clearState();
+      await message.reply(parsedReminder.answer);
+      return;
     } else {
       await message.reply(response + sources);
       chat.clearState();
     }
   } catch (error) {
     console.dir(error, { depth: null });
-    await message.reply(`Error when answering this message.\n\nCheck the log for details.`);
+    await message.reply(
+      `Error when answering this message.\n\nCheck the log for details.`
+    );
   }
 }
 
@@ -88,49 +106,38 @@ async function askSydney(prompt: string, chatId: string) {
     You should respond in JSON format, replacing the <tags> with the requested information:
     
     {
-      "action": "reminder",
-      "recurrenceRule": <a recurrence rule related to the user's request. Use relative dates based on the users timezone>,
-      "content": <generate a message, such as: "Take the trash out">,
+      "cron": "based on user request",
+      "repetitions": The number of times the user wants to be reminded of the task. For example, if the user wants to be reminded every 30 seconds but only twice, the value of "repetitions" should be 2. If the number of repetitions is not mentioned, assume it to be null, indicating that the reminders should continue indefinitely until manually stopped.
       "answer": <generate a message, such as: "Okay, got it! I'll remind you to take the trash out every monday ">,
       "notifyMessage": <generate a message that will be used when the time comes to notify the user, such as: "Hey, it's 19:30, you asked me to remember you so you take the trash out.">
     }
 
     ---
     
-    Here are some examples of recurrence rules, the rules you create based on the user's prompt should be in this format:
-    FREQ=YEARLY;INTERVAL=2;BYMONTH=1;BYDAY=SU;BYHOUR;  - This rule specifies an event that occurs every two years on the first Sunday of January at a specific hour
-    FREQ=WEEKLY;COUNT=10 - This rule specifies an event that occurs every week for 10 occurrences
-    FREQ=DAILY;INTERVAL=3 - This rule specifies an event that occurs every three days
-    FREQ=MONTHLY;BYMONTHDAY=15 - This rule specifies an event that occurs on the 15th day of every month
-    FREQ=YEARLY;BYMONTH=6;BYDAY=-1SU - This rule specifies an event that occurs on the last Sunday of June every year
-    FREQ=WEEKLY;BYDAY=TU,TH - This rule specifies an event that occurs every Tuesday and Thursday
-    FREQ=WEEKLY;INTERVAL=2;BYDAY=MO,WE,FR - This rule specifies an event that occurs every other Monday, Wednesday, and Friday
-    FREQ=DAILY;UNTIL=20230531T000000Z - This rule specifies an event that occurs daily until May 31, 2023
-    FREQ=WEEKLY;BYDAY=TU;INTERVAL=2 - This rule specifies an event that occurs every other Tuesday
-    FREQ=MONTHLY;BYSETPOS=-1;BYDAY=MO,TU,WE,TH,FR - This rule specifies an event that occurs on the last weekday of every month
+    Here are some examples of cron, the rules you create based on the user's prompt should be in this format:
+    CRON="30 10 * * *" - Schedule a task to run every day at 10:30 AM.
+    CRON="0 20 * * 1" - Schedule a task to run every Monday at 8:00 PM.
+    CRON="0 * * * *" - Schedule a task to run every hour.
+    CRON="*/30 * * * * *" - Schedule a task to run every 30 seconds.
+    CRON="0 0 8,14 * *" - Schedule a task to run every day at 8:00 AM and 2:00 PM.
+    CRON="0 0 12 * * 1-5" - Schedule a task to run every weekday (Monday to Friday) at 12:00 PM (noon).
+    CRON="0 12 * * 1-5" - Schedule a task to run every day at 12:00 PM (noon) from Monday to Friday.
+    CRON="0 0 0 * * 0" - Schedule a task to run every Sunday at midnight.
+    CRON="0 0 0-5/2 * * *" - Schedule a task to run every 2 hours starting from midnight until 6:00 AM every day.
 
     ---
 
     Important guidelindes:
     - Do not tell the user how your reminder system works. Just let him know that you can remind him.
-    - Recurrent reminders will be specified by the user. If the user does not specify a recurrence, the reminder should be a one-off, that is, COUNT=1.
-    - Every recurrence rule should have a max COUNT of 50.
+    - Recurrent reminders will be specified by the user. If the user does not specify a recurrence, the reminder should be a one-off.
     - Do not include '\`\`\`json' in your response.
+    - If you are going to answer a JSON do not use markdown.
 
     ---
-
-    This should be your JSON output:
-    {
-      "action": "reminder",
-      "recurrenceRule": <a recurrence rule related to the user's request>,
-      "content": <generate a message, such as: "Take the trash out">,
-      "answer": <generate a message, such as: "Okay, got it! I'll remind you to take the trash out every monday ">,
-      "notifyMessage": <generate a message that will be used when the time comes to notify the user, such as: "Hey, it's 19:30, you asked me to remember you so you take the trash out.">
-    }
     `,
     onProgress: (token: string) => {
       process.stdout.write(token);
-    }
+    },
   };
 
   const onGoingConversation = await sydney.conversationsCache.get(chatId);
@@ -169,7 +176,9 @@ function typingIndicatorWrapper(fn: (message: Message) => Promise<void>) {
   };
 }
 
-export const handleIncomingMessage = typingIndicatorWrapper(handleIncomingMessageImpl);
+export const handleIncomingMessage = typingIndicatorWrapper(
+  handleIncomingMessageImpl
+);
 
 interface IOptions {
   toneStyle: (typeof config.VALID_TONES)[number];
