@@ -3,7 +3,9 @@ import { promiseTracker } from "../clients/prompt";
 import { sydney } from "../clients/sydney";
 import { config } from "../config";
 
-function generateSourcesString(sourceAttributions: SourceAttribution[]): string {
+function generateSourcesString(
+  sourceAttributions: SourceAttribution[]
+): string {
   let seeMoreString = "\n\n";
 
   for (let i = 0; i < sourceAttributions.length; i++) {
@@ -21,23 +23,32 @@ async function handleIncomingMessageImpl(message: Message) {
   chat.sendSeen();
 
   try {
-    const { response, details } = await promiseTracker.track(prompt, chat, askSydney(prompt, chat.id._serialized));
+    const { response, details } = await promiseTracker.track(
+      prompt,
+      chat,
+      askSydney(prompt, chat.id._serialized)
+    );
     console.log("Sydney's response: ", response);
 
     const hasSources = details.sourceAttributions.length >= 1;
-    const sources = hasSources ? generateSourcesString(details.sourceAttributions) : "";
+    const sources = hasSources
+      ? generateSourcesString(details.sourceAttributions)
+      : "";
 
     await message.reply(response + sources);
     chat.clearState();
   } catch (error) {
-    await message.reply(`Error when answering this message.\n\nDetails: ${JSON.stringify(error)}`);
+    await message.reply(
+      `Error when answering this message.\n\nDetails: ${JSON.stringify(error)}`
+    );
   }
 }
 
 async function askSydney(prompt: string, chatId: string) {
   let options: IOptions = {
     toneStyle: config.toneStyle,
-    jailbreakConversationId: chatId
+    jailbreakConversationId: chatId,
+    context: `User name is ${process.env.USER_NAME}, and your name is ${process.env.BOT_NAME}. If the user tells you to call him with another name or tells you have a new name, then give priority to the new name. Don't mention neither the user name nor your name everytime, only if it makes sense in your chat. Only present yourself once or if the user asks.`,
     // onProgress: (token: string) => {
     //  process.stdout.write(token);
     // }
@@ -79,13 +90,16 @@ function typingIndicatorWrapper(fn: (message: Message) => Promise<void>) {
   };
 }
 
-export const handleIncomingMessage = typingIndicatorWrapper(handleIncomingMessageImpl);
+export const handleIncomingMessage = typingIndicatorWrapper(
+  handleIncomingMessageImpl
+);
 
 interface IOptions {
   toneStyle: (typeof config.VALID_TONES)[number];
   systemMessage?: string;
   jailbreakConversationId?: string;
   parentMessageId?: string;
+  context?: string;
   onProgress?: (token: string) => void;
 }
 
