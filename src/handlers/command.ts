@@ -20,10 +20,16 @@ function truncateWithEllipsis(input: string, maxLength: number): string {
 async function getPendingPromptsForChat(chat: Chat) {
   const pendingPrompts = promiseTracker.listPendingPrompts();
 
-  return pendingPrompts.filter(({ data }) => data.chat.id._serialized === chat.id._serialized);
+  return pendingPrompts.filter(
+    ({ data }) => data.chat.id._serialized === chat.id._serialized
+  );
 }
 
-export async function handleCommand(message: Message, command: string, args?: string) {
+export async function handleCommand(
+  message: Message,
+  command: string,
+  args?: string
+) {
   const chat = await message.getChat();
 
   chat.sendSeen();
@@ -43,10 +49,16 @@ export async function handleCommand(message: Message, command: string, args?: st
         break;
       }
 
-      const pendingTexts = pendingPromptsForChat.map(({ data }, number) => `--- Prompt ${number} ---\n${data.text}\n---`).join("\n\n");
+      const pendingTexts = pendingPromptsForChat
+        .map(
+          ({ data }, number) => `--- Prompt ${number} ---\n${data.text}\n---`
+        )
+        .join("\n\n");
       const pendingTextsTruncated = truncateWithEllipsis(pendingTexts, 60);
 
-      await message.reply(`These are the pending prompts:\n\n${pendingTextsTruncated}`);
+      await message.reply(
+        `These are the pending prompts:\n\n${pendingTextsTruncated}`
+      );
       break;
     case "!tone":
       if (!args)
@@ -57,13 +69,17 @@ export async function handleCommand(message: Message, command: string, args?: st
         );
       else {
         const tone = args.trim().toLowerCase();
-        const isValidTone = config.VALID_TONES.includes(tone as typeof config.VALID_TONES[number]);
+        const isValidTone = config.VALID_TONES.includes(
+          tone as (typeof config.VALID_TONES)[number]
+        );
 
         if (isValidTone) {
           config.toneStyle = tone as typeof config.toneStyle;
           await message.reply(`Tone set to: *${config.toneStyle}*`);
         } else {
-          await message.reply(`Tone *${tone}* is invalid.\n\n` + AVAILABLE_TONES);
+          await message.reply(
+            `Tone *${tone}* is invalid.\n\n` + AVAILABLE_TONES
+          );
         }
       }
       break;

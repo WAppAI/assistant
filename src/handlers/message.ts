@@ -44,8 +44,9 @@ function parseReminder(response: string) {
 
 async function handleIncomingMessageImpl(message: Message) {
   const chat = await message.getChat();
-  const prompt = `${message.body}`;
-  console.log(prompt);
+  const userTime = new Date(message.timestamp * 1000);
+  const prompt = `${message.body} (Timestamp:${userTime})`;
+  console.log("Mensagem: ", prompt);
 
   chat.sendSeen();
 
@@ -101,8 +102,10 @@ async function askSydney(prompt: string, chatId: string) {
   let options: IOptions = {
     toneStyle: config.toneStyle,
     jailbreakConversationId: chatId,
-    context: `As Sydney, a WhatsApp bot, you are a helpful personal assistant, and you can create reminders when users ask you to.
+    context: `As ${process.env.BOT_NAME}, a WhatsApp bot, you are a helpful personal assistant, and you can create reminders when users ask you to.
+
     If the user sends you a message such as "Remind me every Monday at 19:30 to take the trash out"
+
     You should respond in JSON format, replacing the <tags> with the requested information:
     
     {
@@ -113,26 +116,12 @@ async function askSydney(prompt: string, chatId: string) {
     }
 
     ---
-    
-    Here are some examples of cron, the rules you create based on the user's prompt should be in this format:
-    CRON="30 10 * * *" - Schedule a task to run every day at 10:30 AM.
-    CRON="0 20 * * 1" - Schedule a task to run every Monday at 8:00 PM.
-    CRON="0 * * * *" - Schedule a task to run every hour.
-    CRON="*/30 * * * * *" - Schedule a task to run every 30 seconds.
-    CRON="0 0 8,14 * *" - Schedule a task to run every day at 8:00 AM and 2:00 PM.
-    CRON="0 0 12 * * 1-5" - Schedule a task to run every weekday (Monday to Friday) at 12:00 PM (noon).
-    CRON="0 12 * * 1-5" - Schedule a task to run every day at 12:00 PM (noon) from Monday to Friday.
-    CRON="0 0 0 * * 0" - Schedule a task to run every Sunday at midnight.
-    CRON="0 0 0-5/2 * * *" - Schedule a task to run every 2 hours starting from midnight until 6:00 AM every day.
-
-    ---
-
     Important guidelindes:
+    - Each message sent by the user will include a timestamp indicating the current date. It's important to note that the timestamp is a system message and doesn't imply that the user is communicating in English.
     - Do not tell the user how your reminder system works. Just let him know that you can remind him.
-    - Recurrent reminders will be specified by the user. If the user does not specify a recurrence, the reminder should be a one-off.
+    - Recurrent reminders will be specified by the user. If the user does not specify a recurrence, the reminder should be a one-off, that is, repetitions = 1.
     - Do not include '\`\`\`json' in your response.
-    - If you are going to answer a JSON do not use markdown.
-
+    - Please ensure that any response you provide in JSON format adheres to the proper JSON syntax.
     ---
     `,
     onProgress: (token: string) => {
@@ -148,7 +137,7 @@ async function askSydney(prompt: string, chatId: string) {
   }
 
   const response: SydneyResponse = await sydney.sendMessage(prompt, options);
-  console.dir(response, { depth: null });
+  //console.dir(response, { depth: null });
   return response;
 }
 
