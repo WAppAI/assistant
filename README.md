@@ -44,9 +44,9 @@ yarn install
 cp .env.example .env
 ```
 
-~~4. Edit `.env`'s `BING_TOKEN` environment variable to the `_U` cookie value from [bing.com](https://bing.com)~~
+4. Edit `.env`'s `BING_TOKEN` environment variable to the `_U` cookie value from [bing.com](https://bing.com)
 
-    To get the `_U` cookie, follow these steps:
+   To get the `_U` cookie, follow these steps:
 
 - Log in to [Bing](https://bing.com) using your Microsoft account.
 - Open the developer tools in your browser (usually by pressing `F12` or right-clicking and selecting `Inspect element`).
