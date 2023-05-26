@@ -1,17 +1,8 @@
-import dayjs from "dayjs";
-import timezone from "dayjs/plugin/timezone"; // dependent on utc plugin
-import utc from "dayjs/plugin/utc";
 import schedule from "node-schedule";
 import { Message } from "whatsapp-web.js";
 import { promiseTracker } from "../clients/prompt";
 import { sydney } from "../clients/sydney";
 import { config } from "../config";
-dayjs.extend(utc);
-dayjs.extend(timezone);
-
-// TODO: find a prettier workaround for this import
-import rrule from "rrule";
-const { RRule } = rrule;
 
 function generateSourcesString(
   sourceAttributions: SourceAttribution[]
@@ -122,6 +113,7 @@ async function askSydney(prompt: string, chatId: string) {
     - Recurrent reminders will be specified by the user. If the user does not specify a recurrence, the reminder should be a one-off, that is, repetitions = 1.
     - Do not include '\`\`\`json' in your response.
     - Please ensure that any response you provide in JSON format adheres to the proper JSON syntax.
+    - Don't include // inside the JSON.
     ---
     `,
     onProgress: (token: string) => {
