@@ -6,5 +6,7 @@ dotenv.config();
 
 export const sydney = new BingAIClient({
   userToken: process.env.BING_TOKEN,
-  cache: { store: new KeyvSqlite({ uri: "sqlite://./conversations_cache.sqlite" }) }
+  cache: {
+    store: new KeyvSqlite({ uri: "sqlite://./conversations_cache.sqlite" }),
+  },
 });
