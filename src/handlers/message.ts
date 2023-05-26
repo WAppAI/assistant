@@ -38,8 +38,9 @@ async function handleIncomingMessageImpl(message: Message) {
     await message.reply(response + sources);
     chat.clearState();
   } catch (error) {
+    console.dir(error, { depth: null });
     await message.reply(
-      `Error when answering this message.\n\nDetails: ${JSON.stringify(error)}`
+      `Error when answering this message.\n\nCheck the log for details.`
     );
   }
 }
@@ -62,7 +63,7 @@ async function askSydney(prompt: string, chatId: string) {
   }
 
   const response: SydneyResponse = await sydney.sendMessage(prompt, options);
-  // console.dir(response, { depth: null });
+  console.dir(response, { depth: null });
   return response;
 }
 
