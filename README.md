@@ -6,15 +6,16 @@ This project utilizes [waylaidwanderer/node-chatgpt-api](https://github.com/wayl
 
 1. [Introduction](#introduction)
 2. [Getting Started](#getting-started)
-   1. [Prerequisites](#prerequisites)
-   2. [Installation](#installation)
+    1. [Prerequisites](#prerequisites)
+    2. [Installation](#installation)
 3. [Demo](#demo)
 4. [Usage](#usage)
-   1. [Example Queries](#example-queries)
-   2. [Available Commands](#available-commands)
+    1. [Example Queries](#example-queries)
+    2. [Available Commands](#available-commands)
 5. [Caveats](#caveats)
 6. [Contributing](#contributing)
 7. [License](#license)
+
 
 ## Getting Started
 
@@ -28,44 +29,39 @@ To chat with Sydney, you will need:
 ### Installation
 
 1. Clone this repository
-
 ```
 git clone https://github.com/veigamann/sydney-whatsapp-chatbot.git
 ```
 
 2. Install the dependencies
-
 ```
 yarn install
 ```
 
 3. Copy [.env.example](../master/.env.example) to a new file called `.env`
-
 ```
 cp .env.example .env
 ```
 
-~~4. Edit `.env`'s `BING_TOKEN` environment variable to the `_U` cookie value from [bing.com](https://bing.com)~~
+4. Edit `.env`'s `BING_TOKEN` environment variable to the `_U` cookie value from [bing.com](https://bing.com)
 
-~~**Note:** You must be logged in your Microsoft account AND have access to Bing Chat.~~
-
-**Edit:** Bing is now open to the public, the BING_TOKEN environment variable is not necessary anymore.
+   **Note:** You must be logged in your Microsoft account AND have access to Bing Chat.
 
 5. Start the bot
-
 ```
 yarn start
 ```
 
 6. Connect your WhatsApp account to the bot by scanning the generated QR Code in the CLI.
 
-   **Note:** You likely won't need to ever scan the QR Code again, as WhatsApp session data is persisted in the `./puppeteer` folder (created in the root directory right after you scan the QR Code).
-
+    **Note:** You likely won't need to ever scan the QR Code again, as WhatsApp session data is persisted in the `./puppeteer` folder (created in the root directory right after you scan the QR Code).
+  
 7. Send a message to your WhatsApp account to start a conversation with Sydney!
 
-## Demo
+## Demo 
 
 https://user-images.githubusercontent.com/50471205/230191169-2e3bff68-2b25-4e32-a0d0-43270570403a.mp4
+
 
 ## Usage
 
@@ -94,9 +90,9 @@ Conversations with Sydney will be stored on the `./conversations_cache.sqlite` f
 - I have seen reports of overusage, resulting in a temporary "ban" (kind of) to Bing Chat. That means your account will temporarily (or for an undetermined amount of time) lose access to Bing, so you'll need to make a new account and change the BING_TOKEN env variable.
 
 ## Contributing
-
 If you'd like to contribute to Sydney, please fork this repository and submit a pull request. We welcome contributions of all types, from bugfixes to new features.
 
 ## License
-
 This project is licensed under the MIT License - see the LICENSE file for details.
+
+
