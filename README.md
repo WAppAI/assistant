@@ -10,7 +10,7 @@ Screenshot 1             | Screenshot 2             | Screenshot 3
 
 - [x] Engage in conversations with Sydney, powered by the BingAI jailbreak
 - [ ] Create reminders (Work-in-Progress)
-- [ ] Group chat compatibility
+- [ ] Group chat compatibility (It works but not optimal)
 - [ ] PDF and OCR reading
 - [ ] Voice message capability (Sydney listens to messages)
 - [ ] Image generation
