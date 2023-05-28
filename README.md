@@ -4,7 +4,8 @@ This GitHub repository showcases a chatbot named Sydney, powered by the `waylaid
 
 Screenshot 1             | Screenshot 2             | Screenshot 3
 :-------------------------:|:-------------------------:|:-------------------------:
-![Screenshot 1](/demos/Screenshot_20230527_183419_WhatsApp.jpg) | ![Screenshot 2](/demos/Screenshot_20230527_184042_WhatsApp.jpg) | ![Screenshot 3](/demos/Screenshot_20230527_184050_WhatsApp.jpg)
+<img src="/demos/Screenshot_20230527_183419_WhatsApp.jpg" width="400px"> | <img src="/demos/Screenshot_20230527_184042_WhatsApp.jpg" width="400px"> | <img src="/demos/Screenshot_20230527_184050_WhatsApp.jpg" width="400px">
+
 
 ## Features
 
