@@ -11,7 +11,7 @@
   "author": "Matheus Veiga <veigamann@gmail.com>",
   "license": "MIT",
   "devDependencies": {
-    "@types/node": "^20.2.3",
+    "@types/node": "^20.2.5",
     "nodemon": "^2.0.22",
     "ts-node": "^10.9.1",
     "typescript": "^5.0.4"
