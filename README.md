@@ -2,9 +2,9 @@
 
 This GitHub repository showcases a chatbot named Sydney, powered by the `waylaidwanderer/node-chatgpt-api`'s BingAIClient. Sydney is a versatile AI assistant that remains continuously connected to the internet, enabling it to provide users with reliable and up-to-date information. Leveraging the capabilities of the BingAI jailbreak, Sydney delivers accurate responses by harnessing the vast resources available online. The best part is that the API used in this project is completely free, allowing you to enjoy the benefits of an internet-connected chatbot without any associated charges.
 
-Screenshot 1             | Screenshot 2             | Screenshot 3
-:-------------------------:|:-------------------------:|:-------------------------:
-![Screenshot 1](/demos/Screenshot_20230527_183419_WhatsApp.jpg) | ![Screenshot 2](/demos/Screenshot_20230527_184042_WhatsApp.jpg) | ![Screenshot 3](/demos/Screenshot_20230527_184050_WhatsApp.jpg)
+|                          Screenshot 1                           |                          Screenshot 2                           |                          Screenshot 3                           |
+| :-------------------------------------------------------------: | :-------------------------------------------------------------: | :-------------------------------------------------------------: |
+| ![Screenshot 1](/demos/Screenshot_20230527_183419_WhatsApp.jpg) | ![Screenshot 2](/demos/Screenshot_20230527_184042_WhatsApp.jpg) | ![Screenshot 3](/demos/Screenshot_20230527_184050_WhatsApp.jpg) |
 
 ## Features
 
@@ -14,7 +14,6 @@ Screenshot 1             | Screenshot 2             | Screenshot 3
 - [ ] PDF and OCR reading
 - [ ] Voice message capability (Sydney listens to messages)
 - [ ] Image generation
-
 
 ## Getting Started
 
@@ -28,23 +27,27 @@ To chat with Sydney, you will need:
 ### Installation
 
 1. Clone this repository
+
 ```
 git clone https://github.com/veigamann/sydney-whatsapp-chatbot.git
 ```
 
 2. Install the dependencies
+
 ```
 yarn install
 ```
 
 3. Rename [.env.example](../master/.env.example) to `.env`
+
 ```
 cp .env.example .env
 ```
 
 4. Edit `.env`'s `BING_TOKEN` environment variable to the `_U` cookie value from [bing.com](https://bing.com)
 
-    To get the `_U` cookie, follow these steps:
+   To get the `_U` cookie, follow these steps:
+
    - Log in to [Bing](https://bing.com) using your Microsoft account.
    - Open the developer tools in your browser (usually by pressing `F12` or right-clicking and selecting `Inspect element`).
    - Select the `Storage` tab and click on the `Cookies` option to view all cookies associated with the website.
@@ -54,14 +57,15 @@ cp .env.example .env
    **Note:** While specifying your API is no longer mandatory in the latest `waylaidwanderer/node-chatgpt-api` updates, it is strongly recommended to provide a valid API key. Occasional stability issues have been observed when an API key is not configured, and having one ensures a more reliable experience.
 
 5. Start the bot
+
 ```
 yarn dev
 ```
 
 6. Connect your WhatsApp account to the bot by scanning the generated QR Code in the CLI.
 
-    **Note:** You likely won't need to ever scan the QR Code again, as WhatsApp session data is persisted in the `./puppeteer` folder (created in the root directory right after you scan the QR Code).
-  
+   **Note:** You likely won't need to ever scan the QR Code again, as WhatsApp session data is persisted in the `./puppeteer` folder (created in the root directory right after you scan the QR Code).
+
 7. Send a message to your WhatsApp account to start a conversation with Sydney!
 
 ## Usage
@@ -80,7 +84,8 @@ Conversations with Sydney will be stored on the `./conversations_cache.sqlite` f
 
 **Note**: The `!tone` command uses a shared JavaScript object to store Sydney's tone, making it global for all users. This means that if UserA modifies the tone using `!tone balanced`, it will also affect UserB's conversation. Currently, there is no implementation to store the tone within individual conversation histories.
 
-## Contribute 
+## Contribute
+
 If you'd like to contribute to Sydney, please fork this repository and submit a pull request. We welcome contributions of all types, from bugfixes to new features.
 
 - [Roadmap](https://github.com/users/veigamann/projects/1)
@@ -89,9 +94,9 @@ If you'd like to contribute to Sydney, please fork this repository and submit a 
 
 ## Hire Us
 
-Both creators of this project, [Veigamann](https://github.com/veigamann) and  [Luisotee](https://github.com/Luisotee), are currently seeking new job opportunities. 
+Both creators of this project, [Veigamann](https://github.com/veigamann) and [Luisotee](https://github.com/Luisotee), are currently seeking new job opportunities.
 
-- **Veigamann** is seeking a junior position.
-- **Luisotee** is actively looking for an internship or junior developer position.
+- [Veigamann](https://github.com/veigamann) is seeking a junior position.
+- [Luisotee](https://github.com/Luisotee) is actively looking for an internship or junior developer position.
 
 If you have any job opportunities, please feel free to contact us through the emails provided in our GitHub profiles.
