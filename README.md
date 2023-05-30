@@ -1,4 +1,4 @@
-# WhatsApp BingAI: Your BingAI-powered WhatsApp Assistant
+# WhatsAppGPT: Your BingAI-powered WhatsApp Assistant
 
 This GitHub repository showcases a chatbot named Sydney, powered by the `waylaidwanderer/node-chatgpt-api`'s BingAIClient. Sydney is a versatile AI assistant that remains continuously connected to the internet, enabling it to provide users with reliable and up-to-date information. Leveraging the capabilities of the BingAI jailbreak, Sydney delivers accurate responses by harnessing the vast resources available online. The best part is that the API used in this project is completely free, allowing you to enjoy the benefits of an internet-connected chatbot without any associated charges.
 
