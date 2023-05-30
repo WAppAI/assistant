@@ -5,7 +5,7 @@ import { sydney } from "../clients/sydney";
 import { config } from "../config";
 import { v4 as uuidv4 } from "uuid";
 
-export const jobs: any[] = []; //const that stores all the reminder jobs
+export const reminders: any[] = []; //const that stores all the reminder jobs
 
 function generateSourcesString(
   sourceAttributions: SourceAttribution[]
@@ -83,8 +83,8 @@ async function handleIncomingMessageImpl(message: Message) {
         id: jobId,
         job: job,
       };
-      jobs.push(jobData); // Add the job with its ID to the array
-      console.log("jobs=", jobs);
+      reminders.push(jobData); // Add the job with its ID to the array
+      console.log("jobs=", reminders);
 
       await message.reply(parsedReminder.answer);
       return;

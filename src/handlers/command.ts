@@ -1,10 +1,9 @@
-import { whatsapp } from "./../clients/whatsapp";
 import { Chat, Message } from "whatsapp-web.js";
 import { promiseTracker } from "../clients/prompt";
 import { sydney } from "../clients/sydney";
 import { config } from "../config";
 import { getAvailableTones } from "../utils";
-import { jobs } from "./message";
+import { reminders } from "./message";
 
 const AVAILABLE_TONES = getAvailableTones();
 
@@ -96,44 +95,42 @@ export async function handleCommand(
           "👉 *!reset* erases our conversation history.\n"
       );
       break;
-    case "!r":
-      const jobOptions = jobs
-        .map((job, index) => `${index + 1} - ${job.name}`)
+    case "!r": // !r 1, 2, 5
+      const existingReminders = reminders
+        .map((reminder, index) => `${index + 1} - ${reminder.name}`)
         .join("\n");
-      await message.reply(`Job Options:\n${jobOptions}`);
 
-      whatsapp.on("message", async (msg) => {
-        //Tira isso e coloca response?
-        // Check if the incoming message is from the same user and chat
-        console.log("msg.from=", msg.from);
-        console.log("message.from=", message.from);
-        console.log("msg.getChat", msg.getChat());
-        console.log("message.getChat", message.getChat());
-        if (msg.from == message.from) {
-          console.log("entrou!");
-          const userInput = msg.body; // Extract the user's response from the message
-
-          // Handle the selected option based on the user's response
-          const selectedOption = parseInt(userInput);
-          if (
-            !isNaN(selectedOption) &&
-            selectedOption >= 1 &&
-            selectedOption <= jobs.length
-          ) {
-            const selectedJob = jobs[selectedOption - 1];
-            const jobId = selectedJob.id;
-            console.log("msg:", msg);
-            await message.reply(
-              `You selected option ${selectedOption}, Job ID: ${jobId}`
-            );
-          } else {
-            await message.reply("Invalid option. Please try again.");
-          }
-
-          // Stop listening for further messages to avoid unnecessary processing
-          whatsapp.removeAllListeners("message");
+      if (!args) {
+        if (existingReminders.length == 0)
+          await message.reply("There are no reminders");
+        else
+          await message.reply(
+            `To delete a reminder, you can use the command *!r 1* to delete a specific reminder listed as 1, or *!r all* to delete all reminders.\n\nCurrent reminders:\n${existingReminders}`
+          );
+      } else if (args === "all") {
+        console.log("Delete all");
+        for (const jobData of reminders) {
+          jobData.job.cancel();
         }
-      });
+        reminders.splice(0, reminders.length);
+        await message.reply("Deleted all reminders");
+      } else if (parseInt(args)) {
+        console.log("Delete ", args);
+        let selectedOption = parseInt(args);
+        if (selectedOption >= 1 && selectedOption <= reminders.length) {
+          let selectedOptionIndex = selectedOption - 1;
+          let selectedJob = reminders[selectedOptionIndex];
+          selectedJob.job.cancel();
+
+          await message.reply(
+            `Remind deleted: ${reminders[selectedOptionIndex].name} `
+          );
+
+          reminders.splice(selectedOptionIndex, 1);
+        } else {
+          await message.reply("Invalid option. Please try again.");
+        }
+      }
 
       break;
     default:
