@@ -3,6 +3,9 @@ import { Message } from "whatsapp-web.js";
 import { promiseTracker } from "../clients/prompt";
 import { sydney } from "../clients/sydney";
 import { config } from "../config";
+import { v4 as uuidv4 } from "uuid";
+
+export const reminders: any[] = []; //const that stores all the reminder jobs
 
 function generateSourcesString(
   sourceAttributions: SourceAttribution[]
@@ -73,6 +76,15 @@ async function handleIncomingMessageImpl(message: Message) {
           }
         }
       });
+
+      const jobId = uuidv4(); // Generate a unique ID
+      const jobData = {
+        name: parsedReminder.answer,
+        id: jobId,
+        job: job,
+      };
+      reminders.push(jobData); // Add the job with its ID to the array
+      console.log("jobs=", reminders);
 
       await message.reply(parsedReminder.answer);
       return;

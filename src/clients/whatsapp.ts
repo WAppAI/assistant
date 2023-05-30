@@ -4,12 +4,17 @@ import { Client } from "whatsapp-web.js";
 import { handleIncomingMessage } from "../handlers/message";
 import { handleCommand } from "../handlers/command";
 
-const whatsapp = new Client({
+export const whatsapp = new Client({
   puppeteer: {
     headless: true,
-    args: ["--disable-gpu", "--disable-dev-shm-usage", "--disable-setuid-sandbox", "--no-sandbox"],
-    userDataDir: "./puppeteer"
-  }
+    args: [
+      "--disable-gpu",
+      "--disable-dev-shm-usage",
+      "--disable-setuid-sandbox",
+      "--no-sandbox",
+    ],
+    userDataDir: "./puppeteer",
+  },
 });
 
 whatsapp.on("qr", (qr) => {
@@ -55,5 +60,3 @@ whatsapp.on("message", async (message) => {
     await handleIncomingMessage(message);
   }
 });
-
-export { whatsapp };

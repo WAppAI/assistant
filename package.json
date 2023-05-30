@@ -13,6 +13,7 @@
   "devDependencies": {
     "@types/node": "^20.2.3",
     "@types/node-schedule": "^2.1.0",
+    "@types/uuid": "^9.0.1",
     "nodemon": "^2.0.22",
     "ts-node": "^10.9.1",
     "typescript": "^5.0.4"
@@ -25,6 +26,7 @@
     "keyv": "^4.5.2",
     "node-schedule": "^2.1.1",
     "qrcode-terminal": "^0.12.0",
+    "uuid": "^9.0.0",
     "whatsapp-web.js": "^1.20.0"
   },
   "type": "module"
