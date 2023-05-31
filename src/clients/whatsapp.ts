@@ -1,7 +1,7 @@
 import qrcode from "qrcode-terminal";
 import cli from "../clients/cli";
 import { Client } from "whatsapp-web.js";
-import { handleIncomingMessage } from "../handlers/message";
+import { handleMessage } from "../handlers/message";
 import { handleCommand } from "../handlers/command";
 
 export const whatsapp = new Client({
@@ -11,10 +11,10 @@ export const whatsapp = new Client({
       "--disable-gpu",
       "--disable-dev-shm-usage",
       "--disable-setuid-sandbox",
-      "--no-sandbox",
+      "--no-sandbox"
     ],
-    userDataDir: "./puppeteer",
-  },
+    userDataDir: "./puppeteer"
+  }
 });
 
 whatsapp.on("qr", (qr) => {
@@ -57,6 +57,6 @@ whatsapp.on("message", async (message) => {
     const [command, ...args] = text.split(" ");
     await handleCommand(message, command, args.join(" "));
   } else {
-    await handleIncomingMessage(message);
+    await handleMessage(message);
   }
 });

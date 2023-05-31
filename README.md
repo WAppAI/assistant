@@ -44,17 +44,32 @@ yarn install
 cp .env.example .env
 ```
 
-4. Edit `.env`'s `BING_TOKEN` environment variable to the `_U` cookie value from [bing.com](https://bing.com)
+4. Edit `.env`'s `BING_COOKIES` environment variable to the `cookies` string from [bing.com](https://bing.com) GET request header
 
-   To get the `_U` cookie, follow these steps:
+To obtain the cookies string, perform the following steps:
 
-   - Log in to [Bing](https://bing.com) using your Microsoft account.
-   - Open the developer tools in your browser (usually by pressing `F12` or right-clicking and selecting `Inspect element`).
-   - Select the `Storage` tab and click on the `Cookies` option to view all cookies associated with the website.
-   - Look for the `_U` cookie and click on it to expand its details.
-   - Copy the value of the `_U` cookie (it should look like a long string of letters and numbers).
+- Open the developer tools in your browser (by pressing `F12` or right-clicking anywhere and selecting `Inspect element`).
+- Select the `Network` tab within the devtools.
+- Ensure you're logged in to [Bing](https://bing.com) using your Microsoft account.
+- With the devtools panel open, press `F5` to reload the page.
+- Locate the first listed network request (a GET request to the [bing.com](https://bing.com) endpoint/url).
+- Right-click on the `cookie` value in the request headers and select the "Copy value" option.
+- Paste the the copied value into the `BING_COOKIES` environment variable in the `.env` file.
 
-   **Note:** While specifying your API is no longer mandatory in the latest `waylaidwanderer/node-chatgpt-api` updates, it is strongly recommended to provide a valid API key. Occasional stability issues have been observed when an API key is not configured, and having one ensures a more reliable experience.
+**Note:** If you did this and it worked, skip to step 5. If not, try step 4.1
+**Note:** You don't need to specify both `BING_COOKIES` and `BING_TOKEN`. In fact, if you specify both, `BING_COOKIES` will be the preferred method. If that's not working, comment the `BING_COOKIES` line and leave only `BING_TOKEN`.
+
+4.1 Edit `.env`'s `BING_TOKEN` environment variable to the `_U` cookie value from [bing.com](https://bing.com)
+
+To get the `_U` cookie, follow these steps:
+
+- Log in to [Bing](https://bing.com) using your Microsoft account.
+- Open the developer tools in your browser (by pressing `F12` or right-clicking anywhere and selecting `Inspect element`).
+- Select the `Storage` tab and click on the `Cookies` option to view all cookies associated with the website.
+- Look for the `_U` cookie and click on it to expand its details.
+- Copy the value of the `_U` cookie (it should look like a long string of letters and numbers).
+
+**Note:** While specifying cookies is no longer mandatory in the latest `waylaidwanderer/node-chatgpt-api` update, we do recommende providing them. Occasional stability issues have been observed when those were not configured, and having them ensures a more reliable experience.
 
 5. Start the bot
 
