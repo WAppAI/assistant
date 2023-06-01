@@ -4,7 +4,13 @@ import KeyvSqlite from "@keyv/sqlite";
 import dotenv from "dotenv";
 dotenv.config();
 
+const BING_COOKIES = process.env.BING_COOKIES;
+const BING_TOKEN = BING_COOKIES ? undefined : process.env.BING_TOKEN;
+
 export const sydney = new BingAIClient({
-  userToken: process.env.BING_TOKEN,
-  cache: { store: new KeyvSqlite({ uri: "sqlite://./conversations_cache.sqlite" }) }
+  cookies: BING_COOKIES,
+  userToken: BING_TOKEN,
+  cache: {
+    store: new KeyvSqlite({ uri: "sqlite://./conversations_cache.sqlite" })
+  }
 });

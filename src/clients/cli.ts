@@ -48,5 +48,5 @@ export default {
   printLoading,
   printAuthenticated,
   printAuthenticationFailure,
-  printReady
+  printReady,
 };

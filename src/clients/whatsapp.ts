@@ -1,13 +1,18 @@
 import qrcode from "qrcode-terminal";
 import cli from "../clients/cli";
 import { Client } from "whatsapp-web.js";
-import { handleIncomingMessage } from "../handlers/message";
+import { handleMessage } from "../handlers/message";
 import { handleCommand } from "../handlers/command";
 
-const whatsapp = new Client({
+export const whatsapp = new Client({
   puppeteer: {
     headless: true,
-    args: ["--disable-gpu", "--disable-dev-shm-usage", "--disable-setuid-sandbox", "--no-sandbox"],
+    args: [
+      "--disable-gpu",
+      "--disable-dev-shm-usage",
+      "--disable-setuid-sandbox",
+      "--no-sandbox"
+    ],
     userDataDir: "./puppeteer"
   }
 });
@@ -39,7 +44,7 @@ whatsapp.on("ready", () => {
 whatsapp.on("message", async (message) => {
   const sender = message.from;
 
-  console.log(`Message received from: ${sender}`);
+  console.log(`Message received from ${sender}`);
 
   if (sender == "status@broadcast") {
     console.log("Its a status broadcast, ignoring...");
@@ -52,8 +57,6 @@ whatsapp.on("message", async (message) => {
     const [command, ...args] = text.split(" ");
     await handleCommand(message, command, args.join(" "));
   } else {
-    await handleIncomingMessage(message);
+    await handleMessage(message);
   }
 });
-
-export { whatsapp };

@@ -1,8 +1,8 @@
-import { Chat, Message } from "whatsapp-web.js";
-import { promiseTracker } from "../clients/prompt";
+import { Message } from "whatsapp-web.js";
+import { promptTracker } from "../clients/prompt";
 import { sydney } from "../clients/sydney";
 import { config } from "../config";
-import { getAvailableTones } from "../utils";
+import { getAvailableTones, react } from "../utils";
 
 const AVAILABLE_TONES = getAvailableTones();
 
@@ -17,16 +17,15 @@ function truncateWithEllipsis(input: string, maxLength: number): string {
   return `${start} ... ${end}`;
 }
 
-async function getPendingPromptsForChat(chat: Chat) {
-  const pendingPrompts = promiseTracker.listPendingPrompts();
-
-  return pendingPrompts.filter(({ data }) => data.chat.id._serialized === chat.id._serialized);
-}
-
-export async function handleCommand(message: Message, command: string, args?: string) {
+export async function handleCommand(
+  message: Message,
+  command: string,
+  args?: string
+) {
   const chat = await message.getChat();
+  await chat.sendSeen();
 
-  chat.sendSeen();
+  await react(message, "working");
   switch (command.toLowerCase()) {
     case "!ping":
       await message.reply("*pong!*");
@@ -36,17 +35,23 @@ export async function handleCommand(message: Message, command: string, args?: st
       await message.reply("Conversation history reset.");
       break;
     case "!pending":
-      const pendingPromptsForChat = await getPendingPromptsForChat(chat);
+      const pendingPrompts = promptTracker.listPendingPrompts(chat);
 
-      if (pendingPromptsForChat.length === 0) {
+      if (pendingPrompts.length === 0) {
         await message.reply("There are no pending prompts.");
         break;
       }
 
-      const pendingTexts = pendingPromptsForChat.map(({ data }, number) => `--- Prompt ${number} ---\n${data.text}\n---`).join("\n\n");
+      const pendingTexts = pendingPrompts
+        .map(
+          ({ data }, number) => `--- Prompt ${number} ---\n${data.text}\n---`
+        )
+        .join("\n\n");
       const pendingTextsTruncated = truncateWithEllipsis(pendingTexts, 60);
 
-      await message.reply(`These are the pending prompts:\n\n${pendingTextsTruncated}`);
+      await message.reply(
+        `These are the pending prompts:\n\n${pendingTextsTruncated}`
+      );
       break;
     case "!tone":
       if (!args)
@@ -57,13 +62,17 @@ export async function handleCommand(message: Message, command: string, args?: st
         );
       else {
         const tone = args.trim().toLowerCase();
-        const isValidTone = config.VALID_TONES.includes(tone as typeof config.VALID_TONES[number]);
+        const isValidTone = config.VALID_TONES.includes(
+          tone as (typeof config.VALID_TONES)[number]
+        );
 
         if (isValidTone) {
           config.toneStyle = tone as typeof config.toneStyle;
           await message.reply(`Tone set to: *${config.toneStyle}*`);
         } else {
-          await message.reply(`Tone *${tone}* is invalid.\n\n` + AVAILABLE_TONES);
+          await message.reply(
+            `Tone *${tone}* is invalid.\n\n` + AVAILABLE_TONES
+          );
         }
       }
       break;
@@ -75,11 +84,13 @@ export async function handleCommand(message: Message, command: string, args?: st
           "👉 *!ping* tells you if I'm still alive with a *pong!*; this should be super fast.\n" +
           "👉 *!tone _args_?* lets you check or change my tone if you pass *_args_*; if you don't pass *_args_*, i will answer with the current tone and the available options. \n" +
           "👉 *!pending* gives you a list of the not yet answered prompts you have in this chat.\n" +
-          "👉 *!reset* erases our conversation history.\n"
+          "👉 *!reset* erases our conversation history."
       );
       break;
     default:
       await message.reply(`Command *${command}* unknown.`);
       break;
   }
+
+  await react(message, "done");
 }
