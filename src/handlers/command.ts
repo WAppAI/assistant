@@ -1,8 +1,8 @@
-import { Chat, Message } from "whatsapp-web.js";
-import { promiseTracker } from "../clients/prompt";
+import { Message } from "whatsapp-web.js";
+import { promptTracker } from "../clients/prompt";
 import { sydney } from "../clients/sydney";
 import { config } from "../config";
-import { getAvailableTones } from "../utils";
+import { getAvailableTones, react } from "../utils";
 import { reminders } from "./message";
 
 const AVAILABLE_TONES = getAvailableTones();
@@ -18,22 +18,15 @@ function truncateWithEllipsis(input: string, maxLength: number): string {
   return `${start} ... ${end}`;
 }
 
-async function getPendingPromptsForChat(chat: Chat) {
-  const pendingPrompts = promiseTracker.listPendingPrompts();
-
-  return pendingPrompts.filter(
-    ({ data }) => data.chat.id._serialized === chat.id._serialized
-  );
-}
-
 export async function handleCommand(
   message: Message,
   command: string,
   args?: string
 ) {
   const chat = await message.getChat();
+  await chat.sendSeen();
 
-  chat.sendSeen();
+  await react(message, "working");
   switch (command.toLowerCase()) {
     case "!ping":
       await message.reply("*pong!*");
@@ -43,14 +36,14 @@ export async function handleCommand(
       await message.reply("Conversation history reset.");
       break;
     case "!pending":
-      const pendingPromptsForChat = await getPendingPromptsForChat(chat);
+      const pendingPrompts = promptTracker.listPendingPrompts(chat);
 
-      if (pendingPromptsForChat.length === 0) {
+      if (pendingPrompts.length === 0) {
         await message.reply("There are no pending prompts.");
         break;
       }
 
-      const pendingTexts = pendingPromptsForChat
+      const pendingTexts = pendingPrompts
         .map(
           ({ data }, number) => `--- Prompt ${number} ---\n${data.text}\n---`
         )
@@ -130,12 +123,14 @@ export async function handleCommand(
           "👉 *!ping* tells you if I'm still alive with a *pong!*; this should be super fast.\n" +
           "👉 *!tone _args_?* lets you check or change my tone if you pass *_args_*; if you don't pass *_args_*, i will answer with the current tone and the available options. \n" +
           "👉 *!pending* gives you a list of the not yet answered prompts you have in this chat.\n" +
-          "👉 *!reset* erases our conversation history.\n" +
-          "👉 *!reminder* shows current reminders and delete reminders that you don't want.\n"
+          "👉 *!reminder* shows current reminders and delete reminders that you don't want anymore.\n" +
+          "👉 *!reset* erases our conversation history."
       );
       break;
     default:
       await message.reply(`Command *${command}* unknown.`);
       break;
   }
+
+  await react(message, "done");
 }

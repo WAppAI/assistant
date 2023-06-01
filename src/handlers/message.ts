@@ -1,10 +1,11 @@
 import scheduler from "node-schedule";
 import { Message } from "whatsapp-web.js";
-import { oneLine, stripIndent } from "common-tags";
 import { serializeError } from "serialize-error";
-import { promiseTracker } from "../clients/prompt";
+import { oneLine, stripIndent } from "common-tags";
+import { promptTracker } from "../clients/prompt";
 import { sydney } from "../clients/sydney";
 import { config } from "../config";
+import { react } from "../utils";
 import { v4 as uuidv4 } from "uuid";
 import { jsonSafeParse } from "../utils";
 import { reminderSchema } from "../schemas/reminder";
@@ -24,13 +25,26 @@ function appendSources(sources: SourceAttribution[]) {
 
 async function handleMessageImpl(message: Message) {
   const chat = await message.getChat();
-  await chat.sendSeen();
+  const pendingPrompts = promptTracker.listPendingPrompts(chat);
 
-  const timestamp = new Date(message.timestamp * 1000);
-  const prompt = `${timestamp}\n\n${message.body}`;
+  if (pendingPrompts.length >= 1) {
+    const lastPrompt = pendingPrompts.pop();
+
+    lastPrompt?.prompt.then(async () => {
+      await handleMessage(message);
+    });
+
+    await react(message, "queued");
+    return;
+  }
+
+  await chat.sendSeen();
+  await react(message, "working");
+
+  const prompt = message.body;
 
   try {
-    const { response, details } = await promiseTracker.track(
+    const { response, details } = await promptTracker.track(
       prompt,
       chat,
       askSydney(prompt, chat.id._serialized)
@@ -67,18 +81,21 @@ async function handleMessageImpl(message: Message) {
       console.log("jobs=", reminders);
 
       await message.reply(reminder.answer);
-      return;
     } else {
-      await message.reply(response + sources);
-      chat.clearState();
+      await message.reply(response + sources)
     }
+
+    await react(message, "done");
   } catch (e) {
+    await react(message, "error");
     const error = serializeError(e);
     const errorMessage = error.message?.split("\n")[0];
 
     console.log({ error });
     await message.reply(`Error:\n\n${errorMessage}`);
   }
+
+  chat.clearState();
 }
 
 function getContext() {

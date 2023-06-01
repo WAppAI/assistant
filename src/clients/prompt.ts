@@ -24,9 +24,13 @@ class PromptTracker {
     }
   }
 
-  listPendingPrompts(): { prompt: Promise<any>; data: PromptData }[] {
-    return Array.from(this.pendingPrompts.entries()).map(([prompt, data]) => ({ prompt, data }));
+  listPendingPrompts(chat: Chat): { prompt: Promise<any>; data: PromptData }[] {
+    return Array.from(this.pendingPrompts.entries())
+      .map(([prompt, data]) => ({ prompt, data }))
+      .filter(
+        (entry) => entry.data.chat.id._serialized === chat.id._serialized
+      );
   }
 }
 
-export const promiseTracker = new PromptTracker();
+export const promptTracker = new PromptTracker();

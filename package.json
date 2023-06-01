@@ -23,15 +23,15 @@
     "@clack/prompts": "^0.6.3",
     "@keyv/sqlite": "^3.6.5",
     "@types/qrcode-terminal": "^0.12.0",
-    "@waylaidwanderer/chatgpt-api": "^1.36.0",
     "common-tags": "^1.8.2",
+    "@waylaidwanderer/chatgpt-api": "^1.36.4",
     "keyv": "^4.5.2",
     "node-schedule": "^2.1.1",
     "qrcode-terminal": "^0.12.0",
     "serialize-error": "^11.0.0",
     "uuid": "^9.0.0",
-    "whatsapp-web.js": "^1.20.0",
-    "zod": "^3.21.4"
+    "zod": "^3.21.4",
+    "whatsapp-web.js": "^1.20.0"
   },
   "type": "module"
 }
