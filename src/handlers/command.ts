@@ -3,7 +3,7 @@ import { promptTracker } from "../clients/prompt";
 import { sydney } from "../clients/sydney";
 import { config } from "../config";
 import { getAvailableTones, react } from "../utils";
-import { reminders } from "./message";
+import { reminders } from "./reminder";
 
 const AVAILABLE_TONES = getAvailableTones();
 
