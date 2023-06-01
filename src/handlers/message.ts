@@ -16,7 +16,7 @@ function appendSources(sources: SourceAttribution[]) {
   return sourcesString;
 }
 
-async function replaceMentions(
+function replaceMentions(
   message: Message,
   mentions: Contact[],
   botMention: Contact
@@ -41,23 +41,35 @@ async function updateConversationsCache(chatId: string, lastWAreplyId: string) {
   });
 }
 
-export async function handleMessage(message: Message) {
+async function handleGroupMessage(message: Message) {
   const chat = await message.getChat();
 
-  if (chat.isGroup) {
-    const mentions = await message.getMentions();
-    const botMention = mentions.filter((mention) => mention.isMe).pop();
-    const quotedMessage = await message.getQuotedMessage();
-    const OnGoingConversation = await sydney.conversationsCache.get(
-      chat.id._serialized
-    );
-    const isInThread = quotedMessage
+  const mentions = await message.getMentions();
+  const botMention = mentions.filter((mention) => mention.isMe).pop();
+  const quotedMessage = await message.getQuotedMessage();
+  const OnGoingConversation = await sydney.conversationsCache.get(
+    chat.id._serialized
+  );
+
+  let isInThread = false;
+
+  if (OnGoingConversation)
+    isInThread = quotedMessage
       ? quotedMessage.id._serialized === OnGoingConversation.lastWAreplyId
       : false;
 
-    if (!botMention && !isInThread) return;
+  if (!botMention && !isInThread) return false;
 
-    await replaceMentions(message, mentions, botMention as Contact);
+  replaceMentions(message, mentions, botMention as Contact);
+
+  return true;
+}
+
+export async function handleMessage(message: Message) {
+  const chat = await message.getChat();
+  if (chat.isGroup) {
+    const shouldReply = await handleGroupMessage(message);
+    if (!shouldReply) return;
   }
 
   const pendingPrompts = promptTracker.listPendingPrompts(chat);
