@@ -24,7 +24,7 @@
     "keyv": "^4.5.2",
     "qrcode-terminal": "^0.12.0",
     "serialize-error": "^11.0.0",
-    "whatsapp-web.js": "^1.20.0"
+    "whatsapp-web.js": "^1.21.0"
   },
   "type": "module"
 }
