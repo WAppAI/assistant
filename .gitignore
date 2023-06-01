@@ -3,6 +3,4 @@ puppeteer/
 
 .env
 
-.wwebjs_cache/
-
 conversations_cache.sqlite

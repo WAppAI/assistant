@@ -1,4 +1,3 @@
-import scheduler from "node-schedule";
 import { config } from "./config";
 
 interface IOptions {
@@ -78,17 +77,4 @@ interface SydneyResponse {
   jailbreakConversationId: string;
   parentMessageId: string;
   messageId: string;
-}
-
-export interface reminderI {
-  cron: string;
-  repetitions: number | null;
-  answer: string;
-  notifyMessage: string;
-}
-
-export interface remindersI {
-  name: string;
-  id: string;
-  job: scheduler.Job;
 }
