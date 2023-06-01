@@ -1,10 +1,12 @@
-import { Message } from "whatsapp-web.js";
 import { serializeError } from "serialize-error";
+import { Message } from "whatsapp-web.js";
 import { promptTracker } from "../clients/prompt";
 import { sydney } from "../clients/sydney";
 import { config } from "../config";
-import { react } from "../utils";
-import type { SourceAttribution, IOptions, SydneyResponse } from "../types";
+import { reminderSchema } from "../schemas/reminder";
+import type { IOptions, SourceAttribution, SydneyResponse } from "../types";
+import { jsonSafeParse, react } from "../utils";
+import { reminderContext, scheduleReminder } from "./reminder";
 
 function appendSources(sources: SourceAttribution[]) {
   let sourcesString = "\n\n";
@@ -45,8 +47,14 @@ async function handleMessageImpl(message: Message) {
     const hasSources = details.sourceAttributions.length >= 1;
     const sources = hasSources ? appendSources(details.sourceAttributions) : "";
 
+    const reminder = jsonSafeParse(response, reminderSchema);
+    if (reminder) {
+      await scheduleReminder(reminder, message);
+    } else {
+      await message.reply(response + sources);
+    }
+
     await react(message, "done");
-    await message.reply(response + sources);
   } catch (e) {
     await react(message, "error");
     const error = serializeError(e);
@@ -63,9 +71,10 @@ async function askSydney(prompt: string, chatId: string) {
   let options: IOptions = {
     toneStyle: config.toneStyle,
     jailbreakConversationId: chatId,
+    context: reminderContext(),
     onProgress: (token: string) => {
       process.stdout.write(token);
-    }
+    },
   };
 
   const onGoingConversation = await sydney.conversationsCache.get(chatId);

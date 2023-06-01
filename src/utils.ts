@@ -1,3 +1,4 @@
+import { z, ZodType } from "zod";
 import { Message } from "whatsapp-web.js";
 import { config } from "./config";
 import dotenv from "dotenv";
@@ -42,6 +43,27 @@ export async function react(
     default:
       await message.react(reactEmoji[reaction]);
       break;
+  }
+}
+
+export function jsonSafeParse<T extends ZodType<any>>(
+  str: string,
+  schema: T,
+  logError = false
+): z.infer<T> | null {
+  try {
+    const parsedValue = schema.safeParse(JSON.parse(str));
+    if (parsedValue.success) {
+      // Parsing was successful
+      return parsedValue.data;
+    } else {
+      // Parsing failed
+      if (logError) console.error("Parsing failed:", parsedValue.error);
+      return null; // Or handle the error in any other way
+    }
+  } catch (error) {
+    if (logError) console.error("Parsing failed:", error);
+    return null;
   }
 }
 
