@@ -44,14 +44,13 @@ whatsapp.on("ready", () => {
 whatsapp.on("message", async (message) => {
   const sender = message.from;
 
-  console.log(`Message received from ${sender}`);
+  const text = message.body;
+  console.log(`Message received from ${sender}: ${text}`);
 
   if (sender == "status@broadcast") {
     console.log("Its a status broadcast, ignoring...");
     return;
   }
-
-  const text = message.body;
 
   if (text.startsWith("!")) {
     const [command, ...args] = text.split(" ");
