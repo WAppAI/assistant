@@ -147,12 +147,13 @@ fi
 echo
 rm setup.bat
 echo
-echo "# Choose either BING_TOKEN or BING_COOKIES > .env"
+echo "# Choose either BING_TOKEN or BING_COOKIES" > .env
 echo "# If both are filled, BING_COOKIES will be preferred" >> .env
 echo "# Check README.md for details on how to get these" >> .env
 echo "BING_TOKEN=\"$token\"" >> .env
 echo "BING_COOKIES=\"$cookie\"" >> .env
 echo >> .env
+echo "# Accepted values are "true", "dms_only", "groups_only" or "false"" >> .env
 
 if [[ "$answer2" == "1" ]]; then
     echo "ENABLE_REACTIONS=\"true\"" >> .env
@@ -170,7 +171,6 @@ echo "QUEUED_REACTION=\"🔁\"" >> .env
 echo "WORKING_REACTION=\"⚙️\"" >> .env
 echo "DONE_REACTION=\"✅\"" >> .env
 echo "ERROR_REACTION=\"⚠️\"" >> .env
-echo >> .env
 echo "rm setup.sh" > start.sh
 echo "yarn dev" >> start.sh
 echo "read -p \"Press Enter to continue...\"" >> start.sh
