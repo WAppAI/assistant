@@ -22,7 +22,6 @@ if [[ "$answer" == "n" || "$answer" == "N" ]]; then
     sudo nvm  install v18.15.0
     clear
     echo "Please restart the setup and the terminal. If you still get an error, try installing the node manually"
-    echo "
     exit 0
 fi
 
