@@ -4,8 +4,8 @@ cls
 echo node version:
 call node -v
 echo.
-ECHO is node installed and on version 18.15.0 or higher?
-echo If it throws an error please say "n"
+ECHO Is node installed and on version 18.15.0 or higher?
+echo If it throws an error, please say "n"
 title setup: node version installed?
 echo.
 
@@ -26,7 +26,7 @@ title setup: download node
 pause
 echo.
 echo.
-echo please restart setup.bat
+echo Please restart setup.bat
 timeout 4
 goto end
 
@@ -36,8 +36,8 @@ cls
 echo yarn version:
 call yarn -v
 echo.
-ECHO is yarn installed and on version 1.22.19 or higher?
-echo If it throws an error please say "n"
+ECHO Is yarn installed and on version 1.22.19 or higher?
+echo If it throws an error, please say "n"
 title setup: yarn version installed?
 echo.
 
@@ -56,8 +56,10 @@ title setup: installing yarn...
 call npm install --global yarn
 cls
 goto nothing2
-:yes2
 
+:yes2
+cls
+:nothing2
 
 cls
 title config: set reactions
@@ -71,13 +73,10 @@ echo 4 = Deactivate
 echo.
 SET /p answer2=answer with 1/2/3/4 = 
 
-
-
-
 cls
 title config: set account
 echo How do you want to set the account?
-echo (If you did something wrong you can change it later in the .env file)
+echo (If you did something wrong, you can change it later in the .env file)
 echo.
 echo 1 = Bing-cookies (Recommended)
 echo 2 = Bing-token (_U cookie)
@@ -96,8 +95,8 @@ cls
 echo To get the _U cookie, follow these steps:
 echo.
 echo Log in to Bing using your Microsoft account.
-echo Open the developer tools in your browser (by pressing F12 or right-clicking anywhere and selecting echo Inspect element)
-echo Select the Storage tab and click on the Cookies option to view all cookies associated with the echo website.
+echo Open the developer tools in your browser (by pressing F12 or right-clicking anywhere and selecting Inspect element)
+echo Select the Storage tab and click on the Cookies option to view all cookies associated with the website.
 echo Look for the _U cookie and click on it to expand its details.
 echo Copy the value of the _U cookie (it should look like a long string of letters and numbers).
 echo.
