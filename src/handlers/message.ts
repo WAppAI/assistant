@@ -1,12 +1,13 @@
+import { Contact, Message } from "whatsapp-web.js";
 import { serializeError } from "serialize-error";
-import { Message } from "whatsapp-web.js";
 import { promptTracker } from "../clients/prompt";
 import { sydney } from "../clients/sydney";
 import { config } from "../config";
-import { reminderSchema } from "../schemas/reminder";
-import type { IOptions, SourceAttribution, SydneyResponse } from "../types";
 import { jsonSafeParse, react } from "../utils";
-import { reminderContext, scheduleReminder } from "./reminder";
+import type { SourceAttribution, IOptions, SydneyResponse } from "../types";
+import { getContext } from "./context";
+import { scheduleReminder } from "./reminder";
+import { reminderSchema } from "../schemas/reminder";
 
 function appendSources(sources: SourceAttribution[]) {
   let sourcesString = "\n\n";
@@ -18,10 +19,63 @@ function appendSources(sources: SourceAttribution[]) {
   return sourcesString;
 }
 
-async function handleMessageImpl(message: Message) {
-  const chat = await message.getChat();
-  const pendingPrompts = promptTracker.listPendingPrompts(chat);
+function replaceMentions(
+  message: Message,
+  mentions: Contact[],
+  botMention?: Contact
+) {
+  const botNumber = botMention?.id.user;
+  message.body = message.body.replace(`@${botNumber}`, "Sydney");
 
+  const otherMentions = mentions.filter((mention) => !mention.isMe);
+  otherMentions.forEach((mention) => {
+    message.body = message.body.replace(
+      `@${mention.id.user}`, // user ID, eg.: '@01234567890'
+      `@${mention.pushname}` // WhatsApp's public user name, eg.: 'John'
+    );
+  });
+}
+
+async function upsertLastWAreplyId(chatId: string, lastWAreplyId: string) {
+  const onGoingConversation = await sydney.conversationsCache.get(chatId);
+  await sydney.conversationsCache.set(chatId, {
+    ...onGoingConversation,
+    lastWAreplyId
+  });
+}
+
+async function handleGroupMessage(message: Message) {
+  const chat = await message.getChat();
+
+  const mentions = await message.getMentions();
+  const botMention = mentions.filter((mention) => mention.isMe).pop();
+  const quotedMessage = await message.getQuotedMessage();
+
+  let isInThread = false;
+  const OnGoingConversation = await sydney.conversationsCache.get(
+    chat.id._serialized
+  );
+  if (OnGoingConversation)
+    isInThread = quotedMessage
+      ? quotedMessage.id._serialized === OnGoingConversation.lastWAreplyId
+      : false;
+
+  if (!botMention && !isInThread) return false;
+
+  replaceMentions(message, mentions, botMention);
+
+  return true;
+}
+
+export async function handleMessage(message: Message) {
+  let interval = setTimeout(() => {}, 0);
+  const chat = await message.getChat();
+  if (chat.isGroup) {
+    const shouldReply = await handleGroupMessage(message);
+    if (!shouldReply) return;
+  }
+
+  const pendingPrompts = promptTracker.listPendingPrompts(chat);
   if (pendingPrompts.length >= 1) {
     const lastPrompt = pendingPrompts.pop();
 
@@ -34,27 +88,38 @@ async function handleMessageImpl(message: Message) {
   }
 
   await chat.sendSeen();
+
+  const typingIndicator = () => {
+    chat.sendStateTyping();
+    interval = setTimeout(typingIndicator, 25000);
+  };
+
+  typingIndicator();
   await react(message, "working");
 
-  const prompt = message.body;
+  const timestamp = new Date(message.timestamp * 1000);
+  const prompt = `${timestamp}\n${message.body}`;
 
   try {
     const { response, details } = await promptTracker.track(
       prompt,
       chat,
-      askSydney(prompt, chat.id._serialized)
+      askSydney(prompt, chat.id._serialized, await getContext(message))
     );
     const hasSources = details.sourceAttributions.length >= 1;
     const sources = hasSources ? appendSources(details.sourceAttributions) : "";
 
     const reminder = jsonSafeParse(response, reminderSchema);
-    if (reminder) {
-      await scheduleReminder(reminder, message);
-    } else {
-      await message.reply(response + sources);
-    }
+    if (reminder) await scheduleReminder(reminder, message);
 
     await react(message, "done");
+
+    const reply = await message.reply(
+      reminder ? reminder.answer : response + sources
+    );
+
+    if (chat.isGroup)
+      await upsertLastWAreplyId(chat.id._serialized, reply.id._serialized);
   } catch (e) {
     await react(message, "error");
     const error = serializeError(e);
@@ -64,17 +129,18 @@ async function handleMessageImpl(message: Message) {
     await message.reply(`Error:\n\n${errorMessage}`);
   }
 
+  clearTimeout(interval);
   chat.clearState();
 }
 
-async function askSydney(prompt: string, chatId: string) {
+async function askSydney(prompt: string, chatId: string, context: string) {
   let options: IOptions = {
     toneStyle: config.toneStyle,
     jailbreakConversationId: chatId,
-    context: reminderContext(),
-    onProgress: (token: string) => {
-      process.stdout.write(token);
-    },
+    context
+    /* onProgress: (token: string) => {
+       process.stdout.write(token);
+    } */
   };
 
   const onGoingConversation = await sydney.conversationsCache.get(chatId);
@@ -88,29 +154,3 @@ async function askSydney(prompt: string, chatId: string) {
   //console.dir(response, { depth: null });
   return response;
 }
-
-// generated by GPT-4, this ensures the typing indicator will last more than 25s
-function typingIndicatorWrapper(fn: (message: Message) => Promise<void>) {
-  return async (message: Message) => {
-    const chat = await message.getChat();
-    let interval: NodeJS.Timeout = setTimeout(() => {}, 0);
-
-    const typingIndicator = () => {
-      chat.sendStateTyping();
-      interval = setTimeout(typingIndicator, 25000);
-    };
-
-    typingIndicator();
-
-    try {
-      const result = await fn(message);
-      clearTimeout(interval);
-      return result;
-    } catch (error) {
-      clearTimeout(interval);
-      throw error;
-    }
-  };
-}
-
-export const handleMessage = typingIndicatorWrapper(handleMessageImpl);
