@@ -45,7 +45,7 @@ whatsapp.on("message", async (message) => {
   const sender = message.from;
 
   const text = message.body;
-  console.log(`Message received from ${sender}: ${text}`);
+  console.log(`Message received from ${sender}`);
 
   if (sender == "status@broadcast") {
     console.log("Its a status broadcast, ignoring...");
