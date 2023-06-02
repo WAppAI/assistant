@@ -18,8 +18,8 @@ if [[ "$answer" == "n" || "$answer" == "N" ]]; then
     sudo apt upgrade
     sudo apt install curl
     sudo curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
-    sudo source ~/.bashrc
-    sudo nvm  install v18.15.0
+    source ~/.bashrc
+    nvm install v18.15.0
     clear
     echo "Please restart the setup and the terminal. If you still get an error, try installing the node manually"
     exit 0
