@@ -9,8 +9,8 @@ This GitHub repository showcases a chatbot named Sydney, powered by the `waylaid
 ## Features
 
 - [x] Engage in conversations with Sydney, powered by the BingAI jailbreak
-- [ ] Create reminders (Work-in-Progress)
-- [ ] Group chat compatibility (It works but not optimal)
+- [x] Group chat compatibility 
+- [ ] Create reminders 
 - [ ] PDF and OCR reading
 - [ ] Voice message capability (Sydney listens to messages)
 - [ ] Image generation
