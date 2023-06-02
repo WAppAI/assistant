@@ -113,7 +113,7 @@ export async function handleMessage(message: Message) {
     if (reminder) await scheduleReminder(reminder, message);
 
     await react(message, "done");
-
+    
     const reply = await message.reply(
       reminder ? reminder.answer : response + sources
     );

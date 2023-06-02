@@ -1,3 +1,4 @@
+
 import { oneLine, stripIndent } from "common-tags";
 import { Message } from "whatsapp-web.js";
 
@@ -34,6 +35,7 @@ export async function getContext(message: Message) {
     context += `You are in a WhatsApp group chat. You don't know the group chat's name. This message was sent by: ${contact.pushname}.\nDon't use '@' to mention users when referring to them.`;
   else
     context += `You are in a WhatsApp private chat. The user name is ${contact.pushname}.`;
+
 
   return context + remindersContext;
 }
