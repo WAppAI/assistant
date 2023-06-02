@@ -20,8 +20,9 @@ if [[ "$answer" == "n" || "$answer" == "N" ]]; then
     sudo curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
     sudo source ~/.bashrc
     sudo nvm  install v18.15.0
-    lear
-    echo "Please restart the setup. If it still shows an error then try installing node manually"
+    clear
+    echo "Please restart the setup and the terminal. If you still get an error, try installing the node manually"
+    echo "
     exit 0
 fi
 
