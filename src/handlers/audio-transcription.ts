@@ -1,79 +1,38 @@
 import { randomUUID } from "crypto";
-import { File, blobFromSync } from "fetch-blob/from.js";
 import ffmpeg from "fluent-ffmpeg";
-import FormData from "form-data";
 import fs from "fs";
-import fetch, { Headers } from "node-fetch";
 import os from "os";
 import path from "path";
+import { openai } from "../clients/openai";
 
-async function convertOggToWav(
-  oggPath: string,
-  wavPath: string
-): Promise<void> {
+function convertOggToWav(oggPath: string, wavPath: string) {
   return new Promise((resolve, reject) => {
     ffmpeg(oggPath)
       .toFormat("wav")
       .outputOptions("-acodec pcm_s16le")
       .output(wavPath)
-      .on("end", () => resolve())
-      .on("error", (err) => reject(err))
+      .on("end", resolve)
+      .on("error", reject)
       .run();
   });
 }
 
-export async function audioTranscription(audioBuffer: Buffer): Promise<string> {
-  const url = "https://api.openai.com/v1/audio/transcriptions";
-  let language = "";
-
+export async function transcribeAudio(audioBuffer: Buffer) {
   const tempdir = os.tmpdir();
-  const oggPath = path.join(tempdir, randomUUID() + ".ogg");
-  const wavFilename = randomUUID() + ".wav";
-  const wavPath = path.join(tempdir, wavFilename);
+  const filename = randomUUID();
+
+  const oggPath = path.join(tempdir, filename + ".ogg");
   fs.writeFileSync(oggPath, audioBuffer);
-  try {
-    await convertOggToWav(oggPath, wavPath);
-  } catch (e) {
-    console.log("erro", e);
-    fs.unlinkSync(oggPath);
-    return "";
-  }
 
-  // FormData
-  const formData = new FormData();
+  const wavPath = path.join(tempdir, filename + ".wav");
+  await convertOggToWav(oggPath, wavPath);
 
-  const fileStream = fs.createReadStream(wavPath);
-  formData.append("file", fileStream, {
-    filename: wavFilename,
-    contentType: "audio/wav",
-  });
-  formData.append("model", "whisper-1");
+  // Deletes the ogg file as it is no longer needed
+  fs.unlinkSync(oggPath);
 
-  const headers = new Headers();
-  headers.append("Authorization", `Bearer ${process.env.OPENAI_API_KEY}`);
-
-  // Request options
-  const options = {
-    method: "POST",
-    body: formData,
-    headers,
-  };
-
-  let response;
-  try {
-    response = await fetch(url, options);
-  } catch (e) {
-    console.log(e);
-  } finally {
-    fs.unlinkSync(oggPath);
-    fs.unlinkSync(wavPath);
-  }
-
-  if (!response || response.status != 200) {
-    console.log("erro:", response);
-    return "";
-  }
-
-  const transcription = await response.json();
-  return transcription.text;
+  const transcription = await openai.createTranscription(
+    fs.createReadStream(wavPath),
+    "whisper-1"
+  );
+  return transcription.data.text;
 }
