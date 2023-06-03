@@ -186,6 +186,7 @@ elif [[ "$answer4" == "2" ]]; then
         echo "OPENAI_API_KEY=\"$API\"" >> .env
         echo >> .env
         echo "# Determines whether the bot should detect and convert your voice messages into written text" >> .env
+        echo "# Accepted values are \"true\" or \"false\"" >> .env
         echo "TRANSCRIPTION_ENABLED=true" >> .env
         echo >> .env
         echo "# Determines whether the bot should reply with the transcribed text from your voice messages" >> .env
@@ -196,7 +197,8 @@ elif [[ "$answer4" == "2" ]]; then
     elif [[ "$answer4" == "2" ]]; then
         echo "OPENAI_API_KEY=\"sk-90...\"" >> .env
         echo >> .env
-        echo "# Determines whether the bot should detect and convert your voice messages into written text" >> .env
+        echo "# Determines whether the bot should detect and convert your voice messages into text" >> .env
+        echo "# Accepted values are \"true\" or \"false\"" >> .env
         echo "TRANSCRIPTION_ENABLED=false" >> .env
         echo >> .env
         echo "# Determines whether the bot should reply with the transcribed text from your voice messages" >> .env
@@ -206,7 +208,7 @@ elif [[ "$answer4" == "2" ]]; then
 
     fi
 
-    echo "# Accepted values are "true", "dms_only", "groups_only" or "false"" >> .env
+    echo "# Accepted values are \"true\", \"dms_only\", \"groups_only\" or \"false\"" >> .env
 
     if [[ "$answer2" == "1" ]]; then
         echo "ENABLE_REACTIONS=\"true\"" >> .env
