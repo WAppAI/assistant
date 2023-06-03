@@ -74,6 +74,32 @@ echo.
 SET /p answer2=answer with 1/2/3/4 = 
 
 cls
+:voice
+title config: Voice messages
+echo Should Sydney recognize voice messages?
+echo (You need an OpenAI API key for it)
+echo.
+echo 1 = Activate
+echo 2 = Disable
+echo.
+SET /p answer4=answer with 1/2 = 
+if '%answer4%' == '1' goto voiceset
+if '%answer4%' == '2' goto fv
+cls
+echo That was not a valid answer
+echo.
+goto voice
+
+:voiceset
+cls
+start https://platform.openai.com/account/api-keys
+echo Please set your OpenAI API key here
+echo.
+echo Paste your API key below:
+SET /p API=
+
+:fv
+cls
 title config: set account
 echo How do you want to set the account?
 echo (If you did something wrong, you can change it later in the .env file)
@@ -131,6 +157,29 @@ echo # Check README.md for details on how to get these >> .env
 echo BING_TOKEN="%token%" >> .env
 echo BING_COOKIES="%cookie%" >> .env
 echo.  >> .env
+echo # Voice message transcription >> .env
+if '%answer4%' == '1' goto activate
+if '%answer4%' == '2' goto disable
+
+
+:activate
+echo OPENAI_API_KEY="%API%" >> .env
+echo.  >> .env
+echo # Determines whether the bot should detect and convert your voice messages into written text >> .env
+echo TRANSCRIPTION_ENABLED=true
+echo.
+goto rec
+
+:disable
+echo OPENAI_API_KEY="" >> .env
+echo.  >> .env
+echo # Determines whether the bot should detect and convert your voice messages into written text >> .env
+echo TRANSCRIPTION_ENABLED=false >> .env
+echo. >> .env
+echo. >> .env
+goto rec
+
+:rec
 echo # Accepted values are "true", "dms_only", "groups_only" or "false" >> .env
 if '%answer2%' == '1' goto both
 if '%answer2%' == '2' goto dm
