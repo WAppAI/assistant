@@ -88,6 +88,10 @@ read -p "Answer with 1/2 " answer4
 
 if [[ "$answer4" == "1" ]]; then
     #config: Bing-token
+    echo
+    echo "Required files will be installed (ffmpeg)"
+    sudo apt update
+    sudo apt install ffmpeg
     clear
     echo "Please set your OpenAI API key here"
     echo

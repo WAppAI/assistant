@@ -78,6 +78,7 @@ cls
 title config: Voice messages
 echo Should Sydney recognize voice messages?
 echo (You need an OpenAI API key for it)
+echo (Please note that FFmpeg is required)
 echo.
 echo 1 = Activate
 echo 2 = Disable
@@ -91,6 +92,10 @@ echo.
 goto voice
 
 :voiceset
+echo Please download FFmpeg.
+echo If you've already done so, ignore this
+call https://ffmpeg.org/download.html#build-windows
+pause
 cls
 start https://platform.openai.com/account/api-keys
 echo Please set your OpenAI API key here
