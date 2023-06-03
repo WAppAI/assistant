@@ -188,6 +188,9 @@ elif [[ "$answer4" == "2" ]]; then
         echo "# Determines whether the bot should detect and convert your voice messages into written text" >> .env
         echo "TRANSCRIPTION_ENABLED=true" >> .env
         echo >> .env
+        echo "# Determines whether the bot should reply with the transcribed text from your voice messages" >> .env
+        echo "# Accepted values are \"true\" or \"false\"" >> .env
+        echo "REPLY_TRANSCRIPTION=\"true\"" >> .env
         echo >> .env
 
     elif [[ "$answer4" == "2" ]]; then
@@ -196,6 +199,9 @@ elif [[ "$answer4" == "2" ]]; then
         echo "# Determines whether the bot should detect and convert your voice messages into written text" >> .env
         echo "TRANSCRIPTION_ENABLED=false" >> .env
         echo >> .env
+        echo "# Determines whether the bot should reply with the transcribed text from your voice messages" >> .env
+        echo "# Accepted values are \"true\" or \"false\"" >> .env
+        echo "REPLY_TRANSCRIPTION=\"false\"" >> .env
         echo >> .env
 
     fi
