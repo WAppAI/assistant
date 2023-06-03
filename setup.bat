@@ -171,6 +171,7 @@ if '%answer4%' == '2' goto disable
 echo OPENAI_API_KEY="%API%" >> .env
 echo.  >> .env
 echo # Determines whether the bot should detect and convert your voice messages into written text >> .env
+echo "# Accepted values are "true" or "false"" >> .env
 echo TRANSCRIPTION_ENABLED=true >> .env
 echo. >> .env
 echo # Determines whether the bot should reply with the transcribed text from your voice messages >> .env
@@ -183,6 +184,7 @@ goto rec
 echo OPENAI_API_KEY="sk-90..." >> .env
 echo.  >> .env
 echo # Determines whether the bot should detect and convert your voice messages into written text >> .env
+echo "# Accepted values are "true" or "false"" >> .env
 echo TRANSCRIPTION_ENABLED=false >> .env
 echo. >> .env
 echo # Determines whether the bot should reply with the transcribed text from your voice messages >> .env
