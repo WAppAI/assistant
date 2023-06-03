@@ -43,8 +43,6 @@ whatsapp.on("ready", () => {
 
 whatsapp.on("message", async (message) => {
   const sender = message.from;
-
-  const text = message.body;
   console.log(`Message received from ${sender}`);
 
   if (sender == "status@broadcast") {
@@ -52,8 +50,8 @@ whatsapp.on("message", async (message) => {
     return;
   }
 
-  if (text.startsWith("!")) {
-    const [command, ...args] = text.split(" ");
+  if (message.body.startsWith("!")) {
+    const [command, ...args] = message.body.split(" ");
     await handleCommand(message, command, args.join(" "));
   } else {
     await handleMessage(message);

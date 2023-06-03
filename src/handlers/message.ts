@@ -1,11 +1,12 @@
-import { Contact, Message } from "whatsapp-web.js";
+import { Contact, Message, MessageMedia } from "whatsapp-web.js";
 import { serializeError } from "serialize-error";
 import { promptTracker } from "../clients/prompt";
 import { sydney } from "../clients/sydney";
 import { config } from "../config";
 import { react } from "../utils";
-import type { SourceAttribution, IOptions, SydneyResponse } from "../types";
 import { getContext } from "./context";
+import { transcribeAudio } from "./audio-transcription";
+import type { SourceAttribution, IOptions, SydneyResponse } from "../types";
 
 function appendSources(sources: SourceAttribution[]) {
   let sourcesString = "\n\n";
@@ -65,11 +66,68 @@ async function handleGroupMessage(message: Message) {
   return true;
 }
 
+async function handleAudioMessage(message: Message, media: MessageMedia) {
+  if (process.env.TRANSCRIPTION_ENABLED === "true") {
+    react(message, "working");
+    const audioBuffer = Buffer.from(media.data, "base64");
+
+    try {
+      const transcription = await transcribeAudio(audioBuffer);
+      message.body = transcription;
+
+      if (process.env.REPLY_TRANSCRIPTION === "true")
+        await message.reply(`Transcription:\n\n${transcription}`);
+
+      return true;
+    } catch (e) {
+      react(message, "error");
+      const error = serializeError(e);
+      const errorMessage = error.message?.split("\n")[0];
+      console.log({ error });
+
+      let errorDetails = `Audio message detected but the transcription failed:\n\n${errorMessage}`;
+      if (error.status === 401)
+        errorDetails += "\n\nDid you set your OpenAI API key?";
+
+      await message.reply(errorDetails);
+      return false;
+    }
+  } else {
+    react(message, "error");
+    await message.reply(
+      "Audio message detected but the transcription feature is currently turned off. Not replying."
+    );
+    return false;
+  }
+}
+
+async function handleMediaMessage(message: Message) {
+  const media = await message.downloadMedia();
+
+  if (media.mimetype.startsWith("audio/")) {
+    return await handleAudioMessage(message, media);
+  } else {
+    react(message, "error");
+    message.reply(
+      "Unsupported media format.\n\nCurrently, only text and audio messages are supported. Not replying."
+    );
+    return false;
+  }
+}
+
 export async function handleMessage(message: Message) {
   let interval = setTimeout(() => {}, 0);
   const chat = await message.getChat();
+
   if (chat.isGroup) {
     const shouldReply = await handleGroupMessage(message);
+    if (!shouldReply) return;
+  }
+
+  await chat.sendSeen();
+
+  if (message.hasMedia) {
+    const shouldReply = await handleMediaMessage(message);
     if (!shouldReply) return;
   }
 
@@ -85,23 +143,19 @@ export async function handleMessage(message: Message) {
     return;
   }
 
-  await chat.sendSeen();
-
-  const typingIndicator = () => {
-    chat.sendStateTyping();
+  async function typingIndicator() {
+    await chat.sendStateTyping();
     interval = setTimeout(typingIndicator, 25000);
-  };
+  }
 
   typingIndicator();
   await react(message, "working");
 
-  const prompt = message.body;
-
   try {
     const { response, details } = await promptTracker.track(
-      prompt,
+      message.body,
       chat,
-      askSydney(prompt, chat.id._serialized, await getContext(message))
+      askSydney(message.body, chat.id._serialized, await getContext(message))
     );
     const hasSources = details.sourceAttributions.length >= 1;
     const sources = hasSources ? appendSources(details.sourceAttributions) : "";
