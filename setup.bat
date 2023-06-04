@@ -94,7 +94,9 @@ goto voice
 :voiceset
 echo Please download FFmpeg.
 echo If you've already done so, ignore this
+echo Please check the readme for more instructions 
 call https://ffmpeg.org/download.html#build-windows
+echo.
 pause
 cls
 start https://platform.openai.com/account/api-keys
