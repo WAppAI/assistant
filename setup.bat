@@ -78,6 +78,7 @@ cls
 title config: Voice messages
 echo Should Sydney recognize voice messages?
 echo (You need an OpenAI API key for it)
+echo (Please note that FFmpeg is required)
 echo.
 echo 1 = Activate
 echo 2 = Disable
@@ -91,6 +92,12 @@ echo.
 goto voice
 
 :voiceset
+echo Please download FFmpeg.
+echo If you've already done so, ignore this
+echo Please check the readme for more instructions 
+call https://ffmpeg.org/download.html#build-windows
+echo.
+pause
 cls
 start https://platform.openai.com/account/api-keys
 echo Please set your OpenAI API key here
@@ -166,16 +173,25 @@ if '%answer4%' == '2' goto disable
 echo OPENAI_API_KEY="%API%" >> .env
 echo.  >> .env
 echo # Determines whether the bot should detect and convert your voice messages into written text >> .env
-echo TRANSCRIPTION_ENABLED=true
-echo.
+echo "# Accepted values are "true" or "false"" >> .env
+echo TRANSCRIPTION_ENABLED=true >> .env
+echo. >> .env
+echo # Determines whether the bot should reply with the transcribed text from your voice messages >> .env
+echo # Accepted values are "true" or "false" >> .env
+echo REPLY_TRANSCRIPTION="true" >> .env
+echo. >> .env
 goto rec
 
 :disable
-echo OPENAI_API_KEY="" >> .env
+echo OPENAI_API_KEY="sk-90..." >> .env
 echo.  >> .env
 echo # Determines whether the bot should detect and convert your voice messages into written text >> .env
+echo "# Accepted values are "true" or "false"" >> .env
 echo TRANSCRIPTION_ENABLED=false >> .env
 echo. >> .env
+echo # Determines whether the bot should reply with the transcribed text from your voice messages >> .env
+echo # Accepted values are "true" or "false" >> .env
+echo REPLY_TRANSCRIPTION="false" >> .env
 echo. >> .env
 goto rec
 
