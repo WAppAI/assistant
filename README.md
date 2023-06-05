@@ -4,7 +4,7 @@ This GitHub repository showcases a chatbot named Sydney, powered by the `waylaid
 
 |                          Screenshot 1                           |                          Screenshot 2                           |                          Screenshot 3                           |
 | :-------------------------------------------------------------: | :-------------------------------------------------------------: | :-------------------------------------------------------------: |
-| ![Screenshot 1](/demos/Screenshot_20230604_204741_WhatsApp.jpg) | ![Screenshot 2](/demos/Screenshot_20230604_205104_WhatsApp.jpg) | ![Screenshot 3](/demos/Screenshot_20230604_212625_WhatsApp.jpg) |
+| ![Screenshot 1](/demos/Screenshot_20230604_204741_WhatsApp.jpg) | ![Screenshot 2](/demos/Screenshot_20230604_205104_WhatsApp.jpg) | ![Screenshot 3](/demos/Screenshot_20230604_215518_WhatsApp.jpg) |
 
 ## Features
 
@@ -26,7 +26,9 @@ To chat with Sydney, you will need:
 - FFMPEG must be installed in order to use audio transcription.
 
 ### Installation
-You have the option to run either the setup.bat file (for Windows) or the setup.sh file (for Ubuntu/Debian) to automatically configure the project, or you can choose to perform a manual installation by following the steps below:
+You can configure the project automatically by running either the `setup.bat` file (for Windows) or the `setup.sh` file (for Ubuntu/Debian).
+
+Alternatively, you have the option to perform a manual installation by following the steps below:
 
 1. Clone this repository
 
