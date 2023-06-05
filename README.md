@@ -1,10 +1,10 @@
-# WhatsAppGPT: Your BingAI-powered WhatsApp Assistant
+# WhatsAppSydney: Your BingAI-powered WhatsApp Assistant
 
 This GitHub repository showcases a chatbot named Sydney, powered by the `waylaidwanderer/node-chatgpt-api`'s BingAIClient. Sydney is a versatile AI assistant that remains continuously connected to the internet, enabling it to provide users with reliable and up-to-date information. Leveraging the capabilities of the BingAI jailbreak, Sydney delivers accurate responses by harnessing the vast resources available online. The best part is that the API used in this project is completely free, allowing you to enjoy the benefits of an internet-connected chatbot without any associated charges.
 
 |                          Screenshot 1                           |                          Screenshot 2                           |                          Screenshot 3                           |
 | :-------------------------------------------------------------: | :-------------------------------------------------------------: | :-------------------------------------------------------------: |
-| ![Screenshot 1](/demos/Screenshot_20230527_183419_WhatsApp.jpg) | ![Screenshot 2](/demos/Screenshot_20230527_184042_WhatsApp.jpg) | ![Screenshot 3](/demos/Screenshot_20230527_184050_WhatsApp.jpg) |
+| ![Screenshot 1](/demos/Screenshot_20230604_204741_WhatsApp.jpg) | ![Screenshot 2](/demos/Screenshot_20230604_205104_WhatsApp.jpg) | ![Screenshot 3](/demos/Screenshot_20230604_215518_WhatsApp.jpg) |
 
 ## Features
 
@@ -22,9 +22,13 @@ This GitHub repository showcases a chatbot named Sydney, powered by the `waylaid
 To chat with Sydney, you will need:
 
 - Node.js >= 18.15.0
-- a spare WhatsApp number (chatting with yourself is not ideal, but also works)
+- A spare WhatsApp number (chatting with yourself is not ideal, but also works)
+- FFMPEG must be installed in order to use audio transcription.
 
 ### Installation
+You can configure the project automatically by running either the `setup.bat` file (for Windows) or the `setup.sh` file (for Ubuntu/Debian).
+
+Alternatively, you have the option to perform a manual installation by following the steps below:
 
 1. Clone this repository
 
@@ -87,7 +91,7 @@ yarn dev
 
 Sydney is designed to respond to natural language queries from users. You can ask Sydney questions, or just have a casual conversation.
 
-Conversations with Sydney will be stored on the `./conversations_cache.sqlite` file (created automatically after Sydney's first response to a new chat).
+To utilize it in a group chat, you will need to either mention it by using her username with the "@" symbol (e.g., @Sydney) or reply directly to her last message.
 
 ### Available commands
 
