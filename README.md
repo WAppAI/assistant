@@ -6,12 +6,27 @@ This GitHub repository showcases a chatbot named Sydney, powered by the `waylaid
 | :-------------------------------------------------------------: | :-------------------------------------------------------------: | :-------------------------------------------------------------: |
 | ![Screenshot 1](/demos/Screenshot_20230604_204741_WhatsApp.jpg) | ![Screenshot 2](/demos/Screenshot_20230604_205104_WhatsApp.jpg) | ![Screenshot 3](/demos/Screenshot_20230604_215518_WhatsApp.jpg) |
 
+# Table of Contents
+
+- [WhatsAppSydney: Your BingAI-powered WhatsApp Assistant](#whatsappsydney-your-bingai-powered-whatsapp-assistant)
+  - [Features](#features)
+  - [Getting Started](#getting-started)
+    - [Test the Chatbot](#test-the-chatbot)
+    - [Prerequisites](#prerequisites)
+    - [Installation](#installation)
+  - [Usage](#usage)
+    - [Voice Messages](#voice-messages)
+    - [Group Chat](#group-chat)
+    - [Available commands](#available-commands)
+  - [Contribute](#contribute)
+  - [Hire Us](#hire-us)
+
 ## Features
 
 - [x] Engage in conversations with Sydney, powered by the BingAI jailbreak
-- [x] Group chat compatibility 
+- [x] Group chat compatibility
 - [x] Voice message capability (Sydney listens to messages)
-- [ ] Create reminders 
+- [ ] Create reminders
 - [ ] PDF and OCR reading
 - [ ] Image generation
 
@@ -21,15 +36,18 @@ This GitHub repository showcases a chatbot named Sydney, powered by the `waylaid
 
 You can test the Sydney chatbot by sending a message to the following WhatsApp account: [Sydney AI](https://wa.me/4915237793520). Feel free to ask questions or engage in a conversation with Sydney to experience its capabilities.
 
+**NOTE:** For privacy reasons, we strongly recommend self-hosting it.
+
 ### Prerequisites
 
 To chat with Sydney, you will need:
 
 - Node.js >= 18.15.0
 - A spare WhatsApp number (chatting with yourself is not ideal, but also works)
-- FFMPEG must be installed in order to use audio transcription.
+- FFMPEG must be installed in order to use audio transcription **(OPTIONAL)**.
 
 ### Installation
+
 You can configure the project automatically by running either the `setup.bat` file (for Windows) or the `setup.sh` file (for Ubuntu/Debian).
 
 Alternatively, you have the option to perform a manual installation by following the steps below:
@@ -94,6 +112,14 @@ yarn dev
 ## Usage
 
 Sydney is designed to respond to natural language queries from users. You can ask Sydney questions, or just have a casual conversation.
+
+### Voice Messages
+
+To utilize voice messages, make sure you have FFMPEG installed on your machine and an OpenAI API key. Please note that using the voice transcription API (Whisper AI) provided by OpenAI comes with a cost of US$0.06 per 10 minutes.
+
+Once you have installed FFMPEG and obtained your OpenAI API key, you will need to place the key in the `.env` file under the `OPENAI_API_KEY` variable. Additionally, set `TRANSCRIPTION_ENABLED` to `"TRUE"`. After restarting the bot, you can proceed to utilize it.
+
+### Group Chat
 
 To utilize it in a group chat, you will need to either mention it by using her username with the "@" symbol (e.g., @Sydney) or reply directly to her last message.
 
