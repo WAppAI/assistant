@@ -21,7 +21,6 @@ This GitHub repository showcases a chatbot named Sydney, powered by the `waylaid
   - [Contribute](#contribute)
   - [Hire Us](#hire-us)
 
-
 ## Features
 
 - [x] Engage in conversations with Sydney, powered by the BingAI jailbreak
@@ -116,14 +115,13 @@ Sydney is designed to respond to natural language queries from users. You can as
 
 ### Voice Messages
 
-To utilize voice messages, make sure you have FFMPEG installed on your machine and an OpenAI API key. Please note that using our voice transcription API (Whisper AI) comes with a cost of US$0.06 per 10 minutes.
+To utilize voice messages, make sure you have FFMPEG installed on your machine and an OpenAI API key. Please note that using the voice transcription API (Whisper AI) provided by OpenAI comes with a cost of US$0.06 per 10 minutes.
 
 Once you have installed FFMPEG and obtained your OpenAI API key, you will need to place the key in the `.env` file under the `OPENAI_API_KEY` variable. Additionally, set `TRANSCRIPTION_ENABLED` to `"TRUE"`. After restarting the bot, you can proceed to utilize it.
 
 ### Group Chat
 
 To utilize it in a group chat, you will need to either mention it by using her username with the "@" symbol (e.g., @Sydney) or reply directly to her last message.
-
 
 ### Available commands
 
