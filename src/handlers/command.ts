@@ -1,4 +1,4 @@
-import { Message } from "whatsapp-web.js";
+import { Chat, GroupChat, Message } from "whatsapp-web.js";
 import { promptTracker } from "../clients/prompt";
 import { sydney } from "../clients/sydney";
 import { config } from "../config";
@@ -31,9 +31,23 @@ export async function handleCommand(
       await message.reply("*pong!*");
       break;
     case "!reset":
-      await sydney.conversationsCache.delete(chat.id._serialized);
-      await message.reply("Conversation history reset.");
-      break;
+      if (chat.isGroup) {
+        const admins = (chat as GroupChat).participants.map((user) => {
+          if (user.isAdmin) return user.id._serialized;
+        });
+
+        if (admins.includes(message.author)) {
+          await sydney.conversationsCache.delete(chat.id._serialized);
+          await message.reply("Conversation history reset.");
+        } else {
+          await message.reply("You are not allowed to perform this command.");
+        }
+        break;
+      } else {
+        await sydney.conversationsCache.delete(chat.id._serialized);
+        await message.reply("Conversation history reset.");
+        break;
+      }
     case "!pending":
       const pendingPrompts = promptTracker.listPendingPrompts(chat);
 
@@ -84,7 +98,7 @@ export async function handleCommand(
           "👉 *!ping* tells you if I'm still alive with a *pong!*; this should be super fast.\n" +
           "👉 *!tone _args_?* lets you check or change my tone if you pass *_args_*; if you don't pass *_args_*, i will answer with the current tone and the available options. \n" +
           "👉 *!pending* gives you a list of the not yet answered prompts you have in this chat.\n" +
-          "👉 *!reset* erases our conversation history."
+          "👉 *!reset* erases our conversation history. In group chats, *only admins* can perform this command."
       );
       break;
     default:
