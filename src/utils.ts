@@ -3,6 +3,12 @@ import { config } from "./config";
 import dotenv from "dotenv";
 dotenv.config();
 
+export function intersection<T>(array1: T[], array2: T[]) {
+  const set = new Set(array1);
+  return array2.filter(value => set.has(value));
+};
+
+
 const ENABLE_REACTIONS =
   (process.env.ENABLE_REACTIONS as
     | "true"
