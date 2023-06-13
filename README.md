@@ -36,7 +36,7 @@ This GitHub repository showcases a chatbot named Sydney, powered by the `waylaid
 
 You can test the Sydney chatbot by sending a message to the following WhatsApp account: [Sydney AI](https://wa.me/4915237793520). Feel free to ask questions or engage in a conversation with Sydney to experience its capabilities.
 
-**NOTE:** For privacy reasons, we strongly recommend self-hosting it.
+**NOTE:** !tone and audio transcription are disabled for the public bot. For privacy reasons, we also strongly recommend self-hosting it.
 
 ### Prerequisites
 
