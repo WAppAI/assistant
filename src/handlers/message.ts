@@ -39,15 +39,15 @@ async function upsertLastWAreplyId(chatId: string, lastWAreplyId: string) {
   const onGoingConversation = await sydney.conversationsCache.get(chatId);
   await sydney.conversationsCache.set(chatId, {
     ...onGoingConversation,
-    lastWAreplyId
+    lastWAreplyId,
   });
 }
 
 async function handleGroupMessage(message: Message) {
   const chat = await message.getChat();
 
-  const mentions = await message.getMentions();
-  const botMention = mentions.filter((mention) => mention.isMe).pop();
+  //const mentions = await message.getMentions();       // Stoped working for some reason (I think it's because the number field is empty)
+  //const botMention = mentions.filter((mention) => mention.isMe).pop();
   const quotedMessage = await message.getQuotedMessage();
 
   let isInThread = false;
@@ -59,9 +59,18 @@ async function handleGroupMessage(message: Message) {
       ? quotedMessage.id._serialized === OnGoingConversation.lastWAreplyId
       : false;
 
-  if (!botMention && !isInThread) return false;
+  const mentionedIds = message.mentionedIds; // Temporary logic so that you can talk with Sydney with @Sydney in a group
+  const toId = message.to;
+  let isMentionedInTo = false;
+  mentionedIds.forEach((mentionedId) => {
+    if (mentionedId === toId) {
+      isMentionedInTo = true;
+    }
+  });
 
-  replaceMentions(message, mentions, botMention);
+  if (!isMentionedInTo && !isInThread) return false;
+
+  //replaceMentions(message, mentions, botMention);
 
   return true;
 }
@@ -182,7 +191,7 @@ async function askSydney(prompt: string, chatId: string, context: string) {
   let options: IOptions = {
     toneStyle: config.toneStyle,
     jailbreakConversationId: chatId,
-    context
+    context,
     /* onProgress: (token: string) => {
        process.stdout.write(token);
     } */
