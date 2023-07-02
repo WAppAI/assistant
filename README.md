@@ -1,6 +1,6 @@
 # WhatsAppSydney: Your BingAI-powered WhatsApp Assistant
 
-This GitHub repository showcases a chatbot named Sydney, powered by the `waylaidwanderer/node-chatgpt-api`'s BingAIClient. Sydney is a versatile AI assistant that remains continuously connected to the internet, enabling it to provide users with reliable and up-to-date information. Leveraging the capabilities of the BingAI jailbreak, Sydney delivers accurate responses by harnessing the vast resources available online. The best part is that the API used in this project is completely free, allowing you to enjoy the benefits of an internet-connected chatbot without any associated charges.
+This GitHub repository showcases a chatbot named Sydney, powered by the [waylaidwanderer/node-chatgpt-api](https://github.com/waylaidwanderer/node-chatgpt-api) BingAIClient. Sydney is a versatile AI assistant that remains continuously connected to the internet, enabling it to provide users with reliable and up-to-date information. Leveraging the capabilities of the BingAI jailbreak, Sydney delivers accurate responses by harnessing the vast resources available online. The best part is that the API used in this project is completely free, allowing you to enjoy the benefits of an internet-connected chatbot without any associated charges.
 
 |                          Screenshot 1                           |                          Screenshot 2                           |                          Screenshot 3                           |
 | :-------------------------------------------------------------: | :-------------------------------------------------------------: | :-------------------------------------------------------------: |
@@ -38,7 +38,7 @@ You can test the Sydney chatbot by sending a message to the following WhatsApp a
 
 **NOTE:** !tone are disabled for the public bot. For privacy reasons, we also strongly recommend self-hosting it.
 
-*(Audio Transcription has been activated for an indefinite time)*
+_(Audio Transcription has been activated for an indefinite time)_
 
 ### Prerequisites
 
