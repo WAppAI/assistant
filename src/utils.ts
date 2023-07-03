@@ -5,9 +5,8 @@ dotenv.config();
 
 export function intersection<T>(array1: T[], array2: T[]) {
   const set = new Set(array1);
-  return array2.filter(value => set.has(value));
-};
-
+  return array2.filter((value) => set.has(value));
+}
 
 const ENABLE_REACTIONS =
   (process.env.ENABLE_REACTIONS as
@@ -24,7 +23,7 @@ const reactEmoji = {
   queued: QUEUED_REACTION,
   working: WORKING_REACTION,
   done: DONE_REACTION,
-  error: ERROR_REACTION
+  error: ERROR_REACTION,
 };
 
 export async function react(
