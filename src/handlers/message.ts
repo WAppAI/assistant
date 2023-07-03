@@ -8,6 +8,9 @@ import { react } from "../utils";
 import { transcribeAudio } from "./audio-transcription";
 import { getContext } from "./context";
 import { counterRequests } from "./requests-counter";
+import { jsonSafeParse, react } from "../utils";
+import { scheduleReminder } from "./reminder";
+import { reminderSchema } from "../schemas/reminder";
 
 function appendSources(sources: SourceAttribution[]) {
   let sourcesString = "\n\n";
@@ -165,6 +168,9 @@ export async function handleMessage(message: Message) {
   await react(message, "working");
 
   counterRequests();
+  
+  const timestamp = new Date(message.timestamp * 1000);
+  const prompt = `${timestamp}\n${message.body}`;
 
   try {
     const { response, details } = await promptTracker.track(
@@ -175,8 +181,14 @@ export async function handleMessage(message: Message) {
     const hasSources = details.sourceAttributions.length >= 1;
     const sources = hasSources ? appendSources(details.sourceAttributions) : "";
 
+    const reminder = jsonSafeParse(response, reminderSchema);
+    if (reminder) await scheduleReminder(reminder, message);
+
     await react(message, "done");
-    const reply = await message.reply(response + sources);
+    
+    const reply = await message.reply(
+      reminder ? reminder.answer : response + sources
+    );
 
     if (chat.isGroup)
       await upsertLastWAreplyId(chat.id._serialized, reply.id._serialized);
