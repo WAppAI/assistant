@@ -11,6 +11,6 @@ export const sydney = new BingAIClient({
   cookies: BING_COOKIES,
   userToken: BING_TOKEN,
   cache: {
-    store: new KeyvSqlite({ uri: "sqlite://./conversations_cache.sqlite" })
-  }
+    store: new KeyvSqlite({ uri: "sqlite://./conversations_cache.sqlite" }),
+  },
 });

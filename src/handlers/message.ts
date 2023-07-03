@@ -1,12 +1,13 @@
-import { Contact, Message, MessageMedia } from "whatsapp-web.js";
 import { serializeError } from "serialize-error";
+import { Contact, Message, MessageMedia } from "whatsapp-web.js";
 import { promptTracker } from "../clients/prompt";
 import { sydney } from "../clients/sydney";
 import { config } from "../config";
+import type { IOptions, SourceAttribution, SydneyResponse } from "../types";
 import { react } from "../utils";
-import { getContext } from "./context";
 import { transcribeAudio } from "./audio-transcription";
-import type { SourceAttribution, IOptions, SydneyResponse } from "../types";
+import { getContext } from "./context";
+import { counterRequests } from "./requests-counter";
 
 function appendSources(sources: SourceAttribution[]) {
   let sourcesString = "\n\n";
@@ -128,6 +129,9 @@ export async function handleMessage(message: Message) {
   let interval = setTimeout(() => {}, 0);
   const chat = await message.getChat();
 
+  clearTimeout(interval);
+  chat.clearState();
+
   if (chat.isGroup) {
     const shouldReply = await handleGroupMessage(message);
     if (!shouldReply) return;
@@ -159,6 +163,8 @@ export async function handleMessage(message: Message) {
 
   typingIndicator();
   await react(message, "working");
+
+  counterRequests();
 
   try {
     const { response, details } = await promptTracker.track(

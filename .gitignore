@@ -5,3 +5,4 @@ puppeteer/
 .env
 
 conversations_cache.sqlite
+counter_cache.sqlite
