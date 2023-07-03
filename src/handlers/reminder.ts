@@ -6,6 +6,7 @@ import { Message } from "whatsapp-web.js";
 export const reminders: remindersI[] = []; //const that stores all the reminder jobs
 
 export async function scheduleReminder(reminder: reminderI, message: Message) {
+  const chat = await message.getChat();
   const cronExpression = reminder.cron;
   const job = scheduler.scheduleJob(cronExpression, () => console.log(""));
 
@@ -27,8 +28,8 @@ export async function scheduleReminder(reminder: reminderI, message: Message) {
   const jobData = {
     name: reminder.answer,
     id: jobId,
-    job: job
+    job: job,
+    userId: chat.id,
   };
   reminders.push(jobData); // Add the job with its ID to the array
-  console.log("jobs=", reminders);
 }

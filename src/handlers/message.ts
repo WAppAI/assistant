@@ -4,7 +4,6 @@ import { promptTracker } from "../clients/prompt";
 import { sydney } from "../clients/sydney";
 import { config } from "../config";
 import type { IOptions, SourceAttribution, SydneyResponse } from "../types";
-import { react } from "../utils";
 import { transcribeAudio } from "./audio-transcription";
 import { getContext } from "./context";
 import { counterRequests } from "./requests-counter";
@@ -168,7 +167,7 @@ export async function handleMessage(message: Message) {
   await react(message, "working");
 
   counterRequests();
-  
+
   const timestamp = new Date(message.timestamp * 1000);
   const prompt = `${timestamp}\n${message.body}`;
 
@@ -182,10 +181,12 @@ export async function handleMessage(message: Message) {
     const sources = hasSources ? appendSources(details.sourceAttributions) : "";
 
     const reminder = jsonSafeParse(response, reminderSchema);
-    if (reminder) await scheduleReminder(reminder, message);
+    if (reminder) {
+      await scheduleReminder(reminder, message);
+    }
 
     await react(message, "done");
-    
+
     const reply = await message.reply(
       reminder ? reminder.answer : response + sources
     );
@@ -210,9 +211,9 @@ async function askSydney(prompt: string, chatId: string, context: string) {
     toneStyle: config.toneStyle,
     jailbreakConversationId: chatId,
     context,
-    /* onProgress: (token: string) => {
-       process.stdout.write(token);
-    } */
+    onProgress: (token: string) => {
+      process.stdout.write(token);
+    },
   };
 
   const onGoingConversation = await sydney.conversationsCache.get(chatId);

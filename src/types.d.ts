@@ -1,5 +1,6 @@
 import scheduler from "node-schedule";
 import { config } from "./config";
+import WAWebJS from "whatsapp-web.js";
 
 interface IOptions {
   toneStyle: (typeof config.VALID_TONES)[number];
@@ -91,4 +92,5 @@ export interface remindersI {
   name: string;
   id: string;
   job: scheduler.Job;
+  userId: WAWebJS.ChatId;
 }

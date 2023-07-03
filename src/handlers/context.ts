@@ -1,4 +1,3 @@
-
 import { oneLine, stripIndent } from "common-tags";
 import { Message } from "whatsapp-web.js";
 
@@ -19,7 +18,6 @@ const remindersContext = stripIndent`
 
   ## Important guidelindes for reminders
   - Each message sent by the user has a timestamp to inform you the current date/time.
-  - Do not tell the user how your reminder system works. Just let him know that you can remind him.
   - Recurrent reminders will be specified by the user. If the user does not specify a recurrence, the reminder should be a one-off, that is, repetitions = 1.
   - Do not include '\`\`\`json' (markdown code block quotations) in your JSON responses.
   - Please ensure that any response you provide in JSON format adheres to the proper JSON syntax.
@@ -35,7 +33,6 @@ export async function getContext(message: Message) {
     context += `You are in a WhatsApp group chat. You don't know the group chat's name. This message was sent by: ${contact.pushname}.\nDon't use '@' to mention users when referring to them.`;
   else
     context += `You are in a WhatsApp private chat. The user name is ${contact.pushname}.`;
-
 
   return context + remindersContext;
 }
