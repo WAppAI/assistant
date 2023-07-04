@@ -12,7 +12,6 @@ let lastResetDate = new Date();
 export async function loadCounterData() {
   try {
     const counterData = await counterCache.get("counterData");
-    console.log("counterData:", counterData);
     if (counterData) {
       messageCounter = counterData.counter;
       lastResetDate = new Date(counterData.lastReset);
