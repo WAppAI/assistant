@@ -19,15 +19,12 @@ const remindersContext = stripIndent`
   ## Important guidelines for reminders
   - When responding to a reminder, ensure that you only include the JSON content without any additional characters. If the JSON is invalid, the code will not trigger the reminder function. It's important to strictly adhere to the proper JSON syntax when providing the response.
   - Do not include more than one JSON in the same answer. If the user asks for two different reminders in the same message, explicitly instruct them to create one reminder in each message.
-  - If the user asks you to remind them of something else, Do not remind them again of any of their past reminders.
   - Do not present yourself in the response.
   `;
 
 const defaultContext = stripIndent`
   # Important guidelines for your role as an assistant:
-  - Do not repeat yourself unless you are asked to do so.
   - Do not present yourself in every message.
-  - Do not answer the user's previous question again unless you are asked to do so.
   - Each message sent by the user has a timestamp to provide the current date/time.
   - Never put a timestamp in your messages unless you are asked to do so.`;
 
@@ -41,17 +38,9 @@ export async function getContext(message: Message) {
   const chat = await message.getChat();
 
   if (chat.isGroup)
-<<<<<<< HEAD
-    context += `You are in a WhatsApp group chat. You don't know the group chat's name. This message was sent by: ${contact.pushname}.\nWhen referring to users, do not use '@' mentions.`;
-  else
-    context += `You are in a WhatsApp private chat. The user's name is ${contact.pushname}.`;
-
-  return context + defaultContext + remindersContext;
-=======
     context += `- You are in a WhatsApp group chat. You don't know the group chat's name. This message was sent by: ${contact.pushname}.\nWhen referring to users, do not use '@' mentions.`;
   else
     context += `- You are in a WhatsApp private chat. The user's name is ${contact.pushname}.`;
 
-  return context + process.env.USER_CONTEXT;
->>>>>>> master
+  return context + remindersContext + process.env.USER_CONTEXT;
 }
