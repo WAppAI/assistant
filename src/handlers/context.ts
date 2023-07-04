@@ -3,26 +3,33 @@ import { Message } from "whatsapp-web.js";
 
 const remindersContext = stripIndent`
   # Reminders
-  ${oneLine`If the user sends you a message such as "Remind me every
-  Monday at 19:30 to take the trash out", you will answer in JSON
-  format replacing the <tags> with the requested information, like so:`}
+  ${oneLine`If a user sends you a message like "Remind me every
+  Monday at 19:30 to take out the trash," you should respond in JSON
+  format, replacing the <tags> with the requested information. Here is an example:`}
     
   {
-    "cron": <a cron expression based on the user request>,
-    "repetitions": <the number of times the user wants to be reminded of the task, eg.: if the user wants to be reminded every 30 seconds but only twice, the value of "repetitions" should be 2; if the number of repetitions is not mentioned, assume it to be null, indicating that the reminders should continue indefinitely until manually stopped>
-    "answer": <generate a message such as: "Okay, got it! I'll remind you to take the trash out every monday">,
-    "notifyMessage": <generate a message that will be used when the time comes to notify the user, such as: "Hey, it's 19:30, you asked me to remember you so you take the trash out.">
+    "cron": "<a cron expression based on the user's request>",
+    "repetitions": "<the number of times the user wants to be reminded of the task, e.g., if the user wants to be reminded every 30 seconds but only once, the value of 'repetitions' should be 1; if the user wants a one-time reminder, set 'repetitions' to 1; if the user wants perpetual reminders, set 'repetitions' to null>",
+    "answer": "<generate a message such as 'Okay, got it! I'll remind you to take out the trash every Monday'>",
+    "notifyMessage": "<generate a message that will be used when it's time to notify the user, e.g., 'Hey, it's 19:30. You asked me to remind you to take out the trash.'>"
   }
 
-  If the user is not asking you to be reminded, just answer normally.
+  If the user is not asking to be reminded, respond normally.
 
-  ## Important guidelindes for reminders
-  - Each message sent by the user has a timestamp to inform you the current date/time.
-  - Recurrent reminders will be specified by the user. If the user does not specify a recurrence, the reminder should be a one-off, that is, repetitions = 1.
-  - Do not include '\`\`\`json' (markdown code block quotations) in your JSON responses.
-  - Please ensure that any response you provide in JSON format adheres to the proper JSON syntax.
-  - Don't include '//' inside the JSON.
-  - Unlike the user, you do not prepend your responses with a timestamp.`;
+  ## Important guidelines for reminders
+  - When responding to a reminder, ensure that you only include the JSON content without any additional characters. If the JSON is invalid, the code will not trigger the reminder function. It's important to strictly adhere to the proper JSON syntax when providing the response.
+  - Do not include more than one JSON in the same answer. If the user asks for two different reminders in the same message, explicitly instruct them to create one reminder in each message.
+  - If the user asks you to remind them of something else, Do not remind them again of any of their past reminders.
+  - Do not present yourself in the response.
+  `;
+
+const defaultContext = stripIndent`
+  # Important guidelines for your role as an assistant:
+  - Do not repeat yourself unless you are asked to do so.
+  - Do not present yourself in every message.
+  - Do not answer the user's previous question again unless you are asked to do so.
+  - Each message sent by the user has a timestamp to provide the current date/time.
+  - Never put a timestamp in your messages unless you are asked to do so.`;
 
 export async function getContext(message: Message) {
   let context = "[system](#additional_instructions)\n";
@@ -30,9 +37,9 @@ export async function getContext(message: Message) {
   const chat = await message.getChat();
 
   if (chat.isGroup)
-    context += `You are in a WhatsApp group chat. You don't know the group chat's name. This message was sent by: ${contact.pushname}.\nDon't use '@' to mention users when referring to them.`;
+    context += `You are in a WhatsApp group chat. You don't know the group chat's name. This message was sent by: ${contact.pushname}.\nWhen referring to users, do not use '@' mentions.`;
   else
-    context += `You are in a WhatsApp private chat. The user name is ${contact.pushname}.`;
+    context += `You are in a WhatsApp private chat. The user's name is ${contact.pushname}.`;
 
-  return context + remindersContext;
+  return context + defaultContext + remindersContext;
 }

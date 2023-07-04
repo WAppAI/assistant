@@ -111,6 +111,9 @@ whatsapp.on("message", async (message) => {
     const [command, ...args] = message.body.split(" ");
     await handleCommand(message, command, args.join(" "));
   } else {
+    const timestamp = new Date(message.timestamp * 1000);
+    message.body = `${timestamp}\n${message.body}`;
+    console.log("message:", message.body);
     await handleMessage(message);
   }
 });

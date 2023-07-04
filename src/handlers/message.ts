@@ -168,9 +168,6 @@ export async function handleMessage(message: Message) {
 
   counterRequests();
 
-  const timestamp = new Date(message.timestamp * 1000);
-  const prompt = `${timestamp}\n${message.body}`;
-
   try {
     const { response, details } = await promptTracker.track(
       message.body,
@@ -201,6 +198,8 @@ export async function handleMessage(message: Message) {
     console.log({ error });
     await message.reply(`Error:\n\n${errorMessage}`);
   }
+
+  console.log("message:", message.body);
 
   clearTimeout(interval);
   chat.clearState();
