@@ -15,5 +15,5 @@ export async function getContext(message: Message) {
   else
     context += `- You are in a WhatsApp private chat. The user's name is ${contact.pushname}.`;
 
-  return context;
+  return context + process.env.USER_CONTEXT;
 }
