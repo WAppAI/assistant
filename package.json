@@ -13,7 +13,7 @@
   "devDependencies": {
     "@types/common-tags": "^1.8.1",
     "@types/fluent-ffmpeg": "^2.1.21",
-    "@types/node": "^20.3.2",
+    "@types/node": "^20.3.3",
     "nodemon": "^2.0.22",
     "ts-node": "^10.9.1",
     "typescript": "^5.1.6"
