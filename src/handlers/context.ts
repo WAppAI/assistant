@@ -32,14 +32,26 @@ const defaultContext = stripIndent`
   - Never put a timestamp in your messages unless you are asked to do so.`;
 
 export async function getContext(message: Message) {
-  let context = "[system](#additional_instructions)\n";
+  let context = stripIndent`[system](#additional_instructions)
+  
+  # Important guidelines for your role as an assistant:
+  - You should not present yourself in every message.`;
+
   const contact = await message.getContact();
   const chat = await message.getChat();
 
   if (chat.isGroup)
+<<<<<<< HEAD
     context += `You are in a WhatsApp group chat. You don't know the group chat's name. This message was sent by: ${contact.pushname}.\nWhen referring to users, do not use '@' mentions.`;
   else
     context += `You are in a WhatsApp private chat. The user's name is ${contact.pushname}.`;
 
   return context + defaultContext + remindersContext;
+=======
+    context += `- You are in a WhatsApp group chat. You don't know the group chat's name. This message was sent by: ${contact.pushname}.\nWhen referring to users, do not use '@' mentions.`;
+  else
+    context += `- You are in a WhatsApp private chat. The user's name is ${contact.pushname}.`;
+
+  return context + process.env.USER_CONTEXT;
+>>>>>>> master
 }
