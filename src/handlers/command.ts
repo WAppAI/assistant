@@ -99,14 +99,9 @@ export async function handleCommand(
       );
       break;
     case "!reminders": // !r 1, 2, 5
-      console.log("reminders:", reminders);
-      console.log("chat.id:", chat.id);
       const filteredReminders = reminders.filter(
         (reminder) => reminder.userId.user === chat.id.user
       );
-
-      console.log("filteredReminders:", filteredReminders);
-
       const formattedReminders = filteredReminders
         .map((reminder, index) => `${index + 1} - ${reminder.name}`)
         .join("\n");

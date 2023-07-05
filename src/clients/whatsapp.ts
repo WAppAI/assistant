@@ -4,6 +4,8 @@ import { Client, GroupChat } from "whatsapp-web.js";
 import { handleMessage } from "../handlers/message";
 import { handleCommand } from "../handlers/command";
 import { intersection } from "../utils";
+import { timeStamp } from "console";
+import { date } from "zod";
 
 // filtering empty strings due to how Array.split() works
 const WHITELIST =
@@ -111,8 +113,9 @@ whatsapp.on("message", async (message) => {
     const [command, ...args] = message.body.split(" ");
     await handleCommand(message, command, args.join(" "));
   } else {
-    const timestamp = new Date(message.timestamp * 1000);
-    message.body = `${timestamp}\n${message.body}`;
+    //const timestamp = new Date(message.timestamp * 1000);
+    console.log("time:", new Date().toISOString());
+    //message.body = `${timestamp}\n${message.body}`;
     console.log("message:", message.body);
     await handleMessage(message);
   }
