@@ -1,4 +1,6 @@
+import scheduler from "node-schedule";
 import { config } from "./config";
+import WAWebJS, { Message } from "whatsapp-web.js";
 
 interface IOptions {
   toneStyle: (typeof config.VALID_TONES)[number];
@@ -77,4 +79,23 @@ interface SydneyResponse {
   jailbreakConversationId: string;
   parentMessageId: string;
   messageId: string;
+}
+
+export interface ReminderI {
+  cron: string;
+  repetitions: number | null;
+  answer: string;
+  notifyMessage: string;
+}
+
+export interface RemindersI {
+  name: string;
+  id: WAWebJS.MessageId;
+  job: scheduler.Job;
+  userId: any;
+}
+
+export interface StoredRemindersI {
+  reminderJson: ReminderI;
+  message: Message;
 }

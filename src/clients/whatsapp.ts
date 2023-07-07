@@ -1,9 +1,10 @@
 import qrcode from "qrcode-terminal";
-import cli from "../clients/cli";
 import { Client, GroupChat } from "whatsapp-web.js";
-import { handleMessage } from "../handlers/message";
+import cli from "../clients/cli";
 import { handleCommand } from "../handlers/command";
+import { handleMessage } from "../handlers/message";
 import { intersection } from "../utils";
+import { loadReminders } from "../handlers/reminder";
 
 // filtering empty strings due to how Array.split() works
 const WHITELIST =
@@ -14,6 +15,8 @@ const blockedUsers =
 
 const WHITELIST_ENABLED = WHITELIST.length != 0;
 const blockedUsersEnabled = blockedUsers.length != 0;
+
+let loadRemindersExecuted = false;
 
 export const whatsapp = new Client({
   puppeteer: {
@@ -48,8 +51,12 @@ whatsapp.on("auth_failure", () => {
   cli.printAuthenticationFailure();
 });
 
-whatsapp.on("ready", () => {
+whatsapp.on("ready", async () => {
   cli.printReady();
+  if (!loadRemindersExecuted) {
+    await loadReminders();
+    loadRemindersExecuted = true;
+  }
 });
 
 whatsapp.on("message", async (message) => {

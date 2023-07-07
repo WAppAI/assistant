@@ -4,10 +4,12 @@ import { promptTracker } from "../clients/prompt";
 import { sydney } from "../clients/sydney";
 import { config } from "../config";
 import type { IOptions, SourceAttribution, SydneyResponse } from "../types";
-import { react } from "../utils";
 import { transcribeAudio } from "./audio-transcription";
 import { getContext } from "./context";
 import { counterRequests } from "./requests-counter";
+import { jsonSafeParse, react } from "../utils";
+import { scheduleReminder } from "./reminder";
+import { reminderSchema } from "../schemas/reminder";
 
 function appendSources(sources: SourceAttribution[]) {
   let sourcesString = "\n\n";
@@ -175,8 +177,16 @@ export async function handleMessage(message: Message) {
     const hasSources = details.sourceAttributions.length >= 1;
     const sources = hasSources ? appendSources(details.sourceAttributions) : "";
 
+    const reminder = jsonSafeParse(response, reminderSchema);
+    if (reminder) {
+      await scheduleReminder(reminder, message);
+    }
+
     await react(message, "done");
-    const reply = await message.reply(response + sources);
+
+    const reply = await message.reply(
+      reminder ? reminder.answer : response + sources
+    );
 
     if (chat.isGroup)
       await upsertLastWAreplyId(chat.id._serialized, reply.id._serialized);
@@ -198,9 +208,9 @@ async function askSydney(prompt: string, chatId: string, context: string) {
     toneStyle: config.toneStyle,
     jailbreakConversationId: chatId,
     context,
-    /* onProgress: (token: string) => {
-       process.stdout.write(token);
-    } */
+    /*onProgress: (token: string) => {
+      process.stdout.write(token);
+    },*/
   };
 
   const onGoingConversation = await sydney.conversationsCache.get(chatId);
