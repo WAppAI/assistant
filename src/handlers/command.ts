@@ -118,6 +118,10 @@ export async function handleCommand(
           );
       }
       if (args === "all") {
+        if (filteredReminders.length == 0) {
+          await message.reply("There are no reminders");
+          return;
+        }
         for (const jobData of filteredReminders) {
           jobData.job.cancel();
           const index = reminders.findIndex(
@@ -125,7 +129,6 @@ export async function handleCommand(
           );
           reminders.splice(index, 1);
         }
-        console.log("Delete all");
         const storedReminders = (await reminderDB.get("reminders")) || [];
 
         // Check if remindersToRemove.message.from matches any userId in filteredReminders
@@ -139,7 +142,6 @@ export async function handleCommand(
 
         await message.reply("Deleted all reminders");
       } else if (parseInt(args)) {
-        console.log("Delete ", args);
         let selectedOption = parseInt(args);
         if (selectedOption >= 1 && selectedOption <= filteredReminders.length) {
           let selectedOptionIndex = selectedOption - 1;
@@ -148,20 +150,10 @@ export async function handleCommand(
 
           // Remove the reminder from the database
           const storedReminders = (await reminderDB.get("reminders")) || [];
-          console.log("storedReminders:", storedReminders);
           const updatedReminders = storedReminders.filter(
             (storedReminder: StoredRemindersI) =>
               storedReminder.message.id.id !== selectedJob.id.id
           );
-          console.log("updatedReminders:", updatedReminders);
-          for (let i = 0; i < storedReminders.length; i++) {
-            console.log(
-              "storedReminder.message.id:",
-              storedReminders[i].message.id
-            );
-          }
-
-          console.log("selectedJob.id:", selectedJob.id.id);
           await reminderDB.set("reminders", updatedReminders);
 
           const index = reminders.findIndex(

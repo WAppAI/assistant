@@ -199,8 +199,6 @@ export async function handleMessage(message: Message) {
     await message.reply(`Error:\n\n${errorMessage}`);
   }
 
-  console.log("message:", message.body);
-
   clearTimeout(interval);
   chat.clearState();
 }
