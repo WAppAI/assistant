@@ -6,3 +6,4 @@ puppeteer/
 
 conversations_cache.sqlite
 counter_cache.sqlite
+reminder_db.sqlite

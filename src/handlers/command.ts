@@ -3,8 +3,9 @@ import { promptTracker } from "../clients/prompt";
 import { sydney } from "../clients/sydney";
 import { config } from "../config";
 import { getAvailableTones, react } from "../utils";
-import { reminders } from "./reminder";
+import { reminderDB, reminders } from "./reminder";
 import { loadCounterData, messageCounter } from "./requests-counter";
+import { StoredRemindersI } from "../types";
 
 const AVAILABLE_TONES = getAvailableTones();
 
@@ -22,7 +23,7 @@ function truncateWithEllipsis(input: string, maxLength: number): string {
 export async function handleCommand(
   message: Message,
   command: string,
-  args?: string
+  args?: any
 ) {
   const chat = await message.getChat();
   await chat.sendSeen();
@@ -100,11 +101,13 @@ export async function handleCommand(
       break;
     case "!reminders": // !r 1, 2, 5
       const filteredReminders = reminders.filter(
-        (reminder) => reminder.userId.user === chat.id.user
+        (reminder) => reminder.userId === message.from
       );
       const formattedReminders = filteredReminders
         .map((reminder, index) => `${index + 1} - ${reminder.name}`)
         .join("\n");
+
+      // Rest of the code...
 
       if (!args) {
         if (filteredReminders.length == 0)
@@ -113,8 +116,8 @@ export async function handleCommand(
           await message.reply(
             `To delete a reminder, you can use the command *!reminder 1* to delete a specific reminder listed as 1, or *!reminder all* to delete all reminders.\n\nCurrent reminders:\n${formattedReminders}`
           );
-      } else if (args === "all") {
-        console.log("Delete all");
+      }
+      if (args === "all") {
         for (const jobData of filteredReminders) {
           jobData.job.cancel();
           const index = reminders.findIndex(
@@ -122,6 +125,18 @@ export async function handleCommand(
           );
           reminders.splice(index, 1);
         }
+        console.log("Delete all");
+        const storedReminders = (await reminderDB.get("reminders")) || [];
+
+        // Check if remindersToRemove.message.from matches any userId in filteredReminders
+        const userIds = filteredReminders.map((reminder) => reminder.userId);
+        const updatedReminders = storedReminders.filter(
+          (reminder) => !userIds.includes(reminder.message.from)
+        );
+
+        // Remove the reminder from the database
+        await reminderDB.set("reminders", updatedReminders);
+
         await message.reply("Deleted all reminders");
       } else if (parseInt(args)) {
         console.log("Delete ", args);
@@ -131,16 +146,35 @@ export async function handleCommand(
           let selectedJob = filteredReminders[selectedOptionIndex];
           selectedJob.job.cancel();
 
+          // Remove the reminder from the database
+          const storedReminders = (await reminderDB.get("reminders")) || [];
+          console.log("storedReminders:", storedReminders);
+          const updatedReminders = storedReminders.filter(
+            (storedReminder: StoredRemindersI) =>
+              storedReminder.message.id.id !== selectedJob.id.id
+          );
+          console.log("updatedReminders:", updatedReminders);
+          for (let i = 0; i < storedReminders.length; i++) {
+            console.log(
+              "storedReminder.message.id:",
+              storedReminders[i].message.id
+            );
+          }
+
+          console.log("selectedJob.id:", selectedJob.id.id);
+          await reminderDB.set("reminders", updatedReminders);
+
           const index = reminders.findIndex(
-            (reminder) => reminder.userId.user === selectedJob.userId.user
+            (reminder) => reminder.id === selectedJob.id
           );
           reminders.splice(index, 1);
 
-          await message.reply(`Remind deleted: ${selectedJob.name} `);
+          await message.reply(`Reminder deleted: ${selectedJob.name} `);
         } else {
           await message.reply("Invalid option. Please try again.");
         }
       }
+
       break;
 
     case "!help":
