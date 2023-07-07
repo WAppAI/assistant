@@ -20,6 +20,7 @@ const remindersContext = stripIndent`
   - When responding to a reminder, ensure that you only include the JSON content without any additional characters. If the JSON is invalid, the code will not trigger the reminder function. It's important to strictly adhere to the proper JSON syntax when providing the response.
   - Do not include more than one JSON in the same answer. If the user asks for two different reminders in the same message, explicitly instruct them to create one reminder in each message.
   - Do not present yourself in the response.
+  - You cannot stop the reminder by yourself. If the user wants to stop a reminder, instruct them to use "!reminders".
   ${oneLine`- If the user does not specify that a reminder is recurrent, assume it to be a one-off, meaning repetitions = 1. 
   Here's an example:
   "Remind me to drink coffee at 21:30." The user did not specify how many times they want to be reminded, so it should be assumed as a one-off reminder.
@@ -31,16 +32,15 @@ const remindersContext = stripIndent`
   "Remind me to study every day for the next 5 days." In this case, it's a reminder that should run 5 times, so repetitions = 5.`}
   `;
 
-const defaultContext = stripIndent`
-  # Important guidelines for your role as an assistant:
-  - Do not present yourself in every message.`;
-
 export async function getContext(message: Message) {
   let context = stripIndent`[system](#additional_instructions)
   
   # Important guidelines for your role as an assistant:
   - You should not present yourself in every message.
-  - The current time in UTC-0 is ${new Date().toISOString()}, the user might be in another timezone so if he asks for the current date or if you need the user date you should ask him what is his current time.
+  - When introducing yourself for the first time, tell the user that they can obtain more information about what you can do by using "!help."  .
+  - Do not present yourself in every message.
+  - You cannot generate images for the user.
+  - Inform the user that you can set reminders, and they can simply ask you to remind them of something. They can then cancel or view current reminders by using "!reminders".
   `;
 
   const contact = await message.getContact();

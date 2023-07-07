@@ -208,9 +208,9 @@ async function askSydney(prompt: string, chatId: string, context: string) {
     toneStyle: config.toneStyle,
     jailbreakConversationId: chatId,
     context,
-    onProgress: (token: string) => {
+    /*onProgress: (token: string) => {
       process.stdout.write(token);
-    },
+    },*/
   };
 
   const onGoingConversation = await sydney.conversationsCache.get(chatId);
