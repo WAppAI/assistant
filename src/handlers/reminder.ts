@@ -34,7 +34,9 @@ export async function scheduleReminder(reminder: ReminderI, message: Message) {
     const chat = await client.getChatById(message.to);
 
     try {
-      await client.sendMessage(senderId, replyText);
+      await client.sendMessage(senderId, replyText, {
+        quotedMessageId: message.id._serialized,
+      });
     } catch (error) {
       console.log("Error when sending reply from the reminder:", error);
     }
