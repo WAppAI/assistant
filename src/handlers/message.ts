@@ -46,7 +46,7 @@ async function upsertLastWAreplyId(chatId: string, lastWAreplyId: string) {
   });
 }
 
-export async function handleGroupMessage(message: Message) {
+async function handleGroupMessage(message: Message) {
   const chat = await message.getChat();
 
   //const mentions = await message.getMentions();       // Stoped working for some reason (I think it's because the number field is empty)
@@ -133,6 +133,11 @@ export async function handleMessage(message: Message) {
 
   clearTimeout(interval);
   chat.clearState();
+
+  if (chat.isGroup) {
+    const shouldReply = await handleGroupMessage(message);
+    if (!shouldReply) return;
+  }
 
   await chat.sendSeen();
 

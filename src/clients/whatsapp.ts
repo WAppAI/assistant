@@ -2,7 +2,7 @@ import qrcode from "qrcode-terminal";
 import { Client, GroupChat } from "whatsapp-web.js";
 import cli from "../clients/cli";
 import { handleCommand } from "../handlers/command";
-import { handleGroupMessage, handleMessage } from "../handlers/message";
+import { handleMessage } from "../handlers/message";
 import { intersection } from "../utils";
 import { loadReminders } from "../handlers/reminder";
 
@@ -93,12 +93,6 @@ whatsapp.on("message", async (message) => {
         return;
       }
     }
-  }
-
-  if (chat.isGroup) {
-    const shouldReply = await handleGroupMessage(message);
-
-    if (!shouldReply) return;
   }
 
   if (blockedUsersEnabled) {
