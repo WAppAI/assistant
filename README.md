@@ -117,7 +117,7 @@ Sydney is designed to respond to natural language queries from users. You can as
 
 ### Voice Messages
 
-To utilize voice messages, ensure that FFMPEG is installed on your machine. There are two alternatives for voice transcription: using the Whisper AI API (which incurs a cost of US$0.06 per 10 minutes of audio) or using the local method. The local method is slower and less precise but is free.
+To utilize voice messages, ensure that FFMPEG is installed on your machine, which if you are in Ubuntu/Debian can be done with `sudo apt install ffmpeg`. There are two alternatives for voice transcription: using the Whisper AI API (which incurs a cost of US$0.06 per 10 minutes of audio) or using the local method. The local method is slower and less precise but is free.
 
 1. WhisperAPI: When using the WhisperAPI, you only need to obtain an OpenAI API key. Place the key in the `.env` file under the `OPENAI_API_KEY` variable. Additionally, set `TRANSCRIPTION_ENABLED` to `"true"` and `TRANSCRIPTION_METHOD` to `"api"`. After restarting the bot, you can proceed to utilize it.
 
