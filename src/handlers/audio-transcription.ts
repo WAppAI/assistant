@@ -5,7 +5,7 @@ import os from "os";
 import path from "path";
 import { openai } from "../clients/openai";
 
-function convertOggToWav(oggPath: string, wavPath: string) {
+export function convertOggToWav(oggPath: string, wavPath: string) {
   return new Promise((resolve, reject) => {
     ffmpeg(oggPath)
       .toFormat("wav")

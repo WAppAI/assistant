@@ -10,6 +10,7 @@ import { counterRequests } from "./requests-counter";
 import { jsonSafeParse, react } from "../utils";
 import { scheduleReminder } from "./reminder";
 import { reminderSchema } from "../schemas/reminder";
+import { transcribeAudioLocal } from "./audio-transcription-local";
 
 function appendSources(sources: SourceAttribution[]) {
   let sourcesString = "\n\n";
@@ -84,9 +85,18 @@ async function handleAudioMessage(message: Message, media: MessageMedia) {
     const audioBuffer = Buffer.from(media.data, "base64");
 
     try {
-      const transcription = await transcribeAudio(audioBuffer);
+      let transcription;
+      if (process.env.TRANSCRIPTION_METHOD === "local") {
+        transcription = await transcribeAudioLocal(audioBuffer);
+      } else if (process.env.TRANSCRIPTION_METHOD === "api") {
+        transcription = await transcribeAudio(audioBuffer);
+      } else {
+        await message.reply(
+          "There was a problem in the transcription of the message, the problem is related to the TRANSCRIPTION_METHOD in the .env file."
+        );
+        return;
+      }
       message.body = transcription;
-
       if (process.env.REPLY_TRANSCRIPTION === "true")
         await message.reply(`Transcription:\n\n${transcription}`);
 
