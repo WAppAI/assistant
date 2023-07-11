@@ -53,6 +53,10 @@ export async function scheduleReminder(reminder: ReminderI, message: Message) {
   };
 
   const cronExpression = reminder.cron;
+  await replyMessage(
+    "This is the cron that Sydney sent, take a look to see if it's correct:\n" +
+      cronExpression
+  );
   const job = scheduler.scheduleJob(cronExpression, () => console.log(""));
 
   let reminderCount = 0;
