@@ -65,15 +65,17 @@
   dependencies:
     fast-json-stringify "^5.7.0"
 
-"@ffmpeg/ffmpeg@^0.11.6":
-  version "0.11.6"
-  resolved "https://registry.npmjs.org/@ffmpeg/ffmpeg/-/ffmpeg-0.11.6.tgz"
-  integrity sha512-uN8J8KDjADEavPhNva6tYO9Fj0lWs9z82swF3YXnTxWMBoFLGq3LZ6FLlIldRKEzhOBKnkVfA8UnFJuvGvNxcA==
+"@ffmpeg/ffmpeg@^0.12.3":
+  version "0.12.3"
+  resolved "https://registry.yarnpkg.com/@ffmpeg/ffmpeg/-/ffmpeg-0.12.3.tgz#dbabb94f82f7b80da4b4af17c7d5e5a86d6bb4c4"
+  integrity sha512-icl+xQ9tgslg20kpDFO598Z/r3yEaoDoIW0NASVkGcy8KTkTRQuiYBvyRVpCJCe+X5bmZnO1qNSVtc3LjYX0UQ==
   dependencies:
-    is-url "^1.2.4"
-    node-fetch "^2.6.1"
-    regenerator-runtime "^0.13.7"
-    resolve-url "^0.2.1"
+    "@ffmpeg/types" "^0.12.0"
+
+"@ffmpeg/types@^0.12.0":
+  version "0.12.0"
+  resolved "https://registry.yarnpkg.com/@ffmpeg/types/-/types-0.12.0.tgz#fe6affeea2d599d6d2d57e2c57eb8ca384c7b2a2"
+  integrity sha512-AuR4K+L6v1/9hVOsikU4rGGT5nKulQa8HrtYhpgBEq0HojoWB1c9bq3TTkNBpEvS/gC17WDMVJrqIGgXOj1DXA==
 
 "@gar/promisify@^1.0.1":
   version "1.1.3"
@@ -1486,11 +1488,6 @@ is-unicode-supported@^1.1.0, is-unicode-supported@^1.2.0:
   resolved "https://registry.yarnpkg.com/is-unicode-supported/-/is-unicode-supported-1.3.0.tgz#d824984b616c292a2e198207d4a609983842f714"
   integrity sha512-43r2mRvz+8JRIKnWJ+3j8JtjRKZ6GmjzfaE/qiBJnikNnYv/6bagRJ1kUhNk8R5EX/GkobD+r+sfxCPJsiKBLQ==
 
-is-url@^1.2.4:
-  version "1.2.4"
-  resolved "https://registry.npmjs.org/is-url/-/is-url-1.2.4.tgz"
-  integrity sha512-ITvGim8FhRiYe4IQ5uHSkj7pVaPDrCTkNd3yq3cV7iZAcJdHTUMPMEHcqSOy9xZ9qFenQCvi+2wjH9a1nXqHww==
-
 is-wsl@^2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/is-wsl/-/is-wsl-2.2.0.tgz#74a4c76e77ca9fd3f932f290c17ea326cd157271"
@@ -1860,7 +1857,7 @@ node-fetch@2.6.7:
   dependencies:
     whatwg-url "^5.0.0"
 
-node-fetch@^2.6.1, node-fetch@^2.6.5, node-fetch@^2.6.7:
+node-fetch@^2.6.5, node-fetch@^2.6.7:
   version "2.6.11"
   resolved "https://registry.npmjs.org/node-fetch/-/node-fetch-2.6.11.tgz"
   integrity sha512-4I6pdBY1EthSqDmJkiNk3JIT8cswwR9nfeW/cPdUagJYEQG7R95WRH74wpz7ma8Gh/9dI9FP+OU+0E4FvtA55w==
@@ -2299,20 +2296,10 @@ real-require@^0.2.0:
   resolved "https://registry.yarnpkg.com/real-require/-/real-require-0.2.0.tgz#209632dea1810be2ae063a6ac084fee7e33fba78"
   integrity sha512-57frrGM/OCTLqLOAh0mhVA9VBMHd+9U7Zb2THMGdBUoZVOtGbJzjxsYGDJ3A9AYYCP4hn6y1TVbaOfzWtm5GFg==
 
-regenerator-runtime@^0.13.7:
-  version "0.13.11"
-  resolved "https://registry.npmjs.org/regenerator-runtime/-/regenerator-runtime-0.13.11.tgz"
-  integrity sha512-kY1AZVr2Ra+t+piVaJ4gxaFaReZVH40AKNo7UCX6W+dEwBo/2oZJzqfuN1qLq1oL45o56cPaTXELwrTh8Fpggg==
-
 require-from-string@^2.0.2:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/require-from-string/-/require-from-string-2.0.2.tgz#89a7fdd938261267318eafe14f9c32e598c36909"
   integrity sha512-Xf0nWe6RseziFMu+Ap9biiUbmplq6S9/p+7w7YXP/JBHhrUDDUhwa+vANyubuqfZWTveU//DYVGsDG7RKL/vEw==
-
-resolve-url@^0.2.1:
-  version "0.2.1"
-  resolved "https://registry.npmjs.org/resolve-url/-/resolve-url-0.2.1.tgz"
-  integrity sha512-ZuF55hVUQaaczgOIwqWzkEcEidmlD/xl44x1UZnhOXcYuFN2S6+rcxpG+C1N3So0wvNI3DmJICUFfu2SxhBmvg==
 
 restore-cursor@^3.1.0:
   version "3.1.0"
