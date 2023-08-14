@@ -194,10 +194,10 @@
   dependencies:
     "@types/node" "*"
 
-"@types/node@*", "@types/node@^20.3.2":
-  version "20.3.2"
-  resolved "https://registry.npmjs.org/@types/node/-/node-20.3.2.tgz"
-  integrity sha512-vOBLVQeCQfIcF/2Y7eKFTqrMnizK5lRNQ7ykML/5RuwVXVWxYkgwS7xbt4B6fKCUPgbSL5FSsjHQpaGQP/dQmw==
+"@types/node@*", "@types/node@^20.5.0":
+  version "20.5.0"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.5.0.tgz#7fc8636d5f1aaa3b21e6245e97d56b7f56702313"
+  integrity sha512-Mgq7eCtoTjT89FqNoTzzXg2XvCi5VMhRV6+I2aYanc6kQCBImeNaAYRs/DyoVqk1YEUJK5gN9VO7HRIdz4Wo3Q==
 
 "@types/qrcode-terminal@^0.12.0":
   version "0.12.0"
