@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@clack/prompts": "^0.6.3",
-    "@ffmpeg/ffmpeg": "^0.11.6",
+    "@ffmpeg/ffmpeg": "^0.12.5",
     "@keyv/sqlite": "^3.6.5",
     "@types/qrcode-terminal": "^0.12.0",
     "@waylaidwanderer/chatgpt-api": "1.37.0",
