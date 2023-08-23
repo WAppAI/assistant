@@ -6,21 +6,6 @@ This GitHub repository showcases a chatbot named Sydney, powered by the [waylaid
 | :-------------------------------------------------------------: | :-------------------------------------------------------------: | :-------------------------------------------------------------: |
 | ![Screenshot 1](/demos/Screenshot_20230604_204741_WhatsApp.jpg) | ![Screenshot 2](/demos/Screenshot_20230604_215518_WhatsApp.jpg) | ![Screenshot 3](/demos/Screenshot_20230604_205104_WhatsApp.jpg) |
 
-# Table of Contents
-
-- [WhatsAppSydney: Your BingAI-powered WhatsApp Assistant](#whatsappsydney-your-bingai-powered-whatsapp-assistant)
-  - [Features](#features)
-  - [Getting Started](#getting-started)
-    - [Test the Chatbot](#test-the-chatbot)
-    - [Prerequisites](#prerequisites)
-    - [Installation](#installation)
-  - [Usage](#usage)
-    - [Voice Messages](#voice-messages)
-    - [Group Chat](#group-chat)
-    - [Available commands](#available-commands)
-  - [Contribute](#contribute)
-  - [Hire Us](#hire-us)
-
 ## Features
 
 - [x] Engage in conversations with Sydney, powered by the BingAI jailbreak
