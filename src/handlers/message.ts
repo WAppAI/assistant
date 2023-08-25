@@ -201,8 +201,13 @@ export async function handleMessage(message: Message) {
 
     if (chat.isGroup)
       await upsertLastWAreplyId(chat.id._serialized, reply.id._serialized);
-  } catch (e) {
+  } catch (e: Error | unknown) {
+    if (e instanceof Error && e.name === "Success") {
+      return; // Skip error handling for "Success" response
+    }
+
     await react(message, "error");
+
     const error = serializeError(e);
     const errorMessage = error.message?.split("\n")[0];
 

@@ -30,9 +30,10 @@ export async function transcribeAudio(audioBuffer: Buffer) {
   // Deletes the ogg file as it is no longer needed
   fs.unlinkSync(oggPath);
 
-  const transcription = await openai.createTranscription(
-    fs.createReadStream(wavPath),
-    "whisper-1"
-  );
-  return transcription.data.text;
+  const transcription = await openai.audio.transcriptions.create({
+    model: "whisper-1",
+    file: fs.createReadStream(wavPath),
+  });
+
+  return transcription.text;
 }
