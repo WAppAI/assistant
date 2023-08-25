@@ -21,7 +21,7 @@
     "typescript": "^5.1.6"
   },
   "dependencies": {
-    "@clack/prompts": "^0.6.3",
+    "@clack/prompts": "^0.7.0",
     "@ffmpeg/ffmpeg": "^0.11.6",
     "@keyv/sqlite": "^3.6.5",
     "@types/qrcode-terminal": "^0.12.0",
