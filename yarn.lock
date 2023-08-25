@@ -2442,10 +2442,10 @@ semver@~7.0.0:
   resolved "https://registry.npmjs.org/semver/-/semver-7.0.0.tgz"
   integrity sha512-+GB6zVA9LWh6zovYQLALHwv5rb2PHGlJi3lfiqIHxR0uuwCgefcOJc59v9fv1w8GbStwxuuqqAjI9NMAOOgq1A==
 
-serialize-error@^11.0.0:
-  version "11.0.0"
-  resolved "https://registry.npmjs.org/serialize-error/-/serialize-error-11.0.0.tgz"
-  integrity sha512-YKrURWDqcT3VGX/s/pCwaWtpfJEEaEw5Y4gAnQDku92b/HjVj4r4UhA5QrMVMFotymK2wIWs5xthny5SMFu7Vw==
+serialize-error@^11.0.1:
+  version "11.0.1"
+  resolved "https://registry.yarnpkg.com/serialize-error/-/serialize-error-11.0.1.tgz#7cfa2b54f7aca3e4cbfc0137259d94d93793f813"
+  integrity sha512-B5yw3/Lg+Daspbs0f+iO3Qim0+lALnaLS8aZUAy8Y0tO92tkOoMEuwtKo4jpZ5XO16CTwMi4tYN8cZQI3QF2Qw==
   dependencies:
     type-fest "^2.12.2"
 
