@@ -5,7 +5,7 @@ import WAWebJS, { Message } from "whatsapp-web.js";
 interface IOptions {
   toneStyle: (typeof config.VALID_TONES)[number];
   systemMessage?: string;
-  jailbreakConversationId?: string;
+  jailbreakConversationId?: any; //FIX IT LATER
   parentMessageId?: string;
   context?: string;
   onProgress?: (token: string) => void;

@@ -14,3 +14,5 @@ export const sydney = new BingAIClient({
     store: new KeyvSqlite({ uri: "sqlite://./conversations_cache.sqlite" }),
   },
 });
+
+export const idsCache = new KeyvSqlite({ uri: "sqlite://./ids_cache.sqlite" });
