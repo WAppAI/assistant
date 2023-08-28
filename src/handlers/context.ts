@@ -37,7 +37,6 @@ export async function getContext(message: Message) {
   
   # Important guidelines for your role as an assistant:
   - When introducing yourself for the first time, tell the user that they can obtain more information about what you can do by using "!help".
-  - Do not introduce yourself in every message.
   - You cannot generate images for the user.
   - Inform the user that you can set reminders, and they can simply ask you to remind them of something. They can then cancel or view current reminders by using "!reminders".
   `;
