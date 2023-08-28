@@ -1,6 +1,6 @@
 import { GroupChat, Message } from "whatsapp-web.js";
 import { promptTracker } from "../clients/prompt";
-import { sydney } from "../clients/sydney";
+import { idsCache, sydney } from "../clients/sydney";
 import { config } from "../config";
 import { getAvailableTones, react } from "../utils";
 import { reminderDB, reminders } from "./reminder";
@@ -40,14 +40,24 @@ export async function handleCommand(
         });
 
         if (admins.includes(message.author)) {
-          await sydney.conversationsCache.delete(chat.id._serialized);
+          console.log("admins:", admins);
+          let onGoingConversation = await idsCache.get(chat.id._serialized);
+          const conversationData = JSON.parse(onGoingConversation);
+          let jailbreakId = conversationData.jailbreakConversationId;
+          console.log("jailbreakId:", jailbreakId);
+          await sydney.conversationsCache.delete(jailbreakId);
+          await idsCache.delete(chat.id._serialized);
           await message.reply("Conversation history reset.");
         } else {
           await message.reply("You are not allowed to perform this command.");
         }
         break;
       } else {
-        await sydney.conversationsCache.delete(chat.id._serialized);
+        let onGoingConversation = await idsCache.get(chat.id._serialized);
+        const conversationData = JSON.parse(onGoingConversation);
+        let jailbreakId = conversationData.jailbreakConversationId;
+        await idsCache.delete(chat.id._serialized);
+        await sydney.conversationsCache.delete(jailbreakId);
         await message.reply("Conversation history reset.");
         break;
       }
