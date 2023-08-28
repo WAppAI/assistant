@@ -237,6 +237,10 @@ async function askSydney(prompt: string, chatId: string, context: string) {
     const conversationData = JSON.parse(onGoingConversation);
     options.parentMessageId = conversationData.messageId;
     options.jailbreakConversationId = conversationData.jailbreakConversationId;
+    console.log(
+      "options.jailbreakConversationId:",
+      options.jailbreakConversationId
+    );
   }
 
   const response: SydneyResponse = await sydney.sendMessage(prompt, options);
