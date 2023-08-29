@@ -1,11 +1,12 @@
 import scheduler from "node-schedule";
 import { config } from "./config";
 import WAWebJS, { Message } from "whatsapp-web.js";
+import { boolean } from "zod";
 
 interface IOptions {
   toneStyle: (typeof config.VALID_TONES)[number];
   systemMessage?: string;
-  jailbreakConversationId?: any; //FIX IT LATER
+  jailbreakConversationId?: string | boolean;
   parentMessageId?: string;
   context?: string;
   onProgress?: (token: string) => void;

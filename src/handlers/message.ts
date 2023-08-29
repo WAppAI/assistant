@@ -50,33 +50,27 @@ async function upsertLastWAreplyId(chatId: string, lastWAreplyId: string) {
 export async function handleGroupMessage(message: Message) {
   const chat = await message.getChat();
 
-  //const mentions = await message.getMentions();       // Stoped working for some reason (I think it's because the number field is empty)
-  //const botMention = mentions.filter((mention) => mention.isMe).pop();
   const quotedMessage = await message.getQuotedMessage();
 
   let isInThread = false;
-  const OnGoingConversation = await sydney.conversationsCache.get(
-    chat.id._serialized
-  );
-  if (OnGoingConversation)
-    isInThread = quotedMessage
-      ? quotedMessage.id._serialized === OnGoingConversation.lastWAreplyId
+
+  const conversationDataJSON = await idsCache.get(chat.id._serialized);
+  if (conversationDataJSON) {
+    const conversationData = JSON.parse(conversationDataJSON);
+    const onGoingConversation = await sydney.conversationsCache.get(
+      conversationData.jailbreakConversationId
+    );
+
+    isInThread = onGoingConversation
+      ? quotedMessage?.id._serialized === onGoingConversation.lastWAreplyId
       : false;
+  }
 
-  const mentionedIds = message.mentionedIds; // Temporary logic so that you can talk with Sydney with @Sydney in a group
-  const toId = message.to;
-  let isMentionedInTo = false;
-  mentionedIds.forEach((mentionedId) => {
-    if (mentionedId === toId) {
-      isMentionedInTo = true;
-    }
-  });
+  const mentionedIds: string[] = message.mentionedIds; // Explicitly type mentionedIds as an array of strings
 
-  if (!isMentionedInTo && !isInThread) return false;
+  const isMentionedInTo = mentionedIds.includes(message.to);
 
-  //replaceMentions(message, mentions, botMention);
-
-  return true;
+  return isMentionedInTo || isInThread;
 }
 
 async function handleAudioMessage(message: Message, media: MessageMedia) {
@@ -234,24 +228,19 @@ async function askSydney(prompt: string, chatId: string, context: string) {
   const onGoingConversation = await idsCache.get(chatId);
 
   if (onGoingConversation) {
-    const conversationData = JSON.parse(onGoingConversation);
-    options.parentMessageId = conversationData.messageId;
-    options.jailbreakConversationId = conversationData.jailbreakConversationId;
-    console.log(
-      "options.jailbreakConversationId:",
-      options.jailbreakConversationId
-    );
+    const { messageId, jailbreakConversationId } =
+      JSON.parse(onGoingConversation);
+    options.parentMessageId = messageId;
+    options.jailbreakConversationId = jailbreakConversationId;
   }
 
   const response: SydneyResponse = await sydney.sendMessage(prompt, options);
-  await idsCache.set(
-    chatId,
-    JSON.stringify({
-      jailbreakConversationId: response.jailbreakConversationId,
-      messageId: response.messageId,
-    })
-  );
 
-  //console.dir(response, { depth: null });
+  const newConversationData = {
+    jailbreakConversationId: response.jailbreakConversationId,
+    messageId: response.messageId,
+  };
+  await idsCache.set(chatId, JSON.stringify(newConversationData));
+
   return response;
 }

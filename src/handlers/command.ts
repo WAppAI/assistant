@@ -35,32 +35,60 @@ export async function handleCommand(
       break;
     case "!reset":
       if (chat.isGroup) {
-        const admins = (chat as GroupChat).participants.map((user) => {
-          if (user.isAdmin) return user.id._serialized;
-        });
+        const { participants, id } = chat as GroupChat;
+        const admins = participants.filter((user) => user.isAdmin);
 
-        if (admins.includes(message.author)) {
-          console.log("admins:", admins);
-          let onGoingConversation = await idsCache.get(chat.id._serialized);
-          const conversationData = JSON.parse(onGoingConversation);
-          let jailbreakId = conversationData.jailbreakConversationId;
-          console.log("jailbreakId:", jailbreakId);
-          await sydney.conversationsCache.delete(jailbreakId);
-          await idsCache.delete(chat.id._serialized);
-          await message.reply("Conversation history reset.");
+        const authorId = message.author;
+
+        if (
+          authorId &&
+          admins.some((admin) => admin.id._serialized === authorId)
+        ) {
+          try {
+            const onGoingConversation = await idsCache.get(id._serialized);
+            const conversationData = JSON.parse(onGoingConversation);
+
+            if (conversationData && conversationData.jailbreakConversationId) {
+              const jailbreakId = conversationData.jailbreakConversationId;
+
+              await Promise.all([
+                sydney.conversationsCache.delete(jailbreakId),
+                idsCache.delete(id._serialized),
+              ]);
+
+              await message.reply("Conversation history reset.");
+            } else {
+              await message.reply("Invalid conversation data.");
+            }
+          } catch (error) {
+            console.error("Cache operation or parsing failed:", error);
+          }
         } else {
           await message.reply("You are not allowed to perform this command.");
         }
-        break;
       } else {
-        let onGoingConversation = await idsCache.get(chat.id._serialized);
-        const conversationData = JSON.parse(onGoingConversation);
-        let jailbreakId = conversationData.jailbreakConversationId;
-        await idsCache.delete(chat.id._serialized);
-        await sydney.conversationsCache.delete(jailbreakId);
-        await message.reply("Conversation history reset.");
-        break;
+        try {
+          const onGoingConversation = await idsCache.get(chat.id._serialized);
+          const conversationData = JSON.parse(onGoingConversation);
+
+          if (conversationData && conversationData.jailbreakConversationId) {
+            const jailbreakId = conversationData.jailbreakConversationId;
+
+            await Promise.all([
+              sydney.conversationsCache.delete(jailbreakId),
+              idsCache.delete(chat.id._serialized),
+            ]);
+
+            await message.reply("Conversation history reset.");
+          } else {
+            await message.reply("Invalid conversation data.");
+          }
+        } catch (error) {
+          console.error("Cache operation or parsing failed:", error);
+        }
       }
+      break;
+
     case "!pending":
       const pendingPrompts = promptTracker.listPendingPrompts(chat);
 
