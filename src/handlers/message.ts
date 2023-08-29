@@ -49,7 +49,6 @@ async function upsertLastWAreplyId(chatId: string, lastWAreplyId: string) {
 
 export async function handleGroupMessage(message: Message) {
   const chat = await message.getChat();
-
   const quotedMessage = await message.getQuotedMessage();
 
   let isInThread = false;
@@ -61,16 +60,24 @@ export async function handleGroupMessage(message: Message) {
       conversationData.jailbreakConversationId
     );
 
-    isInThread = onGoingConversation
-      ? quotedMessage?.id._serialized === onGoingConversation.lastWAreplyId
-      : false;
+    if (onGoingConversation)
+      isInThread = quotedMessage
+        ? quotedMessage.id._serialized === onGoingConversation.lastWAreplyId
+        : false;
   }
 
-  const mentionedIds: string[] = message.mentionedIds; // Explicitly type mentionedIds as an array of strings
+  const mentionedIds = message.mentionedIds;
+  const toId = message.to;
+  let isMentionedInTo = false;
+  mentionedIds.forEach((mentionedId) => {
+    if (mentionedId === toId) {
+      isMentionedInTo = true;
+    }
+  });
 
-  const isMentionedInTo = mentionedIds.includes(message.to);
+  if (!isMentionedInTo && !isInThread) return false;
 
-  return isMentionedInTo || isInThread;
+  return true;
 }
 
 async function handleAudioMessage(message: Message, media: MessageMedia) {
