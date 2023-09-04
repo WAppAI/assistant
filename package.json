@@ -13,7 +13,7 @@
   "devDependencies": {
     "@types/common-tags": "^1.8.1",
     "@types/fluent-ffmpeg": "^2.1.21",
-    "@types/node": "^20.3.2",
+    "@types/node": "^20.5.9",
     "@types/node-schedule": "^2.1.0",
     "@types/uuid": "^9.0.1",
     "nodemon": "^2.0.22",
