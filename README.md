@@ -27,10 +27,6 @@ To chat with Sydney, you will need:
 
 ### Installation
 
-You can configure the project automatically by running either the `setup.bat` file (for Windows) or the `setup.sh` file (for Ubuntu/Debian).
-
-Alternatively, you have the option to perform a manual installation by following the steps below:
-
 1. Clone this repository
 
 ```
