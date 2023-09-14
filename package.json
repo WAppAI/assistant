@@ -39,7 +39,7 @@
     "serialize-error": "^11.0.0",
     "uuid": "^9.0.0",
     "whatsapp-web.js": "https://github.com/Luisotee/whatsapp-web.js",
-    "zod": "^3.21.4"
+    "zod": "^3.22.2"
   },
   "type": "module"
 }
