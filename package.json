@@ -32,7 +32,7 @@
     "fs": "^0.0.1-security",
     "keyv": "^4.5.2",
     "node-schedule": "^2.1.1",
-    "openai": "4.6.0",
+    "openai": "4.7.0",
     "os": "^0.1.2",
     "path": "^0.12.7",
     "qrcode-terminal": "^0.12.0",
