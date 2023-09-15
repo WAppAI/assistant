@@ -11,7 +11,7 @@
   "author": "Matheus Veiga <veigamann@gmail.com>",
   "license": "MIT",
   "devDependencies": {
-    "@types/common-tags": "^1.8.1",
+    "@types/common-tags": "^1.8.2",
     "@types/fluent-ffmpeg": "^2.1.21",
     "@types/node": "^20.6.0",
     "@types/node-schedule": "^2.1.0",
