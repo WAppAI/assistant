@@ -181,10 +181,10 @@
   resolved "https://registry.npmjs.org/@types/common-tags/-/common-tags-1.8.1.tgz"
   integrity sha512-20R/mDpKSPWdJs5TOpz3e7zqbeCNuMCPhV7Yndk9KU2Rbij2r5W4RzwDPkzC+2lzUqXYu9rFzTktCBnDjHuNQg==
 
-"@types/fluent-ffmpeg@^2.1.21":
-  version "2.1.21"
-  resolved "https://registry.npmjs.org/@types/fluent-ffmpeg/-/fluent-ffmpeg-2.1.21.tgz"
-  integrity sha512-+n3dy/Tegt6n+YwGZUiGq6i8Jrnt8+MoyPiW1L6J5EWUl7GSt18a/VyReecfCsvTTNBXNMIKOMHDstiQM8nJLA==
+"@types/fluent-ffmpeg@^2.1.22":
+  version "2.1.22"
+  resolved "https://registry.yarnpkg.com/@types/fluent-ffmpeg/-/fluent-ffmpeg-2.1.22.tgz#57fe44beb5e68ef5d33fd58680c20210f64cfca7"
+  integrity sha512-ZZPDDrDOb2Ahp5fxZzuw64f0rCcviv+SDuCyJ1PIF/UFn9wNHtb/bY8Dj/2nrbQ7SNsGI7gaO2wJVkkU2HBcMg==
   dependencies:
     "@types/node" "*"
 
