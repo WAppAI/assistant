@@ -1931,14 +1931,7 @@ node-fetch@2.6.7:
   dependencies:
     whatwg-url "^5.0.0"
 
-node-fetch@^2.6.1, node-fetch@^2.6.7:
-  version "2.6.11"
-  resolved "https://registry.npmjs.org/node-fetch/-/node-fetch-2.6.11.tgz"
-  integrity sha512-4I6pdBY1EthSqDmJkiNk3JIT8cswwR9nfeW/cPdUagJYEQG7R95WRH74wpz7ma8Gh/9dI9FP+OU+0E4FvtA55w==
-  dependencies:
-    whatwg-url "^5.0.0"
-
-node-fetch@^2.6.5:
+node-fetch@^2.6.1, node-fetch@^2.6.5, node-fetch@^2.6.7:
   version "2.7.0"
   resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.7.0.tgz#d0f0fa6e3e2dc1d27efcd8ad99d550bda94d187d"
   integrity sha512-c4FRfUm/dbcWZ7U+1Wq0AwCyFL+3nt2bEw05wfxSz+DWpWsitgmSgYmy2dQdWyKC1694ELPqMs/YzUSNozLt8A==
@@ -2066,10 +2059,10 @@ onetime@^5.1.0, onetime@^5.1.2:
   dependencies:
     mimic-fn "^2.1.0"
 
-openai@4.6.0:
-  version "4.6.0"
-  resolved "https://registry.yarnpkg.com/openai/-/openai-4.6.0.tgz#0335111cf71c608b68dbdca19f8ccbd9cfb0cd97"
-  integrity sha512-LuONkTgoe4D172raQCv+eEK5OdLGnY/M4JrUz/pxRGevZwqDqy3xhBbCeWX8QLCbFcnITYsu/VBJXZJ0rDAMpA==
+openai@4.8.0:
+  version "4.8.0"
+  resolved "https://registry.yarnpkg.com/openai/-/openai-4.8.0.tgz#42e818e484d5c831e438439ed202b08d67416b1c"
+  integrity sha512-CnLZvHi2x4pIoGAWCaj3jHi1a6NA4oFBL6mJDSXkIR5A/wv6lven7uL2gxMevjGBLA7OqYqis3Z2PMluiGauVw==
   dependencies:
     "@types/node" "^18.11.18"
     "@types/node-fetch" "^2.6.4"
