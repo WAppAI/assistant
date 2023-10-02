@@ -4,6 +4,7 @@ import type { BingAIClientResponse } from "@waylaidwanderer/chatgpt-api";
 import { Message } from "whatsapp-web.js";
 import { prisma } from "../clients/prisma";
 import { bing } from "../clients/bing";
+import { SYSTEM_MESSAGE } from "../constants";
 
 export async function getCompletionFor(message: Message, context: string) {
   let completion: BingAIClientResponse;
@@ -30,6 +31,7 @@ export async function getCompletionFor(message: Message, context: string) {
         jailbreakConversationId: conversation.jailbreakId as string,
         parentMessageId: conversation.parentMessageId as string,
         toneStyle: "creative",
+        context,
       });
     else
       completion = await bing.sendMessage(message.body, {
@@ -44,6 +46,7 @@ export async function getCompletionFor(message: Message, context: string) {
   } else {
     completion = await bing.sendMessage(message.body, {
       jailbreakConversationId: waChat?.jailbroken ? true : undefined,
+      systemMessage: waChat?.jailbroken ? SYSTEM_MESSAGE : undefined,
       toneStyle: "creative",
       context,
     });

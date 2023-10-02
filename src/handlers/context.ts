@@ -4,5 +4,5 @@ export async function createContextFromMessage(message: Message) {
   const contact = await message.getContact();
   const publicUserName = contact.pushname;
 
-  return `${publicUserName}: ${message.body}`;
+  return `- The user name is '${publicUserName}'`;
 }
