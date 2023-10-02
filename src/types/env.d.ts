@@ -7,5 +7,7 @@ declare module "bun" {
     ERROR_REACTION: string | "⚠️";
 
     PUPPETEER_EXECUTABLE_PATH: string;
+
+    BING_COOKIES: string;
   }
 }
