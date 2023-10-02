@@ -1,6 +1,8 @@
 node_modules/
 .wwebjs_*/
 
+prisma/*.db*
+
 .env
 .env*.local
 Dockerfile.*
