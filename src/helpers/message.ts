@@ -1,5 +1,6 @@
 import { Message } from "whatsapp-web.js";
 import { Reaction, react } from "../handlers/reactions";
+import { ALLOWED_USERS, BLOCKED_USERS } from "../constants";
 
 async function workingOn(message: Message) {
   const chat = await message.getChat();
@@ -32,4 +33,19 @@ export async function setStatusFor(message: Message, status: Status) {
     default:
       break;
   }
+}
+
+export async function shouldIgnore(message: Message) {
+  const contact = await message.getContact();
+  const number = contact.number;
+
+  const ignore =
+    BLOCKED_USERS.includes(number) || !ALLOWED_USERS.includes(number);
+
+  ignore &&
+    console.warn(
+      `Ignoring message from unknown user "${contact.pushname}" (${number})`
+    );
+
+  return ignore;
 }

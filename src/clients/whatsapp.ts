@@ -1,9 +1,10 @@
 import qrcode from "qrcode";
-import WAWebJS from "whatsapp-web.js";
+import WAWebJS, { Message } from "whatsapp-web.js";
 import { handleMessage } from "../handlers/message";
 import { handleSelfMessage } from "../handlers/message/self";
 import { BOT_PREFIX } from "../constants";
 import { handleCommand } from "../handlers/command";
+import { shouldIgnore } from "../helpers/message";
 
 // Doing this for now because ts-node complains about commonjs modules, will fix later
 const { Client, LocalAuth } = WAWebJS;
@@ -50,8 +51,9 @@ whatsapp.on("ready", async () => {
 });
 
 whatsapp.on("message", async (message) => {
-  const isCommand = message.body.startsWith("!");
+  if (await shouldIgnore(message)) return;
 
+  const isCommand = message.body.startsWith("!");
   if (isCommand) {
     return handleCommand(message);
   } else {
@@ -64,9 +66,9 @@ whatsapp.on("message_create", async (message) => {
   const isSelf = message.to === message.from;
   const isBotMessage = message.body.startsWith(BOT_PREFIX);
   if (!isSelf || isBotMessage) return;
+  if (await shouldIgnore(message)) return;
 
   const isCommand = message.body.startsWith("!");
-
   if (isCommand) {
     return handleCommand(message);
   } else {
