@@ -1,45 +1,23 @@
 {
-  "name": "sydney-whatsapp-bot",
-  "version": "1.1.4",
-  "description": "WhatsApp chatbot",
-  "main": "src/index.ts",
+  "name": "sydney-whatsapp-chatbot",
+  "module": "src/index.ts",
+  "type": "module",
   "scripts": {
-    "start": "yarn nodemon src/index.ts",
-    "dev": "yarn nodemon src/index.ts"
+    "start": "bun src/index.ts",
+    "docker:build": "docker build -t sydney-whatsapp-chatbot .",
+    "docker:run": "docker run -it -d --name sydney-whatsapp-chatbot sydney-whatsapp-chatbot",
+    "docker:build:run": "bun docker:build && bun docker:run",
+    "docker:stop": "docker stop sydney-whatsapp-chatbot"
   },
-  "repository": "https://github.com/veigamann/sydney-whatsapp-chatbot.git",
-  "author": "Matheus Veiga <veigamann@gmail.com>",
-  "license": "MIT",
   "devDependencies": {
-    "@types/common-tags": "^1.8.1",
-    "@types/fluent-ffmpeg": "^2.1.21",
-    "@types/node": "^20.6.0",
-    "@types/node-schedule": "^2.1.0",
-    "@types/uuid": "^9.0.1",
-    "nodemon": "^2.0.22",
-    "ts-node": "^10.9.1",
-    "typescript": "^5.1.6"
+    "@types/qrcode": "^1.5.2",
+    "bun-types": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
   },
   "dependencies": {
-    "@clack/prompts": "^0.7.0",
-    "@ffmpeg/ffmpeg": "^0.11.6",
-    "@keyv/sqlite": "^3.6.5",
-    "@types/qrcode-terminal": "^0.12.0",
-    "@waylaidwanderer/chatgpt-api": "1.37.3",
-    "common-tags": "^1.8.2",
-    "crypto": "^1.0.1",
-    "fluent-ffmpeg": "^2.1.2",
-    "fs": "^0.0.1-security",
-    "keyv": "^4.5.2",
-    "node-schedule": "^2.1.1",
-    "openai": "4.6.0",
-    "os": "^0.1.2",
-    "path": "^0.12.7",
-    "qrcode-terminal": "^0.12.0",
-    "serialize-error": "^11.0.2",
-    "uuid": "^9.0.0",
-    "whatsapp-web.js": "1.22.2-alpha.1",
-    "zod": "^3.22.2"
-  },
-  "type": "module"
+    "qrcode": "^1.5.3",
+    "whatsapp-web.js": "1.22.2-alpha.1"
+  }
 }

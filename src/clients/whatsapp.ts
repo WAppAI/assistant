@@ -1,129 +1,48 @@
-import qrcode from "qrcode-terminal";
-import { Client, GroupChat } from "whatsapp-web.js";
-import cli from "../clients/cli";
-import { handleCommand } from "../handlers/command";
-import { handleGroupMessage, handleMessage } from "../handlers/message";
-import { intersection } from "../utils";
-import { loadReminders } from "../handlers/reminder";
-
-// filtering empty strings due to how Array.split() works
-const WHITELIST =
-  process.env.WHITELIST?.split(",").filter((e) => e != "") ?? [];
-
-const blockedUsers =
-  process.env.BLOCKED_USERS?.split(",").filter((e) => e != "") ?? [];
-
-const WHITELIST_ENABLED = WHITELIST.length != 0;
-const blockedUsersEnabled = blockedUsers.length != 0;
-
-let loadRemindersExecuted = false;
+import qrcode from "qrcode";
+import { Client, LocalAuth } from "whatsapp-web.js";
+import { handleMessage } from "../handlers/message";
+import { handleSelfMessage } from "../handlers/message/self";
 
 export const whatsapp = new Client({
+  authStrategy: new LocalAuth(),
+
   puppeteer: {
-    headless: true,
+    handleSIGTERM: false,
+    handleSIGINT: false,
+    executablePath: Bun.env.PUPPETEER_EXECUTABLE_PATH || undefined,
     args: [
-      "--disable-gpu",
-      "--disable-dev-shm-usage",
-      "--disable-setuid-sandbox",
       "--no-sandbox",
+      "--no-default-browser-check",
+      "--disable-dev-shm-usage",
+      "--disable-accelerated-2d-canvas",
+      "--no-first-run",
+      "--no-zygote",
+      "--single-process",
+      "--disable-gpu",
     ],
-    userDataDir: "./puppeteer",
   },
 });
 
-whatsapp.on("qr", (qr) => {
-  qrcode.generate(qr, { small: true }, (qrcode: string) => {
-    cli.printQRCode(qrcode);
-  });
+whatsapp.on("qr", async (qr) => {
+  const code = await qrcode.toString(qr, { type: "terminal", small: true });
+  console.log(code);
 });
 
 whatsapp.on("loading_screen", (percent) => {
-  if (percent == "0") {
-    cli.printLoading();
-  }
+  console.log(`Loading WhatsApp Web... ${percent}%`);
 });
 
 whatsapp.on("authenticated", () => {
-  cli.printAuthenticated();
+  console.log("Authenticated");
 });
 
-whatsapp.on("auth_failure", () => {
-  cli.printAuthenticationFailure();
+whatsapp.on("auth_failure", (message) => {
+  console.log("Authentication failure. Message:", message);
 });
 
 whatsapp.on("ready", async () => {
-  cli.printReady();
-  if (!loadRemindersExecuted) {
-    await loadReminders();
-    loadRemindersExecuted = true;
-  }
+  console.log("WhatsApp Web ready");
 });
 
-whatsapp.on("message", async (message) => {
-  if (message.from == "status@broadcast") {
-    return;
-  }
-
-  const chat = await message.getChat();
-  const contact = await message.getContact();
-  const sender = contact.id.user;
-
-  const _messageType = chat.isGroup ? "Group" : "DM";
-  const _sender = `${contact.pushname}[${sender}]`;
-  console.log(`${_messageType} message received from ${_sender}`);
-
-  if (WHITELIST_ENABLED) {
-    const isWhitelisted = WHITELIST.includes(sender);
-
-    if (chat.isGroup) {
-      const participants = (chat as GroupChat).participants.map(
-        (user) => user.id.user
-      );
-      const whitelistedParticipants = intersection(WHITELIST, participants);
-
-      if (whitelistedParticipants.length == 0) {
-        await message.reply(
-          "There are no whitelisted participants in this group."
-        );
-        return;
-      }
-    } else {
-      if (!isWhitelisted) {
-        await message.reply(`${_sender} is not whitelisted.`);
-        return;
-      }
-    }
-  }
-
-  if (blockedUsersEnabled) {
-    if (chat.isGroup) {
-      const shouldReply = await handleGroupMessage(message);
-
-      if (!shouldReply) {
-        await chat.sendSeen();
-        return;
-      }
-      const participants = (chat as GroupChat).participants.map(
-        (user) => user.id.user
-      );
-      const blockedParticipants = intersection(blockedUsers, participants);
-
-      if (blockedParticipants.includes(sender)) {
-        await message.reply(`${_sender} is blocked from using Sydney.`);
-        return;
-      }
-    } else {
-      if (blockedUsers.includes(sender)) {
-        await message.reply(`${_sender} is blocked from using Sydney.`);
-        return;
-      }
-    }
-  }
-
-  if (message.body.startsWith("!")) {
-    const [command, ...args] = message.body.split(" ");
-    await handleCommand(message, command, args.join(" "));
-  } else {
-    await handleMessage(message);
-  }
-});
+whatsapp.on("message", handleMessage);
+whatsapp.on("message_create", handleSelfMessage);

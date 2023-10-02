@@ -1,10 +1,6 @@
 node_modules/
-puppeteer/
-.wwebjs_cache/
+.wwebjs_*/
 
 .env
-
-conversations_cache.sqlite
-counter_cache.sqlite
-reminder_db.sqlite
-ids_cache.sqlite
+.env*.local
+Dockerfile.*
