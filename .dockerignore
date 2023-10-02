@@ -1,0 +1,10 @@
+node_modules/
+.wwebjs_*/
+demos/
+
+*.md
+.env*.local
+.git
+.gitignore
+
+Dockerfile*

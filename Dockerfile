@@ -1,12 +1,8 @@
-FROM oven/bun:latest as app
+FROM node:lts as app
 
 WORKDIR /app
 
-COPY src/ /app/src
-COPY .env /app
-
-COPY ./package.json /app
-COPY bun.lockb /app
+COPY . /app
 
 # puppeteer dependencies
 RUN apt update && apt install -y ca-certificates fonts-liberation libasound2 libatk-bridge2.0-0 \
@@ -15,6 +11,6 @@ libgtk-3-0 libnspr4 libnss3 libpango-1.0-0 libpangocairo-1.0-0 libstdc++6 libx11
 libxcomposite1 libxcursor1 libxdamage1 libxext6 libxfixes3 libxi6 libxrandr2 libxrender1 libxss1 libxtst6 \
 lsb-release wget xdg-utils
 
-RUN bun install
-RUN bun node_modules/puppeteer/install.js
-CMD bun start
+RUN npm install
+RUN node node_modules/puppeteer/install.js
+CMD npm start
