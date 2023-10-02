@@ -1,7 +1,10 @@
 import qrcode from "qrcode";
-import { Client, LocalAuth } from "whatsapp-web.js";
+import WAWebJS from "whatsapp-web.js";
 import { handleMessage } from "../handlers/message";
 import { handleSelfMessage } from "../handlers/message/self";
+
+// Doing this for now because ts-node complains about commonjs modules, will fix later
+const { Client, LocalAuth } = WAWebJS;
 
 export const whatsapp = new Client({
   authStrategy: new LocalAuth(),
@@ -9,7 +12,7 @@ export const whatsapp = new Client({
   puppeteer: {
     handleSIGTERM: false,
     handleSIGINT: false,
-    executablePath: Bun.env.PUPPETEER_EXECUTABLE_PATH || undefined,
+    executablePath: process.env.PUPPETEER_EXECUTABLE_PATH,
     args: [
       "--no-sandbox",
       "--no-default-browser-check",

@@ -1,10 +1,10 @@
 import { Message } from "whatsapp-web.js";
 
 export const REACTIONS = {
-  queued: Bun.env.QUEUED_REACTION || "🔁",
-  working: Bun.env.WORKING_REACTION || "⚙️",
-  done: Bun.env.DONE_REACTION || "✅",
-  error: Bun.env.ERROR_REACTION || "⚠️",
+  queued: process.env.QUEUED_REACTION || "🔁",
+  working: process.env.WORKING_REACTION || "⚙️",
+  done: process.env.DONE_REACTION || "✅",
+  error: process.env.ERROR_REACTION || "⚠️",
 };
 
 export type Reaction = keyof typeof REACTIONS;
@@ -14,7 +14,7 @@ export async function react(
   reaction: keyof typeof REACTIONS
 ) {
   const chat = await message.getChat();
-  const enableReactions = Bun.env.ENABLE_REACTIONS || "true";
+  const enableReactions = process.env.ENABLE_REACTIONS || "true";
 
   switch (enableReactions) {
     case "false":
