@@ -10,6 +10,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model WAChat {
+  id               String             @id
+  BingConversation BingConversation[]
+  jailbroken       Boolean            @default(false)
+}
+
 model BingConversation {
   waChatId    String @id
   waMessageId String
@@ -22,4 +28,11 @@ model BingConversation {
 
   signature  String
   expiryTime String
+
+  waChat WAChat? @relation(fields: [waChatId], references: [id])
+}
+
+model cache {
+  key   String @id
+  value String
 }

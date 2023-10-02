@@ -3,6 +3,7 @@ import { setStatusFor } from "../../helpers/message";
 import { createContextFromMessage } from "../context";
 import { getCompletionFor } from "../completion";
 import { log } from "../../helpers/utils";
+import { BOT_PREFIX } from "../../constants";
 
 export async function handleMessage(message: Message) {
   await log(message);
@@ -19,7 +20,7 @@ export async function handleMessage(message: Message) {
   } catch (error) {
     console.error(error);
 
-    await message.reply(`Error: ${JSON.stringify(error)}`);
+    await message.reply(`${BOT_PREFIX} Error: ${JSON.stringify(error)}`);
 
     await setStatusFor(message, "error");
   }

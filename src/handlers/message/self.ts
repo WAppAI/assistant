@@ -20,7 +20,7 @@ export async function handleSelfMessage(message: Message) {
   } catch (error) {
     console.error(error);
 
-    await message.reply(`Error: ${JSON.stringify(error)}`);
+    await message.reply(`${BOT_PREFIX} Error: ${JSON.stringify(error)}`);
 
     await setStatusFor(message, "error");
   }

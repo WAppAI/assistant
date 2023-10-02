@@ -16,6 +16,7 @@ declare module "@waylaidwanderer/chatgpt-api" {
     cookies?: string;
     proxy?: string;
     debug?: boolean;
+    cache: { store: Keyv<any, { table: string; busyTimeout: number }> };
   }
 
   interface BingAIClientSendMessageOptions {
@@ -33,6 +34,7 @@ declare module "@waylaidwanderer/chatgpt-api" {
 
   interface BingAIClientResponse {
     jailbreakConversationId?: string;
+    messageId?: string;
     conversationId: string;
     conversationSignature: string;
     clientId: string;

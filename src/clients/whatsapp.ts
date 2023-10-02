@@ -2,8 +2,8 @@ import qrcode from "qrcode";
 import WAWebJS from "whatsapp-web.js";
 import { handleMessage } from "../handlers/message";
 import { handleSelfMessage } from "../handlers/message/self";
-import { handleCommand } from "../handlers/message/command";
 import { BOT_PREFIX } from "../constants";
+import { handleCommand } from "../handlers/command";
 
 // Doing this for now because ts-node complains about commonjs modules, will fix later
 const { Client, LocalAuth } = WAWebJS;
