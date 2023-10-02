@@ -2,6 +2,8 @@ import qrcode from "qrcode";
 import WAWebJS from "whatsapp-web.js";
 import { handleMessage } from "../handlers/message";
 import { handleSelfMessage } from "../handlers/message/self";
+import { handleCommand } from "../handlers/message/command";
+import { BOT_PREFIX } from "../constants";
 
 // Doing this for now because ts-node complains about commonjs modules, will fix later
 const { Client, LocalAuth } = WAWebJS;
@@ -47,5 +49,27 @@ whatsapp.on("ready", async () => {
   console.log("WhatsApp Web ready");
 });
 
-whatsapp.on("message", handleMessage);
-whatsapp.on("message_create", handleSelfMessage);
+whatsapp.on("message", async (message) => {
+  const isCommand = message.body.startsWith("!");
+
+  if (isCommand) {
+    return handleCommand(message);
+  } else {
+    return handleMessage(message);
+  }
+});
+
+// TODO: may be possible to use only 'message_create' instead of 'message' and still handle self
+whatsapp.on("message_create", async (message) => {
+  const isSelf = message.to === message.from;
+  const isBotMessage = message.body.startsWith(BOT_PREFIX);
+  if (!isSelf || isBotMessage) return;
+
+  const isCommand = message.body.startsWith("!");
+
+  if (isCommand) {
+    return handleCommand(message);
+  } else {
+    return handleSelfMessage(message);
+  }
+});

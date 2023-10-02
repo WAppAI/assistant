@@ -1,7 +1,8 @@
+import { prisma } from "./clients/prisma";
 import { whatsapp } from "./clients/whatsapp";
 import { checkEnv } from "./helpers/utils";
 
-function main() {
+async function main() {
   checkEnv();
   whatsapp.initialize();
 }
@@ -18,4 +19,12 @@ process.on("SIGTERM", async () => {
   process.exit(0);
 });
 
-main();
+main()
+  .then(async () => {
+    await prisma.$disconnect();
+  })
+  .catch(async (e) => {
+    console.error(e);
+    await prisma.$disconnect();
+    process.exit(1);
+  });

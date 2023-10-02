@@ -1,17 +1,27 @@
 import { Message } from "whatsapp-web.js";
 import { setStatusFor } from "../../helpers/message";
-
-const BOT_PREFIX = "(bot):";
+import { createContextFromMessage } from "../context";
+import { getCompletionFor } from "../completion";
+import { log } from "../../helpers/utils";
+import { BOT_PREFIX } from "../../constants";
 
 export async function handleSelfMessage(message: Message) {
-  const isSelf = message.to === message.from;
-  const isBotMessage = message.body.startsWith(BOT_PREFIX);
-  if (!isSelf || isBotMessage) return;
-
+  await log(message);
   await setStatusFor(message, "working");
 
-  message.body = `${BOT_PREFIX} ${message.body}`;
-  await message.reply(message.body);
+  try {
+    const context = await createContextFromMessage(message);
 
-  await setStatusFor(message, "done");
+    const completion = await getCompletionFor(message, context);
+    const reply = await message.reply(`${BOT_PREFIX} ${completion.response}`);
+
+    await log(reply, message.timestamp);
+    await setStatusFor(message, "done");
+  } catch (error) {
+    console.error(error);
+
+    await message.reply(`Error: ${JSON.stringify(error)}`);
+
+    await setStatusFor(message, "error");
+  }
 }

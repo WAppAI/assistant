@@ -3,17 +3,21 @@
   "module": "src/index.ts",
   "type": "module",
   "scripts": {
-    "start": "ts-node src/index.ts"
+    "start": "ts-node src/index.ts",
+    "studio": "prisma studio"
   },
   "devDependencies": {
+    "@types/node": "^20.8.0",
     "@types/qrcode": "^1.5.2",
+    "prisma": "^5.3.1",
+    "ts-node": "^10.9.1",
     "typescript": "^5.2.2"
   },
   "dependencies": {
+    "@prisma/client": "5.3.1",
     "@waylaidwanderer/chatgpt-api": "^1.37.3",
     "dayjs": "^1.11.10",
     "qrcode": "^1.5.3",
-    "ts-node": "^10.9.1",
     "whatsapp-web.js": "1.22.2-alpha.1"
   }
 }
