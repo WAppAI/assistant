@@ -73,5 +73,13 @@ export async function getCompletionFor(message: Message, context: string) {
     });
   }
 
+  completion.response = removeFootnotes(completion.response);
   return completion;
+}
+
+function removeFootnotes(text: string): string {
+  // Use a regular expression to match and remove the "[^x^]" pattern, where x is a number.
+  const cleanedText = text.replace(/\[\^\d+\^\]/g, "");
+
+  return cleanedText;
 }
