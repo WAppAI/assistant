@@ -13,4 +13,5 @@ lsb-release wget xdg-utils
 
 RUN npm install
 RUN node node_modules/puppeteer/install.js
+RUN npm run generate
 CMD npm start

@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "start": "ts-node src/index.ts",
+    "generate": "prisma generate",
     "studio": "prisma studio",
     "docker:build": "docker build -t sydney-whatsapp-chatbot .",
     "docker:run": "docker run -it -d --name sydney-whatsapp-chatbot sydney-whatsapp-chatbot",
