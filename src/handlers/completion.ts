@@ -1,6 +1,6 @@
 // see src/types/bing-ai-client.d.ts
 // @ts-ignore
-import type { BingAIClientResponse } from "@waylaidwanderer/chatgpt-api";
+import type { BingAIClientResponse, SuggestedResponse } from "@waylaidwanderer/chatgpt-api";
 
 // see src/types/bing-ai-client.d.ts
 // @ts-ignore
@@ -13,11 +13,7 @@ import { SYSTEM_MESSAGE } from "../constants";
 import { createConversation, getConversationFor } from "../crud/conversation";
 import { createChat, getChatFor } from "../crud/chat";
 
-export async function getCompletionFor(
-  message: Message,
-  context: string,
-  reply: Message
-) {
+export async function getCompletionFor(message: Message, context: string, reply: Message) {
   let replyContent = reply.body;
   let queue: string[] = []; // Create a queue to store tokens
   let processing = false; // Flag to indicate if processing is ongoing
@@ -51,10 +47,11 @@ export async function getCompletionFor(
   completion.response = removeFootnotes(completion.response);
   completion.response = completion.response + "\n\n" + getSources(completion);
 
+  // TODO: suggestions will be added later; must have a way to select them when replying
+  // completion.response = completion.response + "\n\n" + getSuggestions(completion);
+
   // @ts-ignore
-  return Promise.all([completion, replyEditing]).then(
-    ([completion]) => completion
-  );
+  return Promise.all([completion, replyEditing]).then(([completion]) => completion);
 }
 
 async function generateCompletionFor(
@@ -110,19 +107,26 @@ async function generateCompletionFor(
   return completion;
 }
 
+function getSuggestions(completion: BingAIClientResponse) {
+  const suggestions = completion.details.suggestedResponses;
+
+  // All the suggested responses enumerated, eg: "Suggestions\n\n1. Suggestion 1\n2. Suggestion 2"
+  const suggestionsList = suggestions.map(
+    (suggestion: SuggestedResponse, i: number) => `${i + 1}. ${suggestion.text}`
+  );
+
+  return (suggestionsList.length && "*Suggested responses:*\n" + suggestionsList.join("\n")) || "";
+}
+
 function getSources(completion: BingAIClientResponse) {
   const sources = completion.details.sourceAttributions;
-  // sourcesString is a string of all the sources enumerated, eg: "Sources\n\n1. https://example.com\n2. https://example2.com"
-  const sourcesString =
-    "Sources\n\n" +
-    sources
-      .map(
-        (source: SourceAttribution, i: number) =>
-          `${i + 1}. ${source.seeMoreUrl}`
-      )
-      .join("\n");
 
-  return sourcesString;
+  // All the sources enumerated, eg: "Sources\n\n1. Source 1\n2. Source 2"
+  const sourcesList = sources.map(
+    (source: SourceAttribution, i: number) => `${i + 1}. ${source.seeMoreUrl}`
+  );
+
+  return (sourcesList.length && "*Sources:*\n" + sourcesList.join("\n")) || "";
 }
 
 function removeFootnotes(text: string): string {
