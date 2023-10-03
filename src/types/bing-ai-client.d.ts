@@ -43,61 +43,61 @@ declare module "@waylaidwanderer/chatgpt-api" {
     response: string;
     details: BingAIClientResponseDetails;
   }
-}
 
-interface BingAIClientResponseDetails {
-  text: string;
-  author: string;
-  createdAt: string;
-  timestamp: string;
-  messageId: string;
-  requestId: string;
-  offense: string;
-  adaptiveCards: AdaptiveCard[];
-  sourceAttributions: SourceAttribution[];
-  feedback: Feedback;
-  contentOrigin: string;
-  scores: Score[];
-  suggestedResponses: SuggestedResponse[];
-}
+  interface BingAIClientResponseDetails {
+    text: string;
+    author: string;
+    createdAt: string;
+    timestamp: string;
+    messageId: string;
+    requestId: string;
+    offense: string;
+    adaptiveCards: AdaptiveCard[];
+    sourceAttributions: SourceAttribution[];
+    feedback: Feedback;
+    contentOrigin: string;
+    scores: Score[];
+    suggestedResponses: SuggestedResponse[];
+  }
 
-interface AdaptiveCard {
-  type: string;
-  version: string;
-  body: any[];
-}
+  interface AdaptiveCard {
+    type: string;
+    version: string;
+    body: any[];
+  }
 
-interface SourceAttribution {
-  providerDisplayName: string;
-  seeMoreUrl: string;
-  searchQuery?: string;
-  provider: string;
-  imageLink?: string;
-  imageWidth?: string;
-  imageHeight?: string;
-  imageFavicon?: string;
-  sourceType?: string;
-}
+  interface SourceAttribution {
+    providerDisplayName: string;
+    seeMoreUrl: string;
+    searchQuery?: string;
+    provider: string;
+    imageLink?: string;
+    imageWidth?: string;
+    imageHeight?: string;
+    imageFavicon?: string;
+    sourceType?: string;
+  }
 
-interface Feedback {
-  tag: string | null;
-  updatedOn: string | null;
-  type: string;
-}
+  interface Feedback {
+    tag: string | null;
+    updatedOn: string | null;
+    type: string;
+  }
 
-interface Score {
-  component: string;
-  score: number;
-}
+  interface Score {
+    component: string;
+    score: number;
+  }
 
-interface SuggestedResponse {
-  text: string;
-  author: string;
-  createdAt: string;
-  timestamp: string;
-  messageId: string;
-  messageType: string;
-  offense: string;
-  feedback: Feedback;
-  contentOrigin: string;
+  interface SuggestedResponse {
+    text: string;
+    author: string;
+    createdAt: string;
+    timestamp: string;
+    messageId: string;
+    messageType: string;
+    offense: string;
+    feedback: Feedback;
+    contentOrigin: string;
+  }
 }
