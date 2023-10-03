@@ -6,8 +6,40 @@ import { prisma } from "../clients/prisma";
 import { bing } from "../clients/bing";
 import { SYSTEM_MESSAGE } from "../constants";
 
-export async function getCompletionFor(message: Message, context: string) {
+export async function getCompletionFor(
+  message: Message,
+  context: string,
+  reply: Message
+) {
   let completion: BingAIClientResponse;
+  let replyContent = reply.body;
+  let queue: string[] = []; // Create a queue to store tokens
+  let processing = false; // Flag to indicate if processing is ongoing
+  let replyEditing: Promise<Message | null>; // Flag to indicate if the reply is being edited
+
+  async function onProgress(token: string) {
+    const firstReplace = token.startsWith("Searching") && queue.length === 0;
+    if (firstReplace) token = ` ${token} ...\n\n`;
+
+    queue.push(token); // Add tokens to the queue
+    if (!processing) {
+      processing = true;
+      await processTokenQueue(); // Start processing the queue
+    }
+  }
+
+  async function processTokenQueue() {
+    if (queue.length !== 0) {
+      const token = queue[0];
+      const newReplyContent = replyContent + token;
+      replyEditing = reply.edit(newReplyContent);
+      replyContent = newReplyContent;
+      queue.shift(); // Remove the processed token from the queue
+      await processTokenQueue(); // Continue processing the queue
+    } else {
+      processing = false; // Reset the processing flag
+    }
+  }
 
   const chat = await message.getChat();
 
@@ -32,6 +64,7 @@ export async function getCompletionFor(message: Message, context: string) {
         parentMessageId: conversation.parentMessageId as string,
         toneStyle: "creative",
         context,
+        onProgress,
       });
     else
       completion = await bing.sendMessage(message.body, {
@@ -40,6 +73,7 @@ export async function getCompletionFor(message: Message, context: string) {
         clientId: conversation.clientId,
         invocationId: conversation.invocationId,
         toneStyle: "creative",
+        onProgress,
         // apparently we can't give context to existing conversations when not jailbroken
         // context,
       });
@@ -49,6 +83,7 @@ export async function getCompletionFor(message: Message, context: string) {
       systemMessage: waChat?.jailbroken ? SYSTEM_MESSAGE : undefined,
       toneStyle: "creative",
       context,
+      onProgress,
     });
 
     const chat = await message.getChat();
@@ -74,7 +109,12 @@ export async function getCompletionFor(message: Message, context: string) {
   }
 
   completion.response = removeFootnotes(completion.response);
-  return completion;
+
+  // TODO: remove ts-ignore later
+  // @ts-ignore
+  return Promise.all([completion, replyEditing]).then(
+    ([completion]) => completion
+  );
 }
 
 function removeFootnotes(text: string): string {

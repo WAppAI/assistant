@@ -3,12 +3,10 @@ import { REACTIONS } from "../handlers/reactions";
 import { whatsapp } from "../clients/whatsapp";
 import dayjs from "dayjs";
 
-export async function log(message: Message, initialTimestamp?: number) {
+export async function log(message: Message, isReply: boolean = false) {
   const chat = await message.getChat();
   const contact = await message.getContact();
   const chatName = chat.isGroup ? `@${chat.name}` : "@dm";
-
-  const isReply = !!initialTimestamp;
 
   const from = contact.pushname;
   const to =
@@ -16,17 +14,10 @@ export async function log(message: Message, initialTimestamp?: number) {
       ? (await (await message.getQuotedMessage()).getContact()).pushname
       : (await whatsapp.getContactById(message.to)).pushname;
 
-  const timestamp = dayjs.unix(message.timestamp);
+  const timestamp = dayjs();
   const timestampStr = timestamp.format("HH:mm:ss");
 
-  const timeDelta =
-    initialTimestamp &&
-    timestamp.diff(dayjs.unix(initialTimestamp), "milliseconds", true);
-  const timeDeltaStr = timeDelta ? `[${timeDelta}ms]` : "";
-
-  console.log(
-    `${timestampStr} [${from}->${to}${chatName}]${timeDeltaStr}: ${message.body}`
-  );
+  console.log(`${timestampStr} [${from}->${to}${chatName}]: ${message.body}`);
 }
 
 export function isEmoji(str: string) {

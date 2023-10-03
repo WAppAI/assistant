@@ -10,7 +10,7 @@ export async function handleCommand(message: Message) {
   const args = _args.join(" ");
   let reply: Message;
 
-  log(message);
+  await log(message);
   await setStatusFor(message, "working");
 
   switch (command) {
@@ -28,6 +28,6 @@ export async function handleCommand(message: Message) {
       break;
   }
 
-  log(reply, message.timestamp);
+  await log(reply, true);
   await setStatusFor(message, "done");
 }

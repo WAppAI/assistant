@@ -8,19 +8,21 @@ import { BOT_PREFIX } from "../../constants";
 export async function handleSelfMessage(message: Message) {
   await log(message);
   await setStatusFor(message, "working");
+  let reply = await message.reply(`${BOT_PREFIX}\n...`);
 
   try {
     const context = await createContextFromMessage(message);
 
-    const completion = await getCompletionFor(message, context);
-    const reply = await message.reply(`${BOT_PREFIX} ${completion.response}`);
+    const completion = await getCompletionFor(message, context, reply);
+    const response = BOT_PREFIX + `${completion.response}`;
+    reply = (await reply.edit(response)) as Message;
 
-    await log(reply, message.timestamp);
+    await log(reply, true);
     await setStatusFor(message, "done");
   } catch (error) {
     console.error(error);
 
-    await message.reply(`${BOT_PREFIX} Error: ${JSON.stringify(error)}`);
+    await reply.edit(BOT_PREFIX + `Error: ${JSON.stringify(error)}`);
 
     await setStatusFor(message, "error");
   }
