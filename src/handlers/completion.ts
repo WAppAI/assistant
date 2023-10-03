@@ -1,15 +1,15 @@
 // see src/types/bing-ai-client.d.ts
-// @ts-ignore
-import type { BingAIClientResponse, SuggestedResponse } from "@waylaidwanderer/chatgpt-api";
-
-// see src/types/bing-ai-client.d.ts
-// @ts-ignore
-import type { SourceAttribution } from "@waylaidwanderer/chatgpt-api";
+import type {
+  BingAIClientResponse,
+  SuggestedResponse,
+  SourceAttribution,
+  // @ts-ignore
+} from "@waylaidwanderer/chatgpt-api";
 
 import { Message } from "whatsapp-web.js";
 import { prisma } from "../clients/prisma";
 import { bing } from "../clients/bing";
-import { SYSTEM_MESSAGE } from "../constants";
+import { ENABLE_SOURCES, SYSTEM_MESSAGE } from "../constants";
 import { createConversation, getConversationFor } from "../crud/conversation";
 import { createChat, getChatFor } from "../crud/chat";
 
@@ -45,10 +45,13 @@ export async function getCompletionFor(message: Message, context: string, reply:
 
   const completion = await generateCompletionFor(message, context, onProgress);
   completion.response = removeFootnotes(completion.response);
-  completion.response = completion.response + "\n\n" + getSources(completion);
+
+  if (ENABLE_SOURCES === "true")
+    completion.response = completion.response + "\n\n" + getSources(completion);
 
   // TODO: suggestions will be added later; must have a way to select them when replying
-  // completion.response = completion.response + "\n\n" + getSuggestions(completion);
+  // if (ENABLE_SUGGESTIONS === "true")
+  //   completion.response = completion.response + "\n\n" + getSuggestions(completion);
 
   // @ts-ignore
   return Promise.all([completion, replyEditing]).then(([completion]) => completion);

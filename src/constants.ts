@@ -2,6 +2,8 @@ import dotenv from "dotenv";
 import dotenvExpand from "dotenv-expand";
 dotenvExpand.expand(dotenv.config());
 
+export const ENABLE_REACTIONS = process.env.ENABLE_REACTIONS || "true";
+export const ENABLE_SOURCES = process.env.ENABLE_SOURCES || "true";
 export const BOT_PREFIX = process.env.BOT_PREFIX?.trim() + " " || "[BOT]: ";
 export const ALLOWED_USERS = process.env.ALLOWED_USERS?.split(",") || [];
 export const BLOCKED_USERS = process.env.BLOCKED_USERS?.split(",") || [];

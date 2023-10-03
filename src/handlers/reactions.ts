@@ -1,4 +1,5 @@
 import { Message } from "whatsapp-web.js";
+import { ENABLE_REACTIONS } from "../constants";
 
 export const REACTIONS = {
   queued: process.env.QUEUED_REACTION || "🔁",
@@ -9,14 +10,10 @@ export const REACTIONS = {
 
 export type Reaction = keyof typeof REACTIONS;
 
-export async function react(
-  message: Message,
-  reaction: keyof typeof REACTIONS
-) {
+export async function react(message: Message, reaction: keyof typeof REACTIONS) {
   const chat = await message.getChat();
-  const enableReactions = process.env.ENABLE_REACTIONS || "true";
 
-  switch (enableReactions) {
+  switch (ENABLE_REACTIONS) {
     case "false":
       break;
     case "true":
