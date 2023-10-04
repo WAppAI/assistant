@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 import dotenvExpand from "dotenv-expand";
 dotenvExpand.expand(dotenv.config());
 
+export const CMD_PREFIX = process.env.CMD_PREFIX?.trim() || "!";
 export const REPLY_RRULES = process.env.REPLY_RRULES || "true";
 export const ENABLE_REACTIONS = process.env.ENABLE_REACTIONS || "true";
 export const ENABLE_SOURCES = process.env.ENABLE_SOURCES || "true";

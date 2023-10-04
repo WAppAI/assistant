@@ -2,7 +2,7 @@ import qrcode from "qrcode";
 import WAWebJS, { Message } from "whatsapp-web.js";
 import { handleMessage } from "../handlers/message";
 import { handleSelfMessage } from "../handlers/message/self";
-import { BOT_PREFIX } from "../constants";
+import { BOT_PREFIX, CMD_PREFIX } from "../constants";
 import { handleCommand } from "../handlers/command";
 import { shouldIgnore } from "../helpers/message";
 
@@ -53,7 +53,7 @@ whatsapp.on("ready", async () => {
 whatsapp.on("message", async (message) => {
   if (await shouldIgnore(message)) return;
 
-  const isCommand = message.body.startsWith("!");
+  const isCommand = message.body.startsWith(CMD_PREFIX);
   if (isCommand) {
     return handleCommand(message);
   } else {

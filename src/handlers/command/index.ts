@@ -1,12 +1,12 @@
 import { Message } from "whatsapp-web.js";
 import { setStatusFor } from "../../helpers/message";
 import { log } from "../../helpers/utils";
-import { BOT_PREFIX } from "../../constants";
+import { BOT_PREFIX, CMD_PREFIX } from "../../constants";
 import { handleJailbreak } from "./jailbreak";
 import { handleReset } from "./reset";
 
 export async function handleCommand(message: Message) {
-  const [command, ..._args] = message.body.split(" ");
+  const [command, ..._args] = message.body.split(CMD_PREFIX)[1].split(" ");
   const args = _args.join(" ");
   let reply: Message;
 
@@ -14,13 +14,13 @@ export async function handleCommand(message: Message) {
   await setStatusFor(message, "working");
 
   switch (command) {
-    case "!ping":
+    case "ping":
       reply = await message.reply(BOT_PREFIX + "pong!");
       break;
-    case "!reset":
+    case "reset":
       reply = await handleReset(message, args);
       break;
-    case "!jailbreak":
+    case "jailbreak":
       reply = await handleJailbreak(message, args);
       break;
     default:

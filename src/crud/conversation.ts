@@ -2,7 +2,6 @@
 // @ts-ignore
 import { BingAIClientResponse } from "@waylaidwanderer/chatgpt-api";
 import { prisma } from "../clients/prisma";
-import { Chat, Message } from "whatsapp-web.js";
 
 export async function createConversation(
   completion: BingAIClientResponse,
@@ -24,16 +23,23 @@ export async function createConversation(
   });
 }
 
+export async function deleteAllConversations() {
+  await prisma.cache.deleteMany();
+  return await prisma.bingConversation.deleteMany();
+}
+
 export async function deleteConversation(chatId: string) {
-  const conversation = await prisma.bingConversation.delete({
-    where: { waChatId: chatId },
-    select: { jailbreakId: true },
-  });
+  const conversation = await getConversationFor(chatId);
+  if (!conversation) return;
 
   if (conversation.jailbreakId)
     await prisma.cache.delete({
       where: { key: `bing:${conversation.jailbreakId}` },
     });
+
+  return await prisma.bingConversation.delete({
+    where: { waChatId: chatId },
+  });
 }
 
 export async function getConversationFor(chatId: string) {
