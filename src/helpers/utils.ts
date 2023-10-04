@@ -3,7 +3,9 @@ import { REACTIONS } from "../handlers/reactions";
 import { whatsapp } from "../clients/whatsapp";
 import dayjs from "dayjs";
 
-export async function log(message: Message, isReply: boolean = false) {
+export async function log(message: Message | null, isReply: boolean = false) {
+  if (!message) return;
+
   const chat = await message.getChat();
   const contact = await message.getContact();
   const chatName = chat.isGroup ? `@${chat.name}` : "@dm";

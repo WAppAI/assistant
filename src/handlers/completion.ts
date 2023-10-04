@@ -9,52 +9,63 @@ import type {
 import { Message } from "whatsapp-web.js";
 import { prisma } from "../clients/prisma";
 import { bing } from "../clients/bing";
-import { ENABLE_SOURCES, SYSTEM_MESSAGE } from "../constants";
+import {
+  ENABLE_SOURCES,
+  ENABLE_SUGGESTIONS,
+  STREAM_REMINDERS,
+  STREAM_RESPONSES,
+  SYSTEM_MESSAGE,
+} from "../constants";
 import { createConversation, getConversationFor } from "../crud/conversation";
 import { createChat, getChatFor } from "../crud/chat";
 
-export async function getCompletionFor(message: Message, context: string, reply: Message) {
-  let replyContent = reply.body;
-  let queue: string[] = []; // Create a queue to store tokens
-  let processing = false; // Flag to indicate if processing is ongoing
-  let replyEditing: Promise<Message | null>; // Flag to indicate if the reply is being edited
+export async function getCompletionFor(message: Message, context: string, streamingReply: Message) {
+  let streamingReplyBody = streamingReply.body;
+  let tokenQueue: string[] = [];
+  let isProcessingQueue = false;
+  let isEditingReply: Promise<Message | null>;
+  let isReminder = false;
 
-  async function onProgress(token: string) {
-    const firstReplace = token.startsWith("Searching") && queue.length === 0;
-    if (firstReplace) token = ` ${token} ...\n\n`;
+  async function onTokenStream(token: string) {
+    if (STREAM_RESPONSES !== "true") return;
+    const isWebSearch = token.startsWith("Searching") && tokenQueue.length === 0;
+    if (isWebSearch) token = ` ${token} ...\n\n`; // Formats the web search message nicely
 
-    queue.push(token); // Add tokens to the queue
-    if (!processing) {
-      processing = true;
-      await processTokenQueue(); // Start processing the queue
+    // Avoids reminders being shown to the user as they're being generated
+    if (!isReminder) isReminder = token.startsWith("{");
+    if (isReminder && STREAM_REMINDERS !== "true") return;
+
+    tokenQueue.push(token);
+
+    if (!isProcessingQueue) {
+      isProcessingQueue = true;
+      await processTokenQueue();
     }
   }
 
   async function processTokenQueue() {
-    if (queue.length !== 0) {
-      const token = queue[0];
-      const newReplyContent = replyContent + token;
-      replyEditing = reply.edit(newReplyContent);
-      replyContent = newReplyContent;
-      queue.shift(); // Remove the processed token from the queue
-      await processTokenQueue(); // Continue processing the queue
+    if (tokenQueue.length !== 0) {
+      const token = tokenQueue[0];
+      const newReplyContent = streamingReplyBody + token;
+      isEditingReply = streamingReply.edit(newReplyContent);
+      streamingReplyBody = newReplyContent;
+
+      tokenQueue.shift(); // Removes the processed token from the queue
+
+      await processTokenQueue(); // Continues processing the queue
     } else {
-      processing = false; // Reset the processing flag
+      isProcessingQueue = false;
     }
   }
 
-  const completion = await generateCompletionFor(message, context, onProgress);
+  const completion = await generateCompletionFor(message, context, onTokenStream);
   completion.response = removeFootnotes(completion.response);
 
-  if (ENABLE_SOURCES === "true")
-    completion.response = completion.response + "\n\n" + getSources(completion);
-
-  // TODO: suggestions will be added later; must have a way to select them when replying
-  // if (ENABLE_SUGGESTIONS === "true")
-  //   completion.response = completion.response + "\n\n" + getSuggestions(completion);
-
+  // This is needed to make sure that the last edit to the reply is actually
+  // the formatted completion.response, and not some random edit by the queue processing
+  // ts-ignore is not ideal but it's what we've got for now
   // @ts-ignore
-  return Promise.all([completion, replyEditing]).then(([completion]) => completion);
+  return Promise.all([completion, isEditingReply]).then(([completion]) => completion);
 }
 
 async function generateCompletionFor(
@@ -78,7 +89,7 @@ async function generateCompletionFor(
       completion = await bing.sendMessage(message.body, {
         jailbreakConversationId: conversation.jailbreakId as string,
         parentMessageId: conversation.parentMessageId as string,
-        toneStyle: "creative",
+        toneStyle: "precise",
         context,
         onProgress,
       });
@@ -88,7 +99,7 @@ async function generateCompletionFor(
         conversationId: conversation.id,
         clientId: conversation.clientId,
         invocationId: conversation.invocationId,
-        toneStyle: "creative",
+        toneStyle: "precise",
         onProgress,
         // apparently we can't give context to existing conversations when not jailbroken
         // context,
@@ -97,7 +108,7 @@ async function generateCompletionFor(
     completion = await bing.sendMessage(message.body, {
       jailbreakConversationId: waChat?.jailbroken ? true : undefined,
       systemMessage: waChat?.jailbroken ? SYSTEM_MESSAGE : undefined,
-      toneStyle: "creative",
+      toneStyle: "precise",
       context,
       onProgress,
     });
@@ -110,7 +121,7 @@ async function generateCompletionFor(
   return completion;
 }
 
-function getSuggestions(completion: BingAIClientResponse) {
+export function getSuggestions(completion: BingAIClientResponse) {
   const suggestions = completion.details.suggestedResponses;
 
   // All the suggested responses enumerated, eg: "Suggestions\n\n1. Suggestion 1\n2. Suggestion 2"
@@ -121,7 +132,7 @@ function getSuggestions(completion: BingAIClientResponse) {
   return (suggestionsList.length && "*Suggested responses:*\n" + suggestionsList.join("\n")) || "";
 }
 
-function getSources(completion: BingAIClientResponse) {
+export function getSources(completion: BingAIClientResponse) {
   const sources = completion.details.sourceAttributions;
 
   // All the sources enumerated, eg: "Sources\n\n1. Source 1\n2. Source 2"

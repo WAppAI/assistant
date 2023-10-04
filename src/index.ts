@@ -9,12 +9,14 @@ async function main() {
 
 process.on("SIGINT", async () => {
   console.warn("[SIGINT] Shutting down...");
+  // should react to every pending message and warn the user that the bot is shutting down
   await whatsapp.destroy();
   process.exit(0);
 });
 
 process.on("SIGTERM", async () => {
   console.warn("[SIGTERM] Shutting down...");
+  // should react to every pending message and warn the user that the bot is shutting down
   await whatsapp.destroy();
   process.exit(0);
 });
