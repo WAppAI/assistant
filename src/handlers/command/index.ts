@@ -23,6 +23,16 @@ export async function handleCommand(message: Message) {
     case "jailbreak":
       reply = await handleJailbreak(message, args);
       break;
+    case "help":
+      reply = await message.reply(
+        `${BOT_PREFIX}Available commands:\n\n` +
+          `🆘 *${CMD_PREFIX}help* - Shows you this awesome help message.\n\n` +
+          `🏓 *${CMD_PREFIX}ping* - Checks if I'm alive by responding with a *pong!* Should be super fast.\n\n` +
+          `🗑️ *${CMD_PREFIX}reset* - Clears our conversation history. In group chats, only *admins* can use this command.\n\n` +
+          `🔓 *${CMD_PREFIX}jailbreak* - Toggles *Sydney* jailbreak mode on or off using *${CMD_PREFIX}jailbreak on* or *${CMD_PREFIX}jailbreak off*.\n`
+      );
+      break;
+
     default:
       reply = await message.reply(BOT_PREFIX + "unknown command");
       break;
