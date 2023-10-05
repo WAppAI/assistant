@@ -47,3 +47,11 @@ export async function getConversationFor(chatId: string) {
     where: { waChatId: chatId },
   });
 }
+
+export async function updateWaMessageId(chatId: string, waMessageId: string) {
+  const conversation = await getConversationFor(chatId);
+  await prisma.bingConversation.update({
+    data: { waMessageId },
+    where: { waChatId: conversation?.waChatId },
+  });
+}

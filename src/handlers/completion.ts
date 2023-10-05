@@ -84,11 +84,6 @@ async function generateCompletionFor(
   }
 
   if (conversation) {
-    await prisma.bingConversation.update({
-      data: { waMessageId: message.id.id },
-      where: { waChatId: conversation.waChatId },
-    });
-
     if (waChat?.jailbroken)
       completion = await bing.sendMessage(message.body, {
         jailbreakConversationId: conversation.jailbreakId as string,
