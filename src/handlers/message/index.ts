@@ -3,7 +3,7 @@ import { setStatusFor } from "../../helpers/message";
 import { createContextFromMessage } from "../context";
 import { getCompletionFor, getSources, getSuggestions } from "../completion";
 import { log } from "../../helpers/utils";
-import { BOT_PREFIX, ENABLE_SOURCES, ENABLE_SUGGESTIONS } from "../../constants";
+import { BOT_PREFIX, ENABLE_REMINDERS, ENABLE_SOURCES, ENABLE_SUGGESTIONS } from "../../constants";
 import { handleReminderFor } from "../reminder";
 
 export async function handleMessage(message: Message) {
@@ -15,7 +15,9 @@ export async function handleMessage(message: Message) {
     const context = await createContextFromMessage(message);
 
     const completion = await getCompletionFor(message, context, streamingReply);
-    let response = await handleReminderFor(message, completion);
+    let response = completion.response;
+
+    if (ENABLE_REMINDERS === "true") response = await handleReminderFor(message, completion);
 
     // TODO: must have a way to select them when replying
     // TODO: maybe they can live in a new whatsapp message (sent immediately after the completion)?
