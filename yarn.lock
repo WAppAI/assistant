@@ -103,12 +103,11 @@
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
 
-"@keyv/sqlite@^3.6.5":
-  version "3.6.5"
-  resolved "https://registry.npmjs.org/@keyv/sqlite/-/sqlite-3.6.5.tgz"
-  integrity sha512-PZPsXcZYHPKUCX1DO7e6dTMGmk5aX7uW8QFzEavOPRMVloIp2QMv+Glt162pu+Dw5NunJinCbvD2DvYwinyNZw==
+"@keyv/sqlite@^3.6.6":
+  version "3.6.6"
+  resolved "https://registry.yarnpkg.com/@keyv/sqlite/-/sqlite-3.6.6.tgz#cf6e1a50fa2a6412d13a290a19af76e7839102a1"
+  integrity sha512-1aFpFlHZkJbF4Hiy12R05epoIyiqSQfzfS7aLUT62YbotZYEsA8bjD3L5I+luWq+qx3OSjlOC281p2i3OYHy1g==
   dependencies:
-    pify "^5.0.0"
     sqlite3 "^5.1.6"
 
 "@ljharb/through@^2.3.9":
@@ -2197,11 +2196,6 @@ picomatch@^2.0.4, picomatch@^2.2.1:
   version "2.3.1"
   resolved "https://registry.npmjs.org/picomatch/-/picomatch-2.3.1.tgz"
   integrity sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA==
-
-pify@^5.0.0:
-  version "5.0.0"
-  resolved "https://registry.npmjs.org/pify/-/pify-5.0.0.tgz"
-  integrity sha512-eW/gHNMlxdSP6dmG6uJip6FXN0EQBwm2clYYd8Wul42Cwu/DK8HEftzsapcNdYe2MfLiIwZqsDk2RDEsTE79hA==
 
 pino-abstract-transport@v1.1.0:
   version "1.1.0"
