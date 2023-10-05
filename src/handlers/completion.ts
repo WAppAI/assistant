@@ -6,12 +6,13 @@ import type {
   // @ts-ignore
 } from "@waylaidwanderer/chatgpt-api";
 
-import { Message } from "whatsapp-web.js";
+import { Message, MessageMedia } from "whatsapp-web.js";
 import { prisma } from "../clients/prisma";
 import { bing } from "../clients/bing";
 import { STREAM_REMINDERS, STREAM_RESPONSES, SYSTEM_MESSAGE } from "../constants";
 import { createConversation, getConversationFor } from "../crud/conversation";
 import { createChat, getChatFor } from "../crud/chat";
+import { stripIndents } from "common-tags";
 
 export async function getCompletionFor(message: Message, context: string, streamingReply: Message) {
   let streamingReplyBody = streamingReply.body;
@@ -72,6 +73,15 @@ async function generateCompletionFor(
   const chat = await message.getChat();
   const conversation = await getConversationFor(chat.id._serialized);
   const waChat = await getChatFor(chat.id._serialized);
+  let imageBase64: string | undefined;
+
+  if (message.hasMedia) {
+    const media = await message.downloadMedia();
+    const mimetype = media.mimetype;
+
+    const isImage = mimetype?.includes("image");
+    if (isImage) imageBase64 = media.data;
+  }
 
   if (conversation) {
     await prisma.bingConversation.update({
@@ -83,6 +93,7 @@ async function generateCompletionFor(
       completion = await bing.sendMessage(message.body, {
         jailbreakConversationId: conversation.jailbreakId as string,
         parentMessageId: conversation.parentMessageId as string,
+        imageBase64,
         toneStyle: "precise",
         context,
         onProgress,
@@ -93,6 +104,7 @@ async function generateCompletionFor(
         conversationId: conversation.id,
         clientId: conversation.clientId,
         invocationId: conversation.invocationId,
+        imageBase64,
         toneStyle: "precise",
         onProgress,
         // apparently we can't give context to existing conversations when not jailbroken
@@ -102,6 +114,7 @@ async function generateCompletionFor(
     completion = await bing.sendMessage(message.body, {
       jailbreakConversationId: waChat?.jailbroken ? true : undefined,
       systemMessage: waChat?.jailbroken ? SYSTEM_MESSAGE : undefined,
+      imageBase64,
       toneStyle: "precise",
       context,
       onProgress,

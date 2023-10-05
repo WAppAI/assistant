@@ -8,8 +8,6 @@ declare module "@waylaidwanderer/chatgpt-api" {
       message: string,
       options?: BingAIClientSendMessageOptions
     ): Promise<BingAIClientResponse>;
-
-    uploadImage(imageBase64: string): Promise<string>;
   }
 
   interface BingAIClientOptions {
@@ -31,6 +29,7 @@ declare module "@waylaidwanderer/chatgpt-api" {
     systemMessage?: string;
     context?: string;
     parentMessageId?: string;
+    imageBase64?: string;
     onProgress?: (progress: string) => void;
   }
 
