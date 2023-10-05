@@ -23,7 +23,7 @@
     "@prisma/client": "5.3.1",
     "@types/common-tags": "^1.8.2",
     "@types/node-schedule": "^2.1.1",
-    "@waylaidwanderer/chatgpt-api": "^1.37.3",
+    "@waylaidwanderer/chatgpt-api": "github:veigamann/node-chatgpt-api",
     "common-tags": "^1.8.2",
     "dayjs": "^1.11.10",
     "dotenv": "^16.3.1",

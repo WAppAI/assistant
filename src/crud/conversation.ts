@@ -12,7 +12,7 @@ export async function createConversation(
     data: {
       id: completion.conversationId,
       clientId: completion.clientId,
-      signature: completion.conversationSignature,
+      encryptedSignature: completion.encryptedConversationSignature,
       invocationId: completion.invocationId,
       jailbreakId: completion.jailbreakConversationId,
       parentMessageId: completion.messageId,

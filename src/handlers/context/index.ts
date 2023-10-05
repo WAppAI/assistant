@@ -15,12 +15,6 @@ export async function createContextFromMessage(message: Message) {
   const timezone = dayjs.tz.guess();
   const timestampUTC = dayjs().utc();
   const timestampLocal = timestampUTC.tz(timezone).format();
-  console.log({
-    publicUserName,
-    timezone,
-    timestampUTC,
-    timestampLocal,
-  });
 
   const context = stripIndent`[system](#context)
   - The user's name is '${publicUserName}'

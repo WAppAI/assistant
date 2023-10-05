@@ -26,8 +26,8 @@ model BingConversation {
   parentMessageId String?
   invocationId    Int
 
-  signature  String
-  expiryTime String
+  encryptedSignature String
+  expiryTime         String
 
   waChat WAChat? @relation(fields: [waChatId], references: [id])
 }

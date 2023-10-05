@@ -8,6 +8,8 @@ declare module "@waylaidwanderer/chatgpt-api" {
       message: string,
       options?: BingAIClientSendMessageOptions
     ): Promise<BingAIClientResponse>;
+
+    uploadImage(imageBase64: string): Promise<string>;
   }
 
   interface BingAIClientOptions {
@@ -22,7 +24,7 @@ declare module "@waylaidwanderer/chatgpt-api" {
   interface BingAIClientSendMessageOptions {
     jailbreakConversationId?: boolean | string;
     conversationId?: string;
-    conversationSignature?: string;
+    encryptedConversationSignature?: string;
     clientId?: string;
     toneStyle?: "balanced" | "creative" | "precise" | "fast";
     invocationId?: number;
@@ -36,7 +38,7 @@ declare module "@waylaidwanderer/chatgpt-api" {
     jailbreakConversationId?: string;
     messageId?: string;
     conversationId: string;
-    conversationSignature: string;
+    encryptedConversationSignature: string;
     clientId: string;
     invocationId: number;
     conversationExpiryTime: string;

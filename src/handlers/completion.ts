@@ -9,13 +9,7 @@ import type {
 import { Message } from "whatsapp-web.js";
 import { prisma } from "../clients/prisma";
 import { bing } from "../clients/bing";
-import {
-  ENABLE_SOURCES,
-  ENABLE_SUGGESTIONS,
-  STREAM_REMINDERS,
-  STREAM_RESPONSES,
-  SYSTEM_MESSAGE,
-} from "../constants";
+import { STREAM_REMINDERS, STREAM_RESPONSES, SYSTEM_MESSAGE } from "../constants";
 import { createConversation, getConversationFor } from "../crud/conversation";
 import { createChat, getChatFor } from "../crud/chat";
 
@@ -95,7 +89,7 @@ async function generateCompletionFor(
       });
     else
       completion = await bing.sendMessage(message.body, {
-        conversationSignature: conversation.signature,
+        encryptedConversationSignature: conversation.encryptedSignature,
         conversationId: conversation.id,
         clientId: conversation.clientId,
         invocationId: conversation.invocationId,
