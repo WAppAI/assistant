@@ -1,6 +1,7 @@
-import { GroupChat, Message } from "whatsapp-web.js";
+import { Chat, GroupChat, Message } from "whatsapp-web.js";
 import { Reaction, react } from "../handlers/reactions";
-import { ALLOWED_USERS, BLOCKED_USERS } from "../constants";
+import { ALLOWED_USERS, BLOCKED_USERS, BOT_PREFIX, CMD_PREFIX } from "../constants";
+import { prisma } from "../clients/prisma";
 
 async function workingOn(message: Message) {
   const chat = await message.getChat();
@@ -72,4 +73,61 @@ export async function shouldIgnore(message: Message) {
   }
 
   return false;
+}
+
+export async function shouldReply(message: Message) {
+  const isCommand = message.body.startsWith(CMD_PREFIX);
+  const chat = await message.getChat();
+
+  if (chat.isGroup && !isCommand) {
+    const mentions = await message.getMentions();
+    const isMentioned = mentions.some((mention) => mention.id._serialized === message.to);
+
+    const quotedMessage = await message.getQuotedMessage();
+    const lastWaReply = await prisma.bingConversation.findFirst({
+      where: { waChatId: chat.id._serialized },
+      select: { waMessageId: true },
+    });
+    const isInThread = quotedMessage && quotedMessage.id._serialized == lastWaReply?.waMessageId;
+
+    if (isMentioned || isInThread) {
+      for (const mention of mentions) {
+        message.body = message.body.replace(`@${mention.id.user}`, mention.pushname);
+        console.log(`Replaced "${mention.id.user}" with "${mention.pushname}"`);
+      }
+    } else {
+      console.warn(
+        "Group message received, but the bot was not mentioned neither its last completion was quoted in a thread. Ignoring."
+      );
+      return false;
+    }
+  }
+
+  return true;
+}
+
+export async function shouldIgnoreUnread(chat: Chat) {
+  if (chat.unreadCount > 1) {
+    await chat.sendSeen();
+    if (chat.isGroup) {
+      console.warn(
+        `Too many unread messages (${chat.unreadCount}) for group chat "${chat.name}". Ignoring...`
+      );
+      await chat.sendMessage(
+        BOT_PREFIX +
+          `Too many unread messages (${chat.unreadCount}) since I've last seen this chat. I'm ignoring them. If you need me to respond, please @mention me or quote my last completion in this chat.`
+      );
+    } else {
+      const contact = await chat.getContact();
+      console.warn(
+        `Too many unread messages (${chat.unreadCount}) for chat with user "${contact.pushname}" <${contact.number}>. Ignoring...`
+      );
+      await chat.sendMessage(
+        BOT_PREFIX +
+          `Too many unread messages (${chat.unreadCount}) since I've last seen this chat. I'm ignoring them. If you need me to respond, please message me again.`
+      );
+    }
+
+    return true;
+  }
 }
