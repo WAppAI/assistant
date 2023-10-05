@@ -1,6 +1,7 @@
 import { Message } from "whatsapp-web.js";
-import { stripIndent } from "common-tags";
+import { stripIndents } from "common-tags";
 import { reminderContext } from "./reminder";
+import { getChatContext } from "./chat";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone"; // dependent on utc plugin
@@ -9,15 +10,14 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 
 export async function createContextFromMessage(message: Message) {
-  const contact = await message.getContact();
-  const publicUserName = contact.pushname;
-
   const timezone = dayjs.tz.guess();
   const timestampUTC = dayjs().utc();
   const timestampLocal = timestampUTC.tz(timezone).format();
 
-  const context = stripIndent`[system](#context)
-  - The user's name is '${publicUserName}'
+  const chatContext = await getChatContext(message);
+
+  const context = stripIndents`[system](#context)
+  ${chatContext}
   - The user's timezone is '${timezone}'
   - The user's local date and time is: ${timestampLocal}
 
