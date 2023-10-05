@@ -5,6 +5,7 @@ import { getCompletionFor, getSources, getSuggestions } from "../completion";
 import { log } from "../../helpers/utils";
 import { BOT_PREFIX, ENABLE_REMINDERS, ENABLE_SOURCES, ENABLE_SUGGESTIONS } from "../../constants";
 import { handleReminderFor } from "../reminder";
+import { updateWaMessageId } from "../../crud/conversation";
 
 export async function handleMessage(message: Message) {
   await log(message);
@@ -36,4 +37,12 @@ export async function handleMessage(message: Message) {
     await log(errorReply, true);
     await setStatusFor(message, "error");
   }
+
+  const chat = await message.getChat();
+
+  // The waMessageId is used to track the last completion sent by the bot in the chat (finalReply)
+  // Allows the user to get completions from the bot without having to mention it in groups
+  // Just gotta reply to this message (finalReply) in a thread
+  // streamingReply.id === finalReply.id === errorReply.id
+  if (chat.isGroup) await updateWaMessageId(chat.id._serialized, streamingReply.id._serialized);
 }
