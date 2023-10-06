@@ -10,3 +10,12 @@ export function invalidArgumentMessage(args: string, usage?: string) {
   ${helpStatement}
   `;
 }
+
+export function unauthorizedCommandFor(command: string) {
+  return stripIndents`
+${BOT_PREFIX}Unauthorized: You are not an admin in this group.
+
+Only admins can run the *${command}* command
+
+${helpStatement}`;
+}

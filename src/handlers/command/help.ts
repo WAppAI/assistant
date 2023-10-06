@@ -39,11 +39,11 @@ Displays the available commands, their functionalities and how to use them.
 🏓 *${CMD_PREFIX}ping*
 Checks if the bot is alive by responding with '*_pong!_*'.
 
-🗑️ *${CMD_PREFIX}reset _<all>_*
+🗑️ *${CMD_PREFIX}reset*
 Clears the conversation history for _this_ chat.
 - Run *${CMD_PREFIX}help reset* for more information.
 
-🔓 *${CMD_PREFIX}jailbreak _<enable|disable|on|off>_*:
+🔓 *${CMD_PREFIX}jailbreak _<enable|disable|on|off>_*
 Enables or disables *_${ASSISTANT_NAME}_*'s jailbreak mode.
 - Run *${CMD_PREFIX}help jailbreak* for more information.`;
 
@@ -57,12 +57,10 @@ Smart ass.
 const pingHelpMessage = stripIndents`🏓 *${CMD_PREFIX}ping*
 Checks if the bot is alive by responding with '*_pong!_*'.`;
 
-const resetHelpMessage = stripIndents`🗑️ *${CMD_PREFIX}reset _<all>_*
+const resetHelpMessage = stripIndents`🗑️ *${CMD_PREFIX}reset*
 Clears the conversation history for _this_ chat.
 
 - If no argument is given, it clears the conversation history for _this_ chat.
-
-- If *_<all>_* is provided, it clears the conversation history for *_ALL_* chats.
 
 - *NOTE*: In group chats, only *admins* can use this command.
 

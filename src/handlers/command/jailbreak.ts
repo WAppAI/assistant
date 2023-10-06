@@ -42,7 +42,7 @@ export async function handleJailbreak(message: Message, args: JailbreakArgs) {
       if (conversation && !conversation.jailbreakId) {
         // await deleteConversation(chat.id._serialized);
         // await message.reply( stripIndents`${BOT_PREFIX}Deleted the ongoing conversation for this chat`);
-        await handleReset(message, "");
+        await handleReset(message);
       }
 
       await setChatJailbroken(chat.id._serialized, true);
@@ -52,7 +52,7 @@ export async function handleJailbreak(message: Message, args: JailbreakArgs) {
       if (conversation && conversation.jailbreakId) {
         // await deleteConversation(chat.id._serialized);
         // await message.reply(BOT_PREFIX + "deleted this conversation");
-        await handleReset(message, "");
+        await handleReset(message);
       }
 
       await setChatJailbroken(chat.id._serialized, false);
