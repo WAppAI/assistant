@@ -4,7 +4,11 @@ import { handleMessage } from "../handlers/message";
 import { handleSelfMessage } from "../handlers/message/self";
 import { BOT_PREFIX, CMD_PREFIX } from "../constants";
 import { handleCommand } from "../handlers/command";
-import { shouldIgnoreUnread, shouldIgnore, shouldReply } from "../helpers/message";
+import {
+  shouldIgnoreUnread,
+  shouldIgnore,
+  shouldReply,
+} from "../helpers/message";
 import { handleGroupJoin } from "../handlers/group-join";
 
 // Doing this for now because ts-node complains about commonjs modules, will fix later
