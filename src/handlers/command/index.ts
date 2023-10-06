@@ -1,9 +1,12 @@
 import { Message } from "whatsapp-web.js";
 import { setStatusFor } from "../../helpers/message";
 import { log } from "../../helpers/utils";
-import { BOT_PREFIX, CMD_PREFIX } from "../../constants";
+import { ASSISTANT_NAME, BOT_PREFIX, CMD_PREFIX } from "../../constants";
 import { handleJailbreak } from "./jailbreak";
 import { handleReset } from "./reset";
+import { stripIndent, stripIndents } from "common-tags";
+import { helpStatement } from "../../helpers/command";
+import { handleHelp } from "./help";
 
 export async function handleCommand(message: Message) {
   const [command, ..._args] = message.body.split(CMD_PREFIX)[1].split(" ");
@@ -15,7 +18,7 @@ export async function handleCommand(message: Message) {
 
   switch (command) {
     case "ping":
-      reply = await message.reply(BOT_PREFIX + "pong!");
+      reply = await message.reply(BOT_PREFIX + "*_pong!_*");
       break;
     case "reset":
       reply = await handleReset(message, args);
@@ -24,17 +27,17 @@ export async function handleCommand(message: Message) {
       reply = await handleJailbreak(message, args);
       break;
     case "help":
-      reply = await message.reply(
-        `${BOT_PREFIX}Available commands:\n\n` +
-          `🆘 *${CMD_PREFIX}help* - Shows you this awesome help message.\n\n` +
-          `🏓 *${CMD_PREFIX}ping* - Checks if I'm alive by responding with a *pong!* Should be super fast.\n\n` +
-          `🗑️ *${CMD_PREFIX}reset* - Clears our conversation history. In group chats, only *admins* can use this command.\n\n` +
-          `🔓 *${CMD_PREFIX}jailbreak* - Toggles *Sydney* jailbreak mode on or off using *${CMD_PREFIX}jailbreak on* or *${CMD_PREFIX}jailbreak off*.\n`
-      );
+      reply = await handleHelp(message, args);
+
       break;
 
     default:
-      reply = await message.reply(BOT_PREFIX + "unknown command");
+      reply = await message.reply(
+        stripIndents`
+        ${BOT_PREFIX}Unknown command _"${CMD_PREFIX + command}"_
+
+        ${helpStatement}`
+      );
       break;
   }
 

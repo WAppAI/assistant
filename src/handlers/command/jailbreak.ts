@@ -1,9 +1,13 @@
 import { Message } from "whatsapp-web.js";
 import { prisma } from "../../clients/prisma";
 import { BOT_PREFIX } from "../../constants";
-import { deleteConversation } from "../../crud/conversation";
+import { stripIndents } from "common-tags";
+import { handleReset } from "./reset";
+import { invalidArgumentMessage } from "../../helpers/command";
+import { createChat } from "../../crud/chat";
+import { getConversationFor } from "../../crud/conversation";
 
-type JailbreakArgs = "on" | "off" | (string & {});
+type JailbreakArgs = "enable" | "disable" | "on" | "off" | (string & {});
 
 async function setChatJailbroken(chatId: string, jailbroken: boolean) {
   await prisma.wAChat.upsert({
@@ -22,40 +26,42 @@ export async function handleJailbreak(message: Message, args: JailbreakArgs) {
       where: { id: chat.id._serialized },
       select: { jailbroken: true },
     });
-    if (!waChat)
-      await prisma.wAChat.create({ data: { id: chat.id._serialized } });
+    if (!waChat) await createChat(chat.id._serialized);
 
-    const jailbroken = waChat?.jailbroken
-      ? "jailbreak is enabled"
-      : "jailbreak is not enabled";
-    return (reply = await message.reply(BOT_PREFIX + jailbroken));
+    const state = waChat?.jailbroken ? "enabled" : "disabled";
+
+    return (reply = await message.reply(
+      stripIndents`${BOT_PREFIX}Jailbreak is currently *_${state}_* for this chat`
+    ));
   }
 
-  const conversation = await prisma.bingConversation.findFirst({
-    where: { waChatId: chat.id._serialized },
-  });
+  const conversation = await getConversationFor(chat.id._serialized);
 
   switch (args) {
-    case "on":
+    case "on" || "enable":
       if (conversation && !conversation.jailbreakId) {
-        await deleteConversation(chat.id._serialized);
-        await message.reply(BOT_PREFIX + "deleted this conversation");
+        // await deleteConversation(chat.id._serialized);
+        // await message.reply( stripIndents`${BOT_PREFIX}Deleted the ongoing conversation for this chat`);
+        await handleReset(message, "");
       }
 
       await setChatJailbroken(chat.id._serialized, true);
-      reply = await message.reply(BOT_PREFIX + "jailbreak enabled");
+      reply = await message.reply(`${BOT_PREFIX}Jailbreak *_enabled_* for this chat`);
       break;
-    case "off":
+    case "off" || "disable":
       if (conversation && conversation.jailbreakId) {
-        await deleteConversation(chat.id._serialized);
-        await message.reply(BOT_PREFIX + "deleted this conversation");
+        // await deleteConversation(chat.id._serialized);
+        // await message.reply(BOT_PREFIX + "deleted this conversation");
+        await handleReset(message, "");
       }
 
       await setChatJailbroken(chat.id._serialized, false);
-      reply = await message.reply(BOT_PREFIX + "jailbreak disabled");
+      reply = await message.reply(`${BOT_PREFIX}Jailbreak *_disabled_* for this chat`);
       break;
     default:
-      reply = await message.reply(BOT_PREFIX + "unknown argument");
+      reply = await message.reply(
+        invalidArgumentMessage(args, "jailbreak <enable|disable|on|off>")
+      );
       break;
   }
 

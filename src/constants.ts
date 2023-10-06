@@ -4,6 +4,7 @@ dotenvExpand.expand(dotenv.config());
 
 export const BOT_PREFIX = (process.env.BOT_PREFIX?.trim() + " ") as string;
 export const CMD_PREFIX = process.env.CMD_PREFIX?.trim() as string;
+export const ASSISTANT_NAME = process.env.ASSISTANT_NAME?.trim() as string;
 export const SYSTEM_MESSAGE = process.env.SYSTEM_MESSAGE as string;
 export const STREAM_RESPONSES = process.env.STREAM_RESPONSES as string;
 export const ENABLE_REMINDERS = process.env.ENABLE_REMINDERS as string;
