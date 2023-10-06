@@ -3,7 +3,12 @@ import { setStatusFor } from "../../helpers/message";
 import { createContextFromMessage } from "../context";
 import { getCompletionFor, getSources, getSuggestions } from "../completion";
 import { log } from "../../helpers/utils";
-import { BOT_PREFIX, ENABLE_REMINDERS, ENABLE_SOURCES, ENABLE_SUGGESTIONS } from "../../constants";
+import {
+  BOT_PREFIX,
+  ENABLE_REMINDERS,
+  ENABLE_SOURCES,
+  ENABLE_SUGGESTIONS,
+} from "../../constants";
 import { handleReminderFor } from "../reminder";
 import { updateWaMessageId } from "../../crud/conversation";
 
@@ -18,12 +23,15 @@ export async function handleMessage(message: Message) {
     const completion = await getCompletionFor(message, context, streamingReply);
     let response = completion.response;
 
-    if (ENABLE_REMINDERS === "true") response = await handleReminderFor(message, completion);
+    if (ENABLE_REMINDERS === "true")
+      response = await handleReminderFor(message, completion);
 
     // TODO: must have a way to select them when replying
     // TODO: maybe they can live in a new whatsapp message (sent immediately after the completion)?
-    if (ENABLE_SUGGESTIONS === "true") response = response + "\n\n" + getSuggestions(completion);
-    if (ENABLE_SOURCES === "true") response = response + "\n\n" + getSources(completion);
+    if (ENABLE_SUGGESTIONS === "true")
+      response = response + "\n\n" + getSuggestions(completion);
+    if (ENABLE_SOURCES === "true")
+      response = response + "\n\n" + getSources(completion);
 
     const finalReply = await streamingReply.edit(response);
 
@@ -32,7 +40,9 @@ export async function handleMessage(message: Message) {
   } catch (error) {
     console.error(error);
 
-    const errorReply = await streamingReply.edit(BOT_PREFIX + `Error: ${JSON.stringify(error)}`);
+    const errorReply = await streamingReply.edit(
+      BOT_PREFIX + `Error: ${JSON.stringify(error)}`
+    );
 
     await log(errorReply, true);
     await setStatusFor(message, "error");
@@ -44,5 +54,6 @@ export async function handleMessage(message: Message) {
   // Allows the user to get completions from the bot without having to mention it in groups
   // Just gotta reply to this message (finalReply) in a thread
   // streamingReply.id === finalReply.id === errorReply.id
-  if (chat.isGroup) await updateWaMessageId(chat.id._serialized, streamingReply.id._serialized);
+  if (chat.isGroup)
+    await updateWaMessageId(chat.id._serialized, streamingReply.id._serialized);
 }
