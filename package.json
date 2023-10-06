@@ -6,6 +6,7 @@
     "start": "ts-node src/index.ts",
     "dev": "nodemon src/index.ts",
     "generate": "prisma generate",
+    "migrate": "prisma migrate reset",
     "studio": "prisma studio",
     "docker:build": "docker build -t sydney-whatsapp-chatbot .",
     "docker:run": "docker run -it -d --name sydney-whatsapp-chatbot sydney-whatsapp-chatbot",
