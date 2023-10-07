@@ -40,9 +40,7 @@ export async function handleMessage(message: Message) {
   } catch (error) {
     console.error(error);
 
-    const errorReply = await streamingReply.edit(
-      BOT_PREFIX + `Error: ${JSON.stringify(error)}`
-    );
+    const errorReply = await streamingReply.edit(BOT_PREFIX + error);
 
     await log(errorReply, true);
     await setStatusFor(message, "error");
