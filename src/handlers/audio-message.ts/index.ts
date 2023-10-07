@@ -1,19 +1,49 @@
+import { randomUUID } from "crypto";
+import fs from "fs";
+import os from "os";
+import path from "path";
 import { Message, MessageMedia } from "whatsapp-web.js";
-import { BOT_PREFIX, TRANSCRIPTION_ENABLED } from "../../constants";
-import { log } from "../../helpers/utils";
+import {
+  BOT_PREFIX,
+  REPLY_TRANSCRIPTION,
+  TRANSCRIPTION_METHOD,
+} from "../../constants";
+import { convertOggToWav } from "./util";
+import { handleAudioMessageWithWhisperApi } from "./whisper-api";
+import { handleAudioMessageWithWhisperLocal } from "./whisper-local";
 
 export async function handleAudioMessage(
-  message: Message,
   media: MessageMedia,
-  streamingReply: Message
+  message: Message
 ) {
-  /*const media = await message.downloadMedia(); // Downloads all media from the message
-  if (message.hasMedia && media.mimetype.startsWith("audio/")) {
-    if (TRANSCRIPTION_ENABLED === "true") {
-      console.log("Transcription enabled");
-      return;
-    } else {
-      throw new Error("Transcription not enabled");
+  const { data } = media;
+  const tempdir = os.tmpdir();
+  const filename = randomUUID();
+  const oggPath = path.join(tempdir, `${filename}.ogg`);
+  const wavPath = path.join(tempdir, `${filename}.wav`);
+
+  fs.writeFileSync(oggPath, Buffer.from(data, "base64"));
+  await convertOggToWav(oggPath, wavPath);
+
+  const newMessageBody = `[system](#additional_instructions)\n
+    The user has sent an audio message, here is the transcription:`;
+
+  let transcribedAudio;
+
+  if (TRANSCRIPTION_METHOD === "local") {
+    transcribedAudio = await handleAudioMessageWithWhisperLocal();
+  } else if (TRANSCRIPTION_METHOD === "whisper-api") {
+    try {
+      transcribedAudio = await handleAudioMessageWithWhisperApi(wavPath);
+    } catch (error) {
+      console.error(error);
+      throw new Error("Error transcribing audio");
     }
-  }*/
+  }
+
+  if (REPLY_TRANSCRIPTION === "true") {
+    message.reply(`${BOT_PREFIX} Transcription:\n ${transcribedAudio}`);
+  }
+
+  return `${newMessageBody} ${transcribedAudio}`;
 }
