@@ -1,19 +1,16 @@
 import { Message } from "whatsapp-web.js";
-import { setStatusFor } from "../../helpers/message";
-import { createContextFromMessage } from "../context";
-import { getCompletionFor, getSources, getSuggestions } from "../completion";
-import { log } from "../../helpers/utils";
 import {
   BOT_PREFIX,
   ENABLE_REMINDERS,
   ENABLE_SOURCES,
   ENABLE_SUGGESTIONS,
-  REPLY_TRANSCRIPTION,
-  TRANSCRIPTION_ENABLED,
 } from "../../constants";
-import { handleReminderFor } from "../reminder";
 import { updateWaMessageId } from "../../crud/conversation";
-import { handleAudioMessage } from "../audio-message/index.ts";
+import { setStatusFor } from "../../helpers/message";
+import { log } from "../../helpers/utils";
+import { getCompletionFor, getSources, getSuggestions } from "../completion";
+import { createContextFromMessage } from "../context";
+import { handleReminderFor } from "../reminder";
 
 export async function handleMessage(message: Message) {
   await log(message);
@@ -22,20 +19,8 @@ export async function handleMessage(message: Message) {
 
   try {
     const context = await createContextFromMessage(message);
-    const media = await message.downloadMedia(); // Downloads all media from the message
-
-    // Check if the message has media and if it's audio
-    if (message.hasMedia && media.mimetype.startsWith("audio/")) {
-      if (TRANSCRIPTION_ENABLED === "true") {
-        message.body = await handleAudioMessage(media, message);
-      } else {
-        // Handle the case when transcription is not enabled
-        message.reply(BOT_PREFIX + "Transcription not enabled");
-        throw new Error("Transcription not enabled");
-      }
-    }
-
     const completion = await getCompletionFor(message, context, streamingReply);
+
     let response = completion.response;
 
     if (ENABLE_REMINDERS === "true")
