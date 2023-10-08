@@ -121,6 +121,12 @@ export function checkEnv() {
       throw new Error(
         `Invalid TRANSCRIPTION_METHOD="${process.env.TRANSCRIPTION_METHOD}" provided. Please check the TRANSCRIPTION_METHOD variable your .env file.`
       );
+    if (process.env.TRANSCRIPTION_METHOD === "local") {
+      if (!process.env.TRANSCRIPTION_MODEL)
+        throw new Error(
+          `Invalid TRANSCRIPTION_MODEL="${process.env.TRANSCRIPTION_MODEL}" provided. Please check the TRANSCRIPTION_MODEL variable your .env file.`
+        );
+    }
     if (
       !process.env.REPLY_TRANSCRIPTION ||
       !["true", "false"].includes(process.env.REPLY_TRANSCRIPTION)

@@ -1,17 +1,13 @@
 import { execSync } from "child_process";
 import * as path from "path";
 import { fileURLToPath } from "url";
-import { TRANSCRIPTION_LANGUAGE } from "../../constants";
+import { TRANSCRIPTION_LANGUAGE, TRANSCRIPTION_MODEL } from "../../constants";
 import fs from "fs";
 
 export async function handleAudioMessageWithWhisperLocal(wavPath: string) {
   const __dirname = path.dirname(fileURLToPath(import.meta.url));
   const whisperPath = path.join(__dirname, "..", "..", "..", "whisper");
-  const modelPath = path.join(
-    whisperPath,
-    "models",
-    "ggml-model-whisper-base.bin"
-  );
+  const modelPath = path.join(whisperPath, "models", TRANSCRIPTION_MODEL);
 
   try {
     const command = `"${path.join(
