@@ -15,3 +15,11 @@ export const ENABLE_SUGGESTIONS = process.env.ENABLE_SUGGESTIONS as string;
 export const STREAM_REMINDERS = process.env.STREAM_REMINDERS as string;
 export const ALLOWED_USERS = process.env.ALLOWED_USERS?.split(",") as string[];
 export const BLOCKED_USERS = process.env.BLOCKED_USERS?.split(",") as string[];
+export const TRANSCRIPTION_ENABLED = process.env
+  .TRANSCRIPTION_ENABLED as string;
+export const TRANSCRIPTION_METHOD = process.env.TRANSCRIPTION_METHOD as string;
+export const TRANSCRIPTION_LANGUAGE = process.env
+  .TRANSCRIPTION_LANGUAGE as string;
+export const OPENAI_API_KEY = process.env.OPENAI_API_KEY as string;
+export const REPLY_TRANSCRIPTION = process.env.REPLY_TRANSCRIPTION as string;
+export const TRANSCRIPTION_MODEL = process.env.TRANSCRIPTION_MODEL as string;
