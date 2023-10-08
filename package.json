@@ -39,6 +39,7 @@
     "qrcode": "^1.5.3",
     "rrule": "^2.7.2",
     "whatsapp-web.js": "1.22.2-alpha.1",
+    "whisper-node": "^0.2.12",
     "zod": "^3.22.2"
   }
 }

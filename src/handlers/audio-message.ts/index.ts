@@ -31,7 +31,12 @@ export async function handleAudioMessage(
   let transcribedAudio;
 
   if (TRANSCRIPTION_METHOD === "local") {
-    transcribedAudio = await handleAudioMessageWithWhisperLocal();
+    try {
+      transcribedAudio = await handleAudioMessageWithWhisperLocal(wavPath);
+    } catch (error) {
+      console.error(error);
+      throw new Error("Error transcribing audio");
+    }
   } else if (TRANSCRIPTION_METHOD === "whisper-api") {
     try {
       transcribedAudio = await handleAudioMessageWithWhisperApi(wavPath);
