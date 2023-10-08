@@ -13,7 +13,7 @@ import {
 } from "../../constants";
 import { handleReminderFor } from "../reminder";
 import { updateWaMessageId } from "../../crud/conversation";
-import { handleAudioMessage } from "../audio-message.ts";
+import { handleAudioMessage } from "../audio-message/index.ts";
 
 export async function handleMessage(message: Message) {
   await log(message);

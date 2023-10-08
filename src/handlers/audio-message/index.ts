@@ -8,7 +8,7 @@ import {
   REPLY_TRANSCRIPTION,
   TRANSCRIPTION_METHOD,
 } from "../../constants";
-import { convertOggToWav } from "./util";
+import { convertOggToWav } from "./audio-helper";
 import { handleAudioMessageWithWhisperApi } from "./whisper-api";
 import { handleAudioMessageWithWhisperLocal } from "./whisper-local";
 

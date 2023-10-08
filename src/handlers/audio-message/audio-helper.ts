@@ -5,6 +5,7 @@ export function convertOggToWav(oggPath: string, wavPath: string) {
   return new Promise<void>((resolve, reject) => {
     ffmpeg(oggPath)
       .toFormat("wav")
+      .audioFrequency(16000) // Set the sample rate to 16 kHz
       .outputOptions("-acodec pcm_s16le")
       .output(wavPath)
       .on("end", () => {
