@@ -9,12 +9,23 @@ import type {
 import { Message, MessageMedia } from "whatsapp-web.js";
 import { prisma } from "../clients/prisma";
 import { bing } from "../clients/bing";
-import { STREAM_REMINDERS, STREAM_RESPONSES, SYSTEM_MESSAGE } from "../constants";
+import {
+  BOT_PREFIX,
+  STREAM_REMINDERS,
+  STREAM_RESPONSES,
+  SYSTEM_MESSAGE,
+  TRANSCRIPTION_ENABLED,
+} from "../constants";
 import { createConversation, getConversationFor } from "../crud/conversation";
 import { createChat, getChatFor } from "../crud/chat";
 import { stripIndents } from "common-tags";
+import { handleAudioMessage } from "./audio-message";
 
-export async function getCompletionFor(message: Message, context: string, streamingReply: Message) {
+export async function getCompletionFor(
+  message: Message,
+  context: string,
+  streamingReply: Message
+) {
   let streamingReplyBody = streamingReply.body;
   let tokenQueue: string[] = [];
   let isProcessingQueue = false;
@@ -23,7 +34,8 @@ export async function getCompletionFor(message: Message, context: string, stream
 
   async function onTokenStream(token: string) {
     if (STREAM_RESPONSES !== "true") return;
-    const isWebSearch = token.startsWith("Searching") && tokenQueue.length === 0;
+    const isWebSearch =
+      token.startsWith("Searching") && tokenQueue.length === 0;
     if (isWebSearch) token = ` ${token} ...\n\n`; // Formats the web search message nicely
 
     // Avoids reminders being shown to the user as they're being generated
@@ -53,14 +65,20 @@ export async function getCompletionFor(message: Message, context: string, stream
     }
   }
 
-  const completion = await generateCompletionFor(message, context, onTokenStream);
+  const completion = await generateCompletionFor(
+    message,
+    context,
+    onTokenStream
+  );
   completion.response = removeFootnotes(completion.response);
 
   // This is needed to make sure that the last edit to the reply is actually
   // the formatted completion.response, and not some random edit by the queue processing
   // ts-ignore is not ideal but it's what we've got for now
   // @ts-ignore
-  return Promise.all([completion, isEditingReply]).then(([completion]) => completion);
+  return Promise.all([completion, isEditingReply]).then(
+    ([completion]) => completion
+  );
 }
 
 async function generateCompletionFor(
@@ -80,11 +98,24 @@ async function generateCompletionFor(
     const mimetype = media.mimetype;
 
     const isImage = mimetype?.includes("image");
+    const isAudio = mimetype?.includes("audio");
+
     if (isImage) imageBase64 = media.data;
+    if (isAudio) {
+      if (TRANSCRIPTION_ENABLED === "true") {
+        message.body = await handleAudioMessage(media, message);
+      } else {
+        // Handle the case when transcription is not enabled
+        message.reply(BOT_PREFIX + "Transcription not enabled");
+        throw new Error("Transcription not enabled");
+      }
+    }
   }
 
   if (conversation) {
+    // If the conversation already exists
     if (waChat?.jailbroken)
+      // If the conversation is jailbroken
       completion = await bing.sendMessage(message.body, {
         jailbreakConversationId: conversation.jailbreakId as string,
         parentMessageId: conversation.parentMessageId as string,
@@ -93,6 +124,7 @@ async function generateCompletionFor(
         context,
         onProgress,
       });
+    // If the conversation is not jailbroken
     else
       completion = await bing.sendMessage(message.body, {
         encryptedConversationSignature: conversation.encryptedSignature,
@@ -106,6 +138,7 @@ async function generateCompletionFor(
         // context,
       });
   } else {
+    // If the conversation doesn't exist yet
     completion = await bing.sendMessage(message.body, {
       jailbreakConversationId: waChat?.jailbroken ? true : undefined,
       systemMessage: waChat?.jailbroken ? SYSTEM_MESSAGE : undefined,
@@ -115,9 +148,9 @@ async function generateCompletionFor(
       onProgress,
     });
 
-    if (!waChat) await createChat(chat.id._serialized);
+    if (!waChat) await createChat(chat.id._serialized); // Creates the chat if it doesn't exist yet
 
-    await createConversation(completion, message.id.id, chat.id._serialized);
+    await createConversation(completion, message.id.id, chat.id._serialized); // Creates the conversation
   }
 
   return completion;
@@ -131,7 +164,11 @@ export function getSuggestions(completion: BingAIClientResponse) {
     (suggestion: SuggestedResponse, i: number) => `${i + 1}. ${suggestion.text}`
   );
 
-  return (suggestionsList.length && "*Suggested responses:*\n" + suggestionsList.join("\n")) || "";
+  return (
+    (suggestionsList.length &&
+      "*Suggested responses:*\n" + suggestionsList.join("\n")) ||
+    ""
+  );
 }
 
 export function getSources(completion: BingAIClientResponse) {
