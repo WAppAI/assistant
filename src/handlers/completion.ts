@@ -10,6 +10,7 @@ import { Message, MessageMedia } from "whatsapp-web.js";
 import { prisma } from "../clients/prisma";
 import { bing } from "../clients/bing";
 import {
+  BING_TONESTYLE,
   BOT_PREFIX,
   STREAM_REMINDERS,
   STREAM_RESPONSES,
@@ -120,7 +121,7 @@ async function generateCompletionFor(
         jailbreakConversationId: conversation.jailbreakId as string,
         parentMessageId: conversation.parentMessageId as string,
         imageBase64,
-        toneStyle: "precise",
+        toneStyle: BING_TONESTYLE,
         context,
         onProgress,
       });
@@ -132,7 +133,7 @@ async function generateCompletionFor(
         clientId: conversation.clientId,
         invocationId: conversation.invocationId,
         imageBase64,
-        toneStyle: "precise",
+        toneStyle: BING_TONESTYLE,
         onProgress,
         // apparently we can't give context to existing conversations when not jailbroken
         // context,
@@ -143,7 +144,7 @@ async function generateCompletionFor(
       jailbreakConversationId: waChat?.jailbroken ? true : undefined,
       systemMessage: waChat?.jailbroken ? SYSTEM_MESSAGE : undefined,
       imageBase64,
-      toneStyle: "precise",
+      toneStyle: BING_TONESTYLE,
       context,
       onProgress,
     });
