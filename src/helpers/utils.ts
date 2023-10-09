@@ -11,6 +11,12 @@ export function checkEnv() {
     );
   }
 
+  if (!process.env.BING_TONESTYLE) {
+    console.warn(
+      "invalid BING_TONESTYLE provided. You must set a tonestyle. Please check your .env file."
+    );
+  }
+
   if (process.env.BOT_PREFIX === process.env.CMD_PREFIX)
     throw new Error(
       `Invalid BOT_PREFIX/CMD_PREFIX provided. The bot prefix and the command prefix must be different. Please check your .env file.`
