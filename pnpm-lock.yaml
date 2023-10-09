@@ -18,8 +18,8 @@ dependencies:
     specifier: ^2.1.1
     version: 2.1.1
   '@waylaidwanderer/chatgpt-api':
-    specifier: github:veigamann/node-chatgpt-api
-    version: github.com/veigamann/node-chatgpt-api/891cd9bcf234079c0266bb8e50f64f8ccf89b247
+    specifier: github:Luisotee/node-chatgpt-api
+    version: github.com/Luisotee/node-chatgpt-api/4658463e178e0acd1d7f4bc6635b4104068972b7
   common-tags:
     specifier: ^1.8.2
     version: 1.8.2
@@ -1190,7 +1190,7 @@ packages:
       fast-json-stringify: 5.8.0
       find-my-way: 7.6.2
       light-my-request: 5.11.0
-      pino: 8.15.5
+      pino: 8.15.6
       process-warning: 2.2.0
       proxy-addr: 2.0.7
       rfdc: 1.3.0
@@ -2324,8 +2324,8 @@ packages:
     resolution: {integrity: sha512-cHjPPsE+vhj/tnhCy/wiMh3M3z3h/j15zHQX+S9GkTBgqJuTuJzYJ4gUyACLhDaJ7kk9ba9iRDmbH2tJU03OiA==}
     dev: false
 
-  /pino@8.15.5:
-    resolution: {integrity: sha512-KoTDSVRLiCWIJXTeAHNaflEXqsqCmyZkxfL09y+wT+NRo7j2Ieq30jBEC+GpE4HTQCQQyt3pDRhmwvCKjqzxfQ==}
+  /pino@8.15.6:
+    resolution: {integrity: sha512-GuxHr61R0ZFD1npu58tB3a3FSVjuy21OwN/haw4OuKiZBL63Pg11Y51WWeD52RENS2mjwPZOwt+2OQOSkck6kQ==}
     hasBin: true
     dependencies:
       atomic-sleep: 1.0.0
@@ -2337,7 +2337,7 @@ packages:
       quick-format-unescaped: 4.0.4
       real-require: 0.2.0
       safe-stable-stringify: 2.4.3
-      sonic-boom: 3.5.0
+      sonic-boom: 3.6.1
       thread-stream: 2.4.1
     dev: false
 
@@ -2723,8 +2723,8 @@ packages:
     dev: false
     optional: true
 
-  /sonic-boom@3.5.0:
-    resolution: {integrity: sha512-02A0wEmj4d3aEIW/Sp6LMP1dNcG5cYmQPjhgtytIXa9tNmFZx3ragUPFmyBdgdM0yJJVSWwlLLEVHgrYfA0wtQ==}
+  /sonic-boom@3.6.1:
+    resolution: {integrity: sha512-QV+p5nXPiUiSMxn/k5bOL+hzCpafdj1voL+hywPZhheRSYyYp7CF15rNdz1evOXCUn/tFb7R62PDX1yJmtoTgg==}
     dependencies:
       atomic-sleep: 1.0.0
     dev: false
@@ -3248,8 +3248,8 @@ packages:
     resolution: {integrity: sha512-wvWkphh5WQsJbVk1tbx1l1Ly4yg+XecD+Mq280uBGt9wa5BKSWf4Mhp6GmrkPixhMxmabYY7RbzlwVP32pbGCg==}
     dev: false
 
-  github.com/veigamann/node-chatgpt-api/891cd9bcf234079c0266bb8e50f64f8ccf89b247:
-    resolution: {tarball: https://codeload.github.com/veigamann/node-chatgpt-api/tar.gz/891cd9bcf234079c0266bb8e50f64f8ccf89b247}
+  github.com/Luisotee/node-chatgpt-api/4658463e178e0acd1d7f4bc6635b4104068972b7:
+    resolution: {tarball: https://codeload.github.com/Luisotee/node-chatgpt-api/tar.gz/4658463e178e0acd1d7f4bc6635b4104068972b7}
     name: '@waylaidwanderer/chatgpt-api'
     version: 1.37.3
     hasBin: true
