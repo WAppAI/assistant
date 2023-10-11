@@ -13,7 +13,7 @@ datasource db {
 model WAChat {
   id               String             @id
   BingConversation BingConversation[]
-  jailbroken       Boolean            @default(false)
+  jailbroken       Boolean            @default(true)
 }
 
 model BingConversation {
