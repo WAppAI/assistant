@@ -1,4 +1,4 @@
-# WhatsApp AI Assistant: Your AI-powered WhatsApp Assistant
+# WhatsApp AI Assistant
 
 Welcome to the WhatsApp AI Assistant repository, where you'll find a remarkable WhatsApp chatbot designed to function as your very own AI-powered personal assistant. This chatbot leverages the power of Language Model (LLM) technology. As of now, it only supports Bing Chat and the jailbreak for it, codenamed Sydney.
 
@@ -7,14 +7,14 @@ Welcome to the WhatsApp AI Assistant repository, where you'll find a remarkable 
 | :-------------------------------------------------------------: | :-------------------------------------------------------------: | :-------------------------------------------------------------: |
 | ![Screenshot 1](/demos/Screenshot_20230604_204741_WhatsApp.jpg) | ![Screenshot 2](/demos/Screenshot_20230604_215518_WhatsApp.jpg) | ![Screenshot 3](/demos/Screenshot_20230604_205104_WhatsApp.jpg) |
 
-## Features
+## Feature Comparison
 
 | Feature                       | Sydney (BingAI Jailbreak) | GPT 3.5                   | Claude                    |
 |-------------------------------|---------------------------|---------------------------|---------------------------|
-| Chatbot Interface             | ✅                        | ❌                        | ❌                        |
+| Communication Capability      | ✅                        | ❌                        | ❌                        |
 | Group Chat Compatibility      | ✅                        | ❌                        | ❌                        |
 | Voice Message Capability      | ✅                        | ❌                        | ❌                        |
-| Create Reminders              | ✅                        | ❌                        | ❌                        |
+| Create Reminders              | ❌                        | ❌                        | ❌                        |
 | Image Recognition             | ✅                        | ❌                        | ❌                        |
 | PDF and OCR Reading           | ❌                        | ❌                        | ❌                        |
 | Image Generation              | ❌                        | ❌                        | ❌                        |
