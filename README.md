@@ -3,9 +3,10 @@
 Welcome to the WhatsApp AI Assistant repository, where you'll find a remarkable WhatsApp chatbot designed to function as your very own AI-powered personal assistant. This chatbot leverages the power of Language Model (LLM) technology. As of now, it only supports Bing Chat and the jailbreak for it, codenamed Sydney.
 
 
-|                          Sydney                            |                          GPT 3.5                            |                          Claude                           |
-| :-------------------------------------------------------------: | :-------------------------------------------------------------: | :-------------------------------------------------------------: |
-| ![Screenshot 1](/demos/Screenshot_20230604_204741_WhatsApp.jpg) | ![Screenshot 2](/demos/Screenshot_20230604_215518_WhatsApp.jpg) | ![Screenshot 3](/demos/Screenshot_20230604_205104_WhatsApp.jpg) |
+| Sydney | GPT 3.5 | Claude |
+| :------: | :------: | :------: |
+| ![Sydney](/demos/demo_sydney.gif) | ![GPT 3.5](/demos/demo_sydney.gif) | ![Claude](/demos/demo_sydney.gif) |
+
 
 ## Feature Comparison
 
