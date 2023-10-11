@@ -62,17 +62,17 @@ To obtain the cookies string, perform the following steps:
 - Right-click on the `cookie` value in the request headers and select the "Copy value" option.
 - Paste the the copied value into the `BING_COOKIES` environment variable in the `.env` file.
 
-5. Start the bot
+5. Read and fill in the remaining information in the `.env` file.
+
+6. Start the bot
 
 ```
 pnpm start
 ```
 
-6. Connect your WhatsApp account to the bot by scanning the generated QR Code in the CLI.
+7. Connect your WhatsApp account to the bot by scanning the generated QR Code in the CLI.
 
-   **Note:** You likely won't need to ever scan the QR Code again, as WhatsApp session data is persisted in the `./puppeteer` folder (created in the root directory right after you scan the QR Code).
-
-7. Send a message to your WhatsApp account to start a conversation with Sydney!
+8. Send a message to your WhatsApp account to start a conversation with Sydney!
 
 </details>
 
@@ -107,27 +107,22 @@ To utilize it in a group chat, you will need to either mention it by using her u
 
 ### Available commands
 
-- `!help`: Shows you a little help message withe the available commands.
-- `!ping`: Tells you if the bot is still running.
-- `!tone args?`: Lets you check the current tone that Sydney is replying. `args` can be either `creative`, `balanced` or `precise`. I personally suggest `creative`. If you don't pass `args`, the bot will reply with the current configured tone and the available options.
-- `!pending`: Gives you a list of the prompts that you made and Sydney hasn't replied yet. Since we can't edit sent messages in WhatsApp, and by consequence we can't stream Sydney's responses token by token, this is useful to know if Sydney is still thinking on your past messages.
-- `!reset`: Deletes the current conversation history. Sydney will lose all of it's context and won't remember past messages.
-
-**Note**: The `!tone` command uses a shared JavaScript object to store Sydney's tone, making it global for all users. This means that if UserA modifies the tone using `!tone balanced`, it will also affect UserB's conversation. Currently, there is no implementation to store the tone within individual conversation histories.
+- `!help`: Displays a message listing all available commands.
+- `!help` followed by a specific command, e.g., `!help reset`: Provides detailed information about the selected command.
+- If you wish to customize the command prefix, you can do so in the `.env` file to better suit your preferences.
 
 ## Contribute
 
-If you'd like to contribute to Sydney, please fork this repository and submit a pull request. We welcome contributions of all types, from bugfixes to new features.
+Your contributions to Sydney are welcome in any form. Whether you'd like to:
 
-- [Roadmap](https://github.com/users/veigamann/projects/1)
-- [Open Issues](https://github.com/veigamann/sydney-whatsapp-chatbot/issues)
-- [Open Pull Requests](https://github.com/veigamann/sydney-whatsapp-chatbot/pulls)
+- Report Issues: If you come across bugs or have ideas for new features, please open an issue to discuss and track these items.
+
+- Submit Pull Requests (PRs): Feel free to contribute directly by opening pull requests. Your contributions are greatly appreciated and help improve Sydney.
+
+Your involvement is valued, and you're encouraged to contribute in the way that suits you best.
 
 ## Hire Us
 
 Both creators of this project, [Veigamann](https://github.com/veigamann) and [Luisotee](https://github.com/Luisotee), are currently seeking new job opportunities.
-
-- [Veigamann](https://github.com/veigamann) is seeking a junior position.
-- [Luisotee](https://github.com/Luisotee) is actively looking for an internship or junior developer position.
 
 If you have any job opportunities, please feel free to contact us through the emails provided in our GitHub profiles.
