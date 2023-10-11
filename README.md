@@ -64,7 +64,13 @@ To obtain the cookies string, perform the following steps:
 
 5. Read and fill in the remaining information in the `.env` file.
 
-6. Start the bot
+6. Run 
+
+```
+pnpm build
+```
+
+7. Start the bot
 
 ```
 pnpm start
