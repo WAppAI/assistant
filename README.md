@@ -1,31 +1,36 @@
-# WhatsAppSydney: Your BingAI-powered WhatsApp Assistant
+# WhatsApp AI Assistant: Your AI-powered WhatsApp Assistant
 
-This GitHub repository showcases a chatbot named Sydney, powered by the [waylaidwanderer/node-chatgpt-api](https://github.com/waylaidwanderer/node-chatgpt-api) BingAIClient. Sydney is a versatile AI assistant that remains continuously connected to the internet, enabling it to provide users with reliable and up-to-date information. Leveraging the capabilities of the BingAI jailbreak, Sydney delivers accurate responses by harnessing the vast resources available online. The best part is that the API used in this project is completely free, allowing you to enjoy the benefits of an internet-connected chatbot without any associated charges.
+Welcome to the WhatsApp AI Assistant repository, where you'll find a remarkable WhatsApp chatbot designed to function as your very own AI-powered personal assistant. This chatbot leverages the power of Language Model (LLM) technology. As of now, it only supports Bing Chat and the jailbreak for it, codenamed Sydney.
 
-|                          Screenshot 1                           |                          Screenshot 2                           |                          Screenshot 3                           |
+
+|                          Sydney                            |                          GPT 3.5                            |                          Claude                           |
 | :-------------------------------------------------------------: | :-------------------------------------------------------------: | :-------------------------------------------------------------: |
 | ![Screenshot 1](/demos/Screenshot_20230604_204741_WhatsApp.jpg) | ![Screenshot 2](/demos/Screenshot_20230604_215518_WhatsApp.jpg) | ![Screenshot 3](/demos/Screenshot_20230604_205104_WhatsApp.jpg) |
 
 ## Features
 
-- [x] Engage in conversations with Sydney, powered by the BingAI jailbreak
-- [x] Group chat compatibility
-- [x] Voice message capability (Sydney listens to messages)
-- [x] Create reminders
-- [ ] PDF and OCR reading
-- [ ] Image generation
+| Feature                       | Sydney (BingAI Jailbreak) | GPT 3.5                   | Claude                    |
+|-------------------------------|---------------------------|---------------------------|---------------------------|
+| Chatbot Interface             | ✅                        | ❌                        | ❌                        |
+| Group Chat Compatibility      | ✅                        | ❌                        | ❌                        |
+| Voice Message Capability      | ✅                        | ❌                        | ❌                        |
+| Create Reminders              | ✅                        | ❌                        | ❌                        |
+| Image Recognition             | ✅                        | ❌                        | ❌                        |
+| PDF and OCR Reading           | ❌                        | ❌                        | ❌                        |
+| Image Generation              | ❌                        | ❌                        | ❌                        |
 
 ## Getting Started
 
 ### Prerequisites
 
-To chat with Sydney, you will need:
-
 - Node.js >= 18.15.0
 - A spare WhatsApp number (chatting with yourself is not ideal, but also works)
-- FFMPEG must be installed in order to use audio transcription **(OPTIONAL)**.
 
 ### Installation
+
+<details>
+<summary><b>Sydney/BingChat</b></summary>
+<br>
 
 1. Clone this repository
 
@@ -36,7 +41,7 @@ git clone https://github.com/veigamann/sydney-whatsapp-chatbot.git
 2. Install the dependencies
 
 ```
-yarn install
+pnpm install
 ```
 
 3. Rename [.env.example](../master/.env.example) to `.env`
@@ -45,7 +50,7 @@ yarn install
 cp .env.example .env
 ```
 
-4. Edit `.env`'s `BING_COOKIES` environment variable to the `cookies` string from [bing.com](https://bing.com) GET request header
+4. Edit `.env`'s `BING_COOKIES` environment variable to the `cookies` string from [bing.com](https://bing.com) GET request header.
 
 To obtain the cookies string, perform the following steps:
 
@@ -57,25 +62,10 @@ To obtain the cookies string, perform the following steps:
 - Right-click on the `cookie` value in the request headers and select the "Copy value" option.
 - Paste the the copied value into the `BING_COOKIES` environment variable in the `.env` file.
 
-**Note:** If you did this and it worked, skip to step 5. If not, try step 4.1
-**Note:** You don't need to specify both `BING_COOKIES` and `BING_TOKEN`. In fact, if you specify both, `BING_COOKIES` will be the preferred method. If that's not working, comment the `BING_COOKIES` line and leave only `BING_TOKEN`.
-
-4.1 Edit `.env`'s `BING_TOKEN` environment variable to the `_U` cookie value from [bing.com](https://bing.com)
-
-To get the `_U` cookie, follow these steps:
-
-- Log in to [Bing](https://bing.com) using your Microsoft account.
-- Open the developer tools in your browser (by pressing `F12` or right-clicking anywhere and selecting `Inspect element`).
-- Select the `Storage` tab and click on the `Cookies` option to view all cookies associated with the website.
-- Look for the `_U` cookie and click on it to expand its details.
-- Copy the value of the `_U` cookie (it should look like a long string of letters and numbers).
-
-**Note:** While specifying cookies is no longer mandatory in the latest `waylaidwanderer/node-chatgpt-api` update, we do recommende providing them. Occasional stability issues have been observed when those were not configured, and having them ensures a more reliable experience.
-
 5. Start the bot
 
 ```
-yarn dev
+pnpm start
 ```
 
 6. Connect your WhatsApp account to the bot by scanning the generated QR Code in the CLI.
@@ -84,17 +74,32 @@ yarn dev
 
 7. Send a message to your WhatsApp account to start a conversation with Sydney!
 
+</details>
+
 ## Usage
 
-Sydney is designed to respond to natural language queries from users. You can ask Sydney questions, or just have a casual conversation.
+The AI's are designed to respond to natural language queries from users. You can ask them questions, or just have a casual conversation.
 
 ### Voice Messages
 
-To utilize voice messages, ensure that FFMPEG is installed on your machine, which if you are in Ubuntu/Debian can be done with `sudo apt install ffmpeg`. There are two alternatives for voice transcription: using the Whisper AI API (which incurs a cost of US$0.06 per 10 minutes of audio) or using the local method. The local method is slower and less precise but is free.
+When dealing with voice messages, you have two options for transcription: utilizing the Whisper API or the local method. Each option has its own considerations, including cost and performance.
 
-1. WhisperAPI: When using the WhisperAPI, you only need to obtain an OpenAI API key. Place the key in the `.env` file under the `OPENAI_API_KEY` variable. Additionally, set `TRANSCRIPTION_ENABLED` to `"true"` and `TRANSCRIPTION_METHOD` to `"api"`. After restarting the bot, you can proceed to utilize it.
+<details>
+<summary><strong>Whisper API:</strong></summary>
 
-2. Local mode: To use the local mode, you need to install Python and Whisper. Follow the setup instructions [here](https://github.com/openai/whisper#setup). Then, make some changes in the `.env` file. Change `TRANSCRIPTION_ENABLED` to `"true"` and `TRANSCRIPTION_METHOD` to `"local"`. After restarting the bot, you can proceed to utilize it.
+   - **Cost:** Utilizing the Whisper API incurs a cost of US$0.06 per 10 minutes of audio.
+   - **Setup:**
+     1. Obtain an OpenAI API key and place it in the `.env` file under the `OPENAI_API_KEY` variable.
+     2. Set `TRANSCRIPTION_ENABLED` to `"true"` and `TRANSCRIPTION_METHOD` to `"whisper-api"`. While setting a language in `TRANSCRIPTION_LANGUAGE` is not mandatory, it is recommended for better performance.
+</details>
+<details>
+<summary><strong>Local Mode:</strong></summary>
+
+   - **Cost:** The local method is free but may be slower and less precise.
+   - **Setup:**
+     1. Download a model of your choice from [here](https://huggingface.co/ggerganov/whisper.cpp/tree/main). Download any `.bin` file and place it in the `./whisper/models` folder.
+     2. Modify the `.env` file by changing `TRANSCRIPTION_ENABLED` to `"true"`, `TRANSCRIPTION_METHOD` to `"local"`, and `"TRANSCRIPTION_MODEL"` with the name of the model you downloaded.
+</details>
 
 ### Group Chat
 
