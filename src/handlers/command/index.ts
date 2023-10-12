@@ -7,6 +7,7 @@ import { handleReset } from "./reset";
 import { stripIndents } from "common-tags";
 import { helpStatement, unauthorizedCommandFor } from "../../helpers/command";
 import { handleHelp } from "./help";
+import { handleReminderCommand } from "./reminder";
 
 const adminCommands = ["jailbreak", "reset"];
 
@@ -44,6 +45,9 @@ export async function handleCommand(message: Message) {
       break;
     case "jailbreak":
       reply = await handleJailbreak(message, args);
+      break;
+    case "reminder":
+      reply = await handleReminderCommand(message, args);
       break;
     case "help":
       reply = await handleHelp(message, args);

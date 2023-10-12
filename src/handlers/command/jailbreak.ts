@@ -46,7 +46,9 @@ export async function handleJailbreak(message: Message, args: JailbreakArgs) {
       }
 
       await setChatJailbroken(chat.id._serialized, true);
-      reply = await message.reply(`${BOT_PREFIX}Jailbreak *_enabled_* for this chat`);
+      reply = await message.reply(
+        `${BOT_PREFIX}Jailbreak *_enabled_* for this chat`
+      );
       break;
     case "off" || "disable":
       if (conversation && conversation.jailbreakId) {
@@ -56,7 +58,9 @@ export async function handleJailbreak(message: Message, args: JailbreakArgs) {
       }
 
       await setChatJailbroken(chat.id._serialized, false);
-      reply = await message.reply(`${BOT_PREFIX}Jailbreak *_disabled_* for this chat`);
+      reply = await message.reply(
+        `${BOT_PREFIX}Jailbreak *_disabled_* for this chat`
+      );
       break;
     default:
       reply = await message.reply(
