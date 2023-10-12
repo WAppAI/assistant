@@ -1,4 +1,3 @@
-import { SavedReminderI } from "../../types/reminder";
 // @ts-ignore
 import { BingAIClientResponse } from "@waylaidwanderer/chatgpt-api";
 import { Message } from "whatsapp-web.js";
@@ -53,9 +52,9 @@ export async function handleReminderFor(
   );
   console.log(`Next recurrence: ${recurrences[0]}`);
 
-  await createReminder(reminder, message); //saves reminder
+  const savedReminder = await createReminder(reminder, message); //saves reminder
 
-  await scheduleReminderJob(reminder, message, recurrences);
+  await scheduleReminderJob(savedReminder, message, recurrences);
 
   if (REPLY_RRULES === "true")
     return `${reminder.answer}\n\n${reminder.rrule}\nNext recurrence: ${recurrences[0]}`;

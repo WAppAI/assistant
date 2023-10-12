@@ -1,4 +1,3 @@
-import { SavedReminderI } from "../../types/reminder";
 import { Message } from "whatsapp-web.js";
 import schedule from "node-schedule";
 import rrule from "rrule";
@@ -13,6 +12,7 @@ import {
   replyMessage,
   scheduleReminderJob,
 } from "./utils";
+import { Reminder } from "@prisma/client";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -34,7 +34,7 @@ export async function loadAllRemindersAndSchedule() {
 }
 
 // Define a function to schedule a single reminder
-async function scheduleSavedReminder(savedReminder: SavedReminderI) {
+async function scheduleSavedReminder(savedReminder: Reminder) {
   const reminder = parseReminderString(savedReminder.reminder);
   const message = JSON.parse(savedReminder.message) as Message;
   // Parse the recurrence rule using rrule library
@@ -59,7 +59,7 @@ async function scheduleSavedReminder(savedReminder: SavedReminderI) {
       return addOffset(recurrence);
     });
 
-  await scheduleReminderJob(reminder, message, recurrences);
+  await scheduleReminderJob(savedReminder, message, recurrences);
 
   if (REPLY_RRULES === "true")
     return `${reminder.answer}\n\n${reminder.rrule}\nNext recurrence: ${recurrences[0]}`;
