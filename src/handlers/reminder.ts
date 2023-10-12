@@ -12,7 +12,7 @@ import { REPLY_RRULES } from "../constants";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-function appendTZID(rruleString: string) {
+/*function appendTZID(rruleString: string) {
   if (rruleString.includes("TZID")) return rruleString;
 
   const tz = dayjs.tz.guess();
@@ -25,11 +25,13 @@ function appendTZID(rruleString: string) {
   const tzid = `GMT${sign}${offsetHoursString}`;
 
   return `${rruleString};TZID=${tzid}`;
-}
+}*/
 
 function addOffset(recurrence: Date) {
   const offset = dayjs().tz(dayjs.tz.guess()).utcOffset();
-  return (recurrence = dayjs(recurrence).add(Math.abs(offset), "minute").toDate());
+  return (recurrence = dayjs(recurrence)
+    .add(Math.abs(offset), "minute")
+    .toDate());
 }
 
 const ReminderSchema = z.object({
@@ -42,8 +44,12 @@ function parseReminderString(inputString: string) {
   return ReminderSchema.parse(JSON.parse(inputString));
 }
 
-export async function handleReminderFor(message: Message, completion: BingAIClientResponse) {
-  const isReminder = completion.response.startsWith("{") && completion.response.endsWith("}");
+export async function handleReminderFor(
+  message: Message,
+  completion: BingAIClientResponse
+) {
+  const isReminder =
+    completion.response.startsWith("{") && completion.response.endsWith("}");
   if (!isReminder) return completion.response;
 
   const reminder = parseReminderString(completion.response);
@@ -72,13 +78,16 @@ export async function handleReminderFor(message: Message, completion: BingAIClie
       return addOffset(recurrence);
     });
 
-  console.log(`Scheduling ${recurrences.length} recurrences for "${message.body}"`);
+  console.log(
+    `Scheduling ${recurrences.length} recurrences for "${message.body}"`
+  );
   console.log(`Next recurrence: ${recurrences[0]}`);
 
   for (const recurrence of recurrences) {
     const job = schedule.scheduleJob(recurrence, async () => {
       const contact = await message.getContact();
-      const recurrencesLeft = recurrences.length - recurrences.indexOf(recurrence);
+      const recurrencesLeft =
+        recurrences.length - recurrences.indexOf(recurrence);
       const totalRecurrences = recurrences.length;
       const nextRecurrence = recurrences[recurrences.indexOf(recurrence) + 1];
 
