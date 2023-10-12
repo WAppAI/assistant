@@ -11,6 +11,7 @@ export const reminderContext = `## On your ability to create reminders:
   `}
 - If the user asks to be reminded every month on the fourth tuesday, the rrule should be 'RRULE:FREQ=MONTHLY;BYDAY=+4TH'
 - If the user asks to be reminded 2 hours from now (a one-off event), the rrule should be 'RRULE:FREQ=HOURLY;INTERVAL=2;COUNT=1'
+- If the user asks to be reminded at 21:45 without specifying that it's a recurring event, the rrule should be 'RRULE:FREQ=DAILY;BYHOUR=21;BYMINUTE=45;COUNT=1'
 - If the user is not asking to be reminded, respond normally.
 
 ### Important guidelines for reminders
