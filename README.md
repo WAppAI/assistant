@@ -5,8 +5,7 @@ Welcome to the WhatsApp AI Assistant repository, where you'll find a remarkable 
 
 | Sydney | GPT 3.5 | Claude |
 | :------: | :------: | :------: |
-| ![Sydney](/demos/demo_sydney.gif) | ![GPT 3.5](/demos/demo_sydney.gif) | ![Claude](/demos/demo_sydney.gif) |
-
+| <video src="https://github.com/Luisotee/sydney-whatsapp-chatbot/assets/50471205/92d07d2f-5abf-4e43-92a6-a6ac6780ebea"> | Coming soon | Coming soon |
 
 ## Feature Comparison
 
