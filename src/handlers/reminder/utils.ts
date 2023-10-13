@@ -18,9 +18,14 @@ export const replyMessage = async (replyText: string, senderId: string) => {
   }
 };
 
-export function addOffset(recurrence: Date) {
+export function addOffset(recurrence: Date, rruleStr: string): Date {
   const offset = dayjs().tz(dayjs.tz.guess()).utcOffset();
-  return dayjs(recurrence).add(Math.abs(offset), "minute").toDate();
+
+  if (!rruleStr.includes("FREQ=MINUTELY")) {
+    return dayjs(recurrence).add(Math.abs(offset), "minute").toDate();
+  }
+
+  return recurrence; // No offset for minutely recurrence.
 }
 
 export const ReminderSchema = z.object({
