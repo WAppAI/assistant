@@ -93,6 +93,64 @@ export async function deleteReminder(waChatId: string) {
   return `Deleted ${remindersToDelete.length} reminders for user ${waChatId}`;
 }
 
+// Define the deleteSpecificReminder function
+export async function deleteSpecificReminder(
+  waChatId: string,
+  reminderId: number
+) {
+  // Find the reminder by ID
+  const reminder = await prisma.reminder.findUnique({
+    where: { id: reminderId },
+  });
+
+  if (!reminder) {
+    return `Reminder with ID ${reminderId} not found.`;
+  }
+
+  // Cancel any scheduled jobs associated with the reminder
+  const jobs = scheduledJobsMap.get(reminder.id);
+  if (jobs) {
+    jobs.forEach((job) => {
+      if (job) {
+        job.cancel();
+      }
+    });
+    scheduledJobsMap.delete(reminder.id);
+  }
+
+  // Delete the reminder from the database
+  await prisma.reminder.delete({ where: { id: reminderId } });
+
+  return `Deleted reminder with ID ${reminderId}.`;
+}
+
+export async function deleteReminderByIndex(
+  waChatId: string,
+  reminderIndex: number
+) {
+  // Retrieve the user's reminders
+  const reminders = await prisma.wAChat.findUnique({
+    where: { id: waChatId },
+    include: { reminders: true },
+  });
+
+  console.log("reminders: ", reminders);
+
+  if (!reminders) {
+    return `No reminders found for user ${waChatId}`;
+  }
+
+  // Check if the reminderIndex is within a valid range
+  if (reminderIndex >= 1 && reminderIndex <= reminders.reminders.length) {
+    // Get the corresponding reminder ID
+    const reminderId = reminders.reminders[reminderIndex - 1].id;
+    // Call the deleteSpecificReminder function with the reminder ID
+    return deleteSpecificReminder(waChatId, reminderId);
+  } else {
+    return `Invalid reminder index. Please provide a valid reminder index from the list.`;
+  }
+}
+
 export async function listAllReminders(waChatId: string) {
   const waChat = await prisma.wAChat.findUnique({
     where: { id: waChatId },
