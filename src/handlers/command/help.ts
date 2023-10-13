@@ -19,11 +19,16 @@ export async function handleHelp(message: Message, args: string) {
     case "jailbreak":
       reply = await message.reply(jailbreakHelpMessage);
       break;
+    case "reminder":
+      reply = await message.reply(reminderHelpMessage);
+      break;
     case "":
       reply = await message.reply(helpMessage);
       break;
     default:
-      reply = await message.reply(invalidArgumentMessage(args, "help <command>"));
+      reply = await message.reply(
+        invalidArgumentMessage(args, "help <command>")
+      );
       break;
   }
 
@@ -45,7 +50,13 @@ Clears the conversation history for _this_ chat.
 
 🔓 *${CMD_PREFIX}jailbreak _<enable|disable|on|off>_*
 Enables or disables *_${ASSISTANT_NAME}_*'s jailbreak mode.
-- Run *${CMD_PREFIX}help jailbreak* for more information.`;
+- Run *${CMD_PREFIX}help jailbreak* for more information.
+
+⏰ *${CMD_PREFIX}reminder*
+Manage reminders with the following commands:
+- *${CMD_PREFIX}reminder list*: List all reminders.
+- *${CMD_PREFIX}reminder delete <index>⠀*: Delete a specific reminder.
+- *${CMD_PREFIX}reminder delete all*: Delete all reminders.`;
 
 const helpHelpMessage = stripIndents`I see what you did there.
 
@@ -80,3 +91,15 @@ Toggles *_${ASSISTANT_NAME}_*'s jailbreak mode on or off.
 - *NOTE*: In group chats, only *admins* can use this command.
 
 - *NOTE*: This action is *irreversible!*`;
+
+const reminderHelpMessage = stripIndents`⏰ *${CMD_PREFIX}reminder*
+Manage reminders with the following commands:
+
+- *${CMD_PREFIX}reminder list*:
+  Lists all your active reminders. It provides you with a detailed view of your scheduled reminders, including their content and order.
+
+- *${CMD_PREFIX}reminder delete <index>*:
+  Allows you to delete a specific reminder by providing its index in the list. You can find the index next to each reminder when you list them. For example, *${CMD_PREFIX}reminder delete 2* would delete the second reminder in your list.
+
+- *${CMD_PREFIX}reminder delete all*:
+  Removes all of your active reminders. Use this command if you want to clear your entire reminders list.`;

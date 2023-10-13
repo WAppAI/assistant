@@ -10,6 +10,8 @@ import {
   shouldReply,
 } from "../helpers/message";
 import { handleGroupJoin } from "../handlers/group-join";
+import { loadAllReminders } from "../crud/reminder";
+import { loadAllRemindersAndSchedule } from "../handlers/reminder/load-reminder";
 
 // Doing this for now because ts-node complains about commonjs modules, will fix later
 const { Client, LocalAuth } = WAWebJS;
@@ -53,6 +55,8 @@ whatsapp.on("auth_failure", (message) => {
 
 whatsapp.on("ready", async () => {
   console.log("WhatsApp Web ready");
+  await loadAllRemindersAndSchedule();
+  console.log("Bot is ready");
 });
 
 whatsapp.on("group_join", handleGroupJoin);

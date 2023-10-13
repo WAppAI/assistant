@@ -11,7 +11,7 @@ import {
   REPLY_TRANSCRIPTION,
   TRANSCRIPTION_ENABLED,
 } from "../../constants";
-import { handleReminderFor } from "../reminder";
+import { handleReminderFor } from "../reminder/reminder.ts";
 import { updateWaMessageId } from "../../crud/conversation";
 import { handleAudioMessage } from "../audio-message/index.ts";
 
