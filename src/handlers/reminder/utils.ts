@@ -62,7 +62,33 @@ export async function scheduleReminderJob(
   scheduledJobsMap.set(reminderId, jobArray);
 }
 
-export async function deleteReminder(waChatId: string) {
+export async function listAllReminders(waChatId: string) {
+  const waChat = await prisma.wAChat.findUnique({
+    where: { id: waChatId },
+    include: { reminders: true },
+  });
+
+  if (!waChat) {
+    return `WAChat not found for user ${waChatId}`;
+  }
+
+  const reminders = waChat.reminders;
+
+  if (reminders.length === 0) {
+    return `No reminders found for user ${waChatId}`;
+  }
+
+  const remindersList = reminders
+    .map(
+      (reminder, index) =>
+        `${index + 1}. Reminder: ${JSON.parse(reminder.reminder).answer}`
+    )
+    .join("\n");
+
+  return `Reminders for user ${waChatId}:\n\n${remindersList}`;
+}
+
+export async function deleteAllReminder(waChatId: string) {
   const waChat = await prisma.wAChat.findUnique({
     where: { id: waChatId },
     include: { reminders: true },
@@ -94,10 +120,7 @@ export async function deleteReminder(waChatId: string) {
 }
 
 // Define the deleteSpecificReminder function
-export async function deleteSpecificReminder(
-  waChatId: string,
-  reminderId: number
-) {
+async function deleteSpecificReminder(waChatId: string, reminderId: number) {
   // Find the reminder by ID
   const reminder = await prisma.reminder.findUnique({
     where: { id: reminderId },
@@ -149,30 +172,4 @@ export async function deleteReminderByIndex(
   } else {
     return `Invalid reminder index. Please provide a valid reminder index from the list.`;
   }
-}
-
-export async function listAllReminders(waChatId: string) {
-  const waChat = await prisma.wAChat.findUnique({
-    where: { id: waChatId },
-    include: { reminders: true },
-  });
-
-  if (!waChat) {
-    return `WAChat not found for user ${waChatId}`;
-  }
-
-  const reminders = waChat.reminders;
-
-  if (reminders.length === 0) {
-    return `No reminders found for user ${waChatId}`;
-  }
-
-  const remindersList = reminders
-    .map(
-      (reminder, index) =>
-        `${index + 1}. Reminder: ${JSON.parse(reminder.reminder).answer}`
-    )
-    .join("\n");
-
-  return `Reminders for user ${waChatId}:\n\n${remindersList}`;
 }

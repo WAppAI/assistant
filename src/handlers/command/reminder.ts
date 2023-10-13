@@ -1,6 +1,6 @@
 import { Message } from "whatsapp-web.js";
 import {
-  deleteReminder,
+  deleteAllReminder,
   deleteReminderByIndex,
   listAllReminders,
 } from "../reminder/utils";
@@ -16,7 +16,9 @@ export async function handleReminderCommand(message: Message, args: string) {
 
   switch (command) {
     case "all":
-      return (reply = await message.reply(await deleteReminder(message.from)));
+      return (reply = await message.reply(
+        await deleteAllReminder(message.from)
+      ));
     case "list":
       return (reply = await message.reply(
         await listAllReminders(message.from)
