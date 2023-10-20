@@ -1932,14 +1932,7 @@ node-fetch@2.6.7:
   dependencies:
     whatwg-url "^5.0.0"
 
-node-fetch@^2.6.1, node-fetch@^2.6.7:
-  version "2.6.11"
-  resolved "https://registry.npmjs.org/node-fetch/-/node-fetch-2.6.11.tgz"
-  integrity sha512-4I6pdBY1EthSqDmJkiNk3JIT8cswwR9nfeW/cPdUagJYEQG7R95WRH74wpz7ma8Gh/9dI9FP+OU+0E4FvtA55w==
-  dependencies:
-    whatwg-url "^5.0.0"
-
-node-fetch@^2.6.5:
+node-fetch@^2.6.1, node-fetch@^2.6.5, node-fetch@^2.6.7:
   version "2.7.0"
   resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.7.0.tgz#d0f0fa6e3e2dc1d27efcd8ad99d550bda94d187d"
   integrity sha512-c4FRfUm/dbcWZ7U+1Wq0AwCyFL+3nt2bEw05wfxSz+DWpWsitgmSgYmy2dQdWyKC1694ELPqMs/YzUSNozLt8A==
@@ -2952,10 +2945,10 @@ webidl-conversions@^3.0.0:
   resolved "https://registry.npmjs.org/webidl-conversions/-/webidl-conversions-3.0.1.tgz"
   integrity sha512-2JAn3z8AR6rjK8Sm8orRC0h/bcl/DqL7tRPdGZ4I1CjdF+EaMLmYxBHyXuKL849eucPFhvBoxMsflfOb8kxaeQ==
 
-whatsapp-web.js@1.22.2-alpha.1:
-  version "1.22.2-alpha.1"
-  resolved "https://registry.yarnpkg.com/whatsapp-web.js/-/whatsapp-web.js-1.22.2-alpha.1.tgz#3120c6677199b82d813c017ed282e7f2decb2e47"
-  integrity sha512-E3fLtkybS/t1cYEIRtnsqwYrvIOsZz5odHFHvdZPxnQFdTvsf/rb6iSc9W2KQmhHxLU3YdNankvOBabmMc3Qnw==
+whatsapp-web.js@1.22.2-alpha.4:
+  version "1.22.2-alpha.4"
+  resolved "https://registry.yarnpkg.com/whatsapp-web.js/-/whatsapp-web.js-1.22.2-alpha.4.tgz#321ad6345f0a8a73a27efad3d7983257be072ee8"
+  integrity sha512-mogZOs1YVcoJITDd0BIEbBqwAyUjeFSIUMeEJpxC4MDCLROXTE0Dsx7Y1IveeyDGVBJB2nOF1OxljXtYtnU7Gw==
   dependencies:
     "@pedroslopez/moduleraid" "^5.0.2"
     fluent-ffmpeg "^2.1.2"
