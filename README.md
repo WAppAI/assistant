@@ -24,7 +24,8 @@ Welcome to the WhatsApp AI Assistant repository, where you'll find a remarkable 
 ### Prerequisites
 
 - Node.js >= 18.15.0
-- A spare WhatsApp number (chatting with yourself is not ideal, but also works)
+- Node.js version >= 20.x.x users should use the following command instead of `pnpm start`: `node --loader ts-node/esm src/index.ts`
+- A spare WhatsApp number 
 
 ### Installation
 
@@ -76,9 +77,9 @@ pnpm build
 pnpm start
 ```
 
-7. Connect your WhatsApp account to the bot by scanning the generated QR Code in the CLI.
+8. Connect your WhatsApp account to the bot by scanning the generated QR Code in the CLI.
 
-8. Send a message to your WhatsApp account to start a conversation with Sydney!
+9. Send a message to your WhatsApp account to start a conversation with Sydney!
 
 </details>
 
