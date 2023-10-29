@@ -1,6 +1,11 @@
 import { Chat, GroupChat, Message } from "whatsapp-web.js";
 import { Reaction, react } from "../handlers/reactions";
-import { ALLOWED_USERS, BLOCKED_USERS, BOT_PREFIX, CMD_PREFIX } from "../constants";
+import {
+  ALLOWED_USERS,
+  BLOCKED_USERS,
+  BOT_PREFIX,
+  CMD_PREFIX,
+} from "../constants";
 import { prisma } from "../clients/prisma";
 
 async function workingOn(message: Message) {
@@ -49,7 +54,9 @@ export async function shouldIgnore(message: Message) {
 
     // Check if this message came from a blocked user
     if (BLOCKED_USERS.includes(contact.number)) {
-      console.warn(`Ignoring message from blocked user "${contact.pushname}" <${contact.number}>`);
+      console.warn(
+        `Ignoring message from blocked user "${contact.pushname}" <${contact.number}>`
+      );
       return true;
     }
 
@@ -64,7 +71,10 @@ export async function shouldIgnore(message: Message) {
       );
       return true;
     }
-  } else if (BLOCKED_USERS.includes(contact.number) || !ALLOWED_USERS.includes(contact.number)) {
+  } else if (
+    BLOCKED_USERS.includes(contact.number) ||
+    !ALLOWED_USERS.includes(contact.number)
+  ) {
     // It's a private message, so just check if the user is blocked or isn't in the allowed list
     console.warn(
       `Ignoring message from blocked/not allowed user "${contact.pushname}" <${contact.number}>`
@@ -81,18 +91,24 @@ export async function shouldReply(message: Message) {
 
   if (chat.isGroup && !isCommand) {
     const mentions = await message.getMentions();
-    const isMentioned = mentions.some((mention) => mention.id._serialized === message.to);
+    const isMentioned = mentions.some(
+      (mention) => mention.id._serialized === message.to
+    );
 
     const quotedMessage = await message.getQuotedMessage();
     const lastWaReply = await prisma.bingConversation.findFirst({
       where: { waChatId: chat.id._serialized },
       select: { waMessageId: true },
     });
-    const isInThread = quotedMessage && quotedMessage.id._serialized == lastWaReply?.waMessageId;
+    const isInThread =
+      quotedMessage && quotedMessage.id._serialized == lastWaReply?.waMessageId;
 
     if (isMentioned || isInThread) {
       for (const mention of mentions) {
-        message.body = message.body.replace(`@${mention.id.user}`, mention.pushname);
+        message.body = message.body.replace(
+          `@${mention.id.user}`,
+          mention.pushname
+        );
         console.log(`Replaced "${mention.id.user}" with "${mention.pushname}"`);
       }
     } else {
