@@ -19,8 +19,12 @@ export const ENABLE_REACTIONS = process.env.ENABLE_REACTIONS as string;
 export const ENABLE_SOURCES = process.env.ENABLE_SOURCES as string;
 export const ENABLE_SUGGESTIONS = process.env.ENABLE_SUGGESTIONS as string;
 export const STREAM_REMINDERS = process.env.STREAM_REMINDERS as string;
-export const ALLOWED_USERS = process.env.ALLOWED_USERS?.split(",") as string[];
-export const BLOCKED_USERS = process.env.BLOCKED_USERS?.split(",") as string[];
+export const ALLOWED_USERS = process.env.ALLOWED_USERS
+  ? process.env.ALLOWED_USERS.split(",")
+  : [];
+export const BLOCKED_USERS = process.env.BLOCKED_USERS
+  ? process.env.BLOCKED_USERS.split(",")
+  : [];
 export const TRANSCRIPTION_ENABLED = process.env
   .TRANSCRIPTION_ENABLED as string;
 export const TRANSCRIPTION_METHOD = process.env.TRANSCRIPTION_METHOD as string;
