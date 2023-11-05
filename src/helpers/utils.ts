@@ -11,6 +11,15 @@ export function checkEnv() {
     );
   }
 
+  if (
+    !process.env.IGNORE_MESSAGES_WARNING ||
+    !["true", "false"].includes(process.env.IGNORE_MESSAGES_WARNING)
+  ) {
+    throw new Error(
+      `Invalid IGNORE_MESSAGES_WARNING="${process.env.IGNORE_MESSAGES_WARNING}" provided. Accepted values are "true" or "false". Please check the IGNORE_MESSAGES_WARNING variable your .env file.`
+    );
+  }
+
   if (!process.env.BING_TONESTYLE) {
     console.warn(
       "invalid BING_TONESTYLE provided. You must set a tonestyle. Please check your .env file."

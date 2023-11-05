@@ -5,6 +5,7 @@ import {
   BLOCKED_USERS,
   BOT_PREFIX,
   CMD_PREFIX,
+  IGNORE_MESSAGES_WARNING,
 } from "../constants";
 import { prisma } from "../clients/prisma";
 
@@ -129,19 +130,23 @@ export async function shouldIgnoreUnread(chat: Chat) {
       console.warn(
         `Too many unread messages (${chat.unreadCount}) for group chat "${chat.name}". Ignoring...`
       );
-      await chat.sendMessage(
-        BOT_PREFIX +
-          `Too many unread messages (${chat.unreadCount}) since I've last seen this chat. I'm ignoring them. If you need me to respond, please @mention me or quote my last completion in this chat.`
-      );
+      if (IGNORE_MESSAGES_WARNING === "true") {
+        await chat.sendMessage(
+          BOT_PREFIX +
+            `Too many unread messages (${chat.unreadCount}) since I've last seen this chat. I'm ignoring them. If you need me to respond, please @mention me or quote my last completion in this chat.`
+        );
+      }
     } else {
       const contact = await chat.getContact();
       console.warn(
         `Too many unread messages (${chat.unreadCount}) for chat with user "${contact.pushname}" <${contact.number}>. Ignoring...`
       );
-      await chat.sendMessage(
-        BOT_PREFIX +
-          `Too many unread messages (${chat.unreadCount}) since I've last seen this chat. I'm ignoring them. If you need me to respond, please message me again.`
-      );
+      if (IGNORE_MESSAGES_WARNING === "true") {
+        await chat.sendMessage(
+          BOT_PREFIX +
+            `Too many unread messages (${chat.unreadCount}) since I've last seen this chat. I'm ignoring them. If you need me to respond, please message me again.`
+        );
+      }
     }
 
     return true;

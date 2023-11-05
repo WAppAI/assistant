@@ -33,3 +33,5 @@ export const TRANSCRIPTION_LANGUAGE = process.env
 export const OPENAI_API_KEY = process.env.OPENAI_API_KEY as string;
 export const REPLY_TRANSCRIPTION = process.env.REPLY_TRANSCRIPTION as string;
 export const TRANSCRIPTION_MODEL = process.env.TRANSCRIPTION_MODEL as string;
+export const IGNORE_MESSAGES_WARNING = process.env
+  .IGNORE_MESSAGES_WARNING as string;
