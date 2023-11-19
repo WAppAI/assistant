@@ -1,7 +1,12 @@
+import { DEFAULT_LLM_MODEL } from "./../../constants";
 import { Message } from "whatsapp-web.js";
 import { setStatusFor } from "../../helpers/message";
 import { createContextFromMessage } from "../context";
-import { getCompletionFor, getSources, getSuggestions } from "../completion";
+import {
+  getCompletionWithBing,
+  getSources,
+  getSuggestions,
+} from "../llm-models/completion-bing.ts";
 import { log } from "../../helpers/utils";
 import {
   BOT_PREFIX,
@@ -11,28 +16,48 @@ import {
 } from "../../constants";
 import { handleReminderFor } from "../reminder/reminder.ts";
 import { updateWaMessageId } from "../../crud/conversation";
+import { callOpenRouterAPI } from "../../clients/open-router.ts";
 
 export async function handleMessage(message: Message) {
   await log(message);
   await setStatusFor(message, "working");
   const streamingReply = await message.reply("...");
+  let response: string;
 
   try {
     const context = await createContextFromMessage(message);
 
-    const completion = await getCompletionFor(message, context, streamingReply);
-    let response = completion.response;
+    if (DEFAULT_LLM_MODEL === "bing") {
+      const completion = await getCompletionWithBing(
+        message,
+        context,
+        streamingReply
+      );
+      response = completion.response;
 
-    if (ENABLE_REMINDERS === "true")
-      response = await handleReminderFor(message, completion);
+      if (ENABLE_REMINDERS === "true")
+        response = await handleReminderFor(message, completion.response);
 
-    // TODO: must have a way to select them when replying
-    // TODO: maybe they can live in a new whatsapp message (sent immediately after the completion)?
-    if (ENABLE_SUGGESTIONS === "true")
-      response = response + "\n\n" + getSuggestions(completion);
-    if (ENABLE_SOURCES === "true")
-      response = response + "\n\n" + getSources(completion);
+      // TODO: must have a way to select them when replying
+      // TODO: maybe they can live in a new whatsapp message (sent immediately after the completion)?
+      if (ENABLE_SUGGESTIONS === "true")
+        response = response + "\n\n" + getSuggestions(completion);
+      if (ENABLE_SOURCES === "true")
+        response = response + "\n\n" + getSources(completion);
+    } else if (DEFAULT_LLM_MODEL === "openai/gpt-3.5-turbo") {
+      let response = await callOpenRouterAPI(
+        message.body,
+        DEFAULT_LLM_MODEL,
+        context
+      );
 
+      if (!response) throw new Error("Error when calling Open Router API");
+
+      //if (ENABLE_REMINDERS === "true")
+      //  response = await handleReminderFor(message, response);
+    }
+
+    // @ts-ignore
     const finalReply = await streamingReply.edit(response);
 
     await log(finalReply, true);

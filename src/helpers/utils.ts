@@ -5,18 +5,21 @@ import { whatsapp } from "../clients/whatsapp";
 import dayjs from "dayjs";
 
 export function checkEnv() {
+  if (!process.env.DEFAULT_LLM_MODEL) {
+    console.warn(
+      "DEFAULT_LLM_MODEL not provided. You must set a LLM_MODEL. Please check your .env file."
+    );
+  } else if (process.env.DEFAULT_LLM_MODEL != "bing") {
+    if (!process.env.OPENROUTER_API_KEY) {
+      console.warn(
+        "OPENROUTER_API_KEY not provided. You must set a OPENROUTER_API_KEY. Please check your .env file."
+      );
+    }
+  }
+
   if (!process.env.BING_COOKIES) {
     console.warn(
       "BING_COOKIES not provided. The bot will work, but you may soon need to solve captchas."
-    );
-  }
-
-  if (
-    !process.env.IGNORE_MESSAGES_WARNING ||
-    !["true", "false"].includes(process.env.IGNORE_MESSAGES_WARNING)
-  ) {
-    throw new Error(
-      `Invalid IGNORE_MESSAGES_WARNING="${process.env.IGNORE_MESSAGES_WARNING}" provided. Accepted values are "true" or "false". Please check the IGNORE_MESSAGES_WARNING variable your .env file.`
     );
   }
 
