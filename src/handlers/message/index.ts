@@ -8,12 +8,9 @@ import {
   ENABLE_REMINDERS,
   ENABLE_SOURCES,
   ENABLE_SUGGESTIONS,
-  REPLY_TRANSCRIPTION,
-  TRANSCRIPTION_ENABLED,
 } from "../../constants";
 import { handleReminderFor } from "../reminder/reminder.ts";
 import { updateWaMessageId } from "../../crud/conversation";
-import { handleAudioMessage } from "../audio-message/index.ts";
 
 export async function handleMessage(message: Message) {
   await log(message);
