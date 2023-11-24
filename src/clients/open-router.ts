@@ -16,7 +16,7 @@ export async function callOpenRouterAPI(
 ) {
   const apiUrl = "https://openrouter.ai/api/v1/chat/completions";
   let completeContext = OPEN_ROUTER_SYSTEM_MESSAGE + context;
-  console.log(" context = ", completeContext);
+
   const requestData = {
     method: "POST",
     headers: {

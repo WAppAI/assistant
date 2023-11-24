@@ -44,7 +44,7 @@ export async function handleMessage(message: Message) {
         response = response + "\n\n" + getSuggestions(completion);
       if (ENABLE_SOURCES === "true")
         response = response + "\n\n" + getSources(completion);
-    } else if (DEFAULT_LLM_MODEL === "openai/gpt-3.5-turbo") {
+    } else {
       response = await callOpenRouterAPI(
         message.body,
         DEFAULT_LLM_MODEL,
@@ -55,8 +55,6 @@ export async function handleMessage(message: Message) {
 
       //if (ENABLE_REMINDERS === "true")
       //  response = await handleReminderFor(message, response);
-    } else {
-      throw new Error("Invalid LLM model");
     }
 
     // @ts-ignore
