@@ -11,7 +11,9 @@ export const CMD_PREFIX = process.env.CMD_PREFIX?.trim() as string;
 export const BING_TONESTYLE = process.env
   .BING_TONESTYLE as BingAIClientSendMessageOptions["toneStyle"];
 export const ASSISTANT_NAME = process.env.ASSISTANT_NAME?.trim() as string;
-export const SYSTEM_MESSAGE = process.env.SYSTEM_MESSAGE as string;
+export const BING_SYSTEM_MESSAGE = process.env.BING_SYSTEM_MESSAGE as string;
+export const OPEN_ROUTER_SYSTEM_MESSAGE = process.env
+  .OPEN_ROUTER_SYSTEM_MESSAGE as string;
 export const STREAM_RESPONSES = process.env.STREAM_RESPONSES as string;
 export const ENABLE_REMINDERS = process.env.ENABLE_REMINDERS as string;
 export const REPLY_RRULES = process.env.REPLY_RRULES as string;
@@ -35,3 +37,5 @@ export const REPLY_TRANSCRIPTION = process.env.REPLY_TRANSCRIPTION as string;
 export const TRANSCRIPTION_MODEL = process.env.TRANSCRIPTION_MODEL as string;
 export const IGNORE_MESSAGES_WARNING = process.env
   .IGNORE_MESSAGES_WARNING as string;
+export const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY as string;
+export const DEFAULT_LLM_MODEL = process.env.DEFAULT_LLM_MODEL as string;

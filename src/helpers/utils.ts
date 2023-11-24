@@ -5,25 +5,41 @@ import { whatsapp } from "../clients/whatsapp";
 import dayjs from "dayjs";
 
 export function checkEnv() {
-  if (!process.env.BING_COOKIES) {
+  if (!process.env.DEFAULT_LLM_MODEL) {
     console.warn(
-      "BING_COOKIES not provided. The bot will work, but you may soon need to solve captchas."
+      "DEFAULT_LLM_MODEL not provided. You must set a LLM_MODEL. Please check your .env file."
     );
-  }
+  } else if (process.env.DEFAULT_LLM_MODEL != "bing") {
+    if (!process.env.OPENROUTER_API_KEY) {
+      console.warn(
+        "OPENROUTER_API_KEY not provided. You must set a OPENROUTER_API_KEY. Please check your .env file."
+      );
+    }
 
-  if (
-    !process.env.IGNORE_MESSAGES_WARNING ||
-    !["true", "false"].includes(process.env.IGNORE_MESSAGES_WARNING)
-  ) {
-    throw new Error(
-      `Invalid IGNORE_MESSAGES_WARNING="${process.env.IGNORE_MESSAGES_WARNING}" provided. Accepted values are "true" or "false". Please check the IGNORE_MESSAGES_WARNING variable your .env file.`
-    );
-  }
+    if (!process.env.BING_COOKIES) {
+      console.warn(
+        "BING_COOKIES not provided. The bot will work, but you may soon need to solve captchas."
+      );
+    }
 
-  if (!process.env.BING_TONESTYLE) {
-    console.warn(
-      "invalid BING_TONESTYLE provided. You must set a tonestyle. Please check your .env file."
-    );
+    if (!process.env.BING_TONESTYLE) {
+      console.warn(
+        "invalid BING_TONESTYLE provided. You must set a tonestyle. Please check your .env file."
+      );
+    }
+
+    if (!process.env.BING_SYSTEM_MESSAGE)
+      throw new Error(
+        `Invalid BING_SYSTEM_MESSAGE="${process.env.BING_SYSTEM_MESSAGE}" provided. Please check the SYSTEM_MESSAGE variable your .env file.`
+      );
+
+    if (
+      !process.env.ENABLE_SUGGESTIONS ||
+      !["true", "false"].includes(process.env.ENABLE_SUGGESTIONS)
+    )
+      throw new Error(
+        `Invalid ENABLE_SUGGESTIONS="${process.env.ENABLE_SUGGESTIONS}" provided. Accepted values are "true" or "false". Please check the ENABLE_SUGGESTIONS variable your .env file.`
+      );
   }
 
   if (process.env.BOT_PREFIX === process.env.CMD_PREFIX)
@@ -40,7 +56,7 @@ export function checkEnv() {
       `Invalid ASSISTANT_NAME="${process.env.ASSISTANT_NAME}" provided. Please check the ASSISTANT_NAME variable your .env file.`
     );
 
-  if (!process.env.SYSTEM_MESSAGE)
+  if (!process.env.OPEN_ROUTER_SYSTEM_MESSAGE)
     throw new Error(
       `Invalid SYSTEM_MESSAGE="${process.env.SYSTEM_MESSAGE}" provided. Please check the SYSTEM_MESSAGE variable your .env file.`
     );
@@ -98,14 +114,6 @@ export function checkEnv() {
   )
     throw new Error(
       `Invalid ENABLE_REACTIONS="${process.env.ENABLE_REACTIONS}" provided. Accepted values are "true", "dms_only", "groups_only" or "false". Please check the ENABLE_REACTIONS variable your .env file.`
-    );
-
-  if (
-    !process.env.ENABLE_SUGGESTIONS ||
-    !["true", "false"].includes(process.env.ENABLE_SUGGESTIONS)
-  )
-    throw new Error(
-      `Invalid ENABLE_SUGGESTIONS="${process.env.ENABLE_SUGGESTIONS}" provided. Accepted values are "true" or "false". Please check the ENABLE_SUGGESTIONS variable your .env file.`
     );
 
   if (process.env.ENABLE_REACTIONS !== "false")
