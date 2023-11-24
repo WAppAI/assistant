@@ -118,11 +118,6 @@ export function checkEnv() {
       }
     });
 
-  if (!process.env.ALLOWED_USERS)
-    console.warn(
-      "ALLOWED_USERS not provided. The bot will work, but will answer to everyone."
-    );
-
   if (process.env.BLOCKED_USERS)
     console.warn(
       "BLOCKED_USERS provided. The bot will ignore messages from these users."
