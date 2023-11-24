@@ -11,7 +11,7 @@ import { createChat, getChatFor } from "../../crud/chat";
 import {
   BING_TONESTYLE,
   BOT_PREFIX,
-  SYSTEM_MESSAGE,
+  BING_SYSTEM_MESSAGE,
   TRANSCRIPTION_ENABLED,
 } from "../../constants";
 import { handleAudioMessage } from "../audio-message";
@@ -78,7 +78,7 @@ export async function generateCompletionWithBing(
     // If the conversation doesn't exist yet
     completion = await bing.sendMessage(message.body, {
       jailbreakConversationId: waChat?.jailbroken !== false,
-      systemMessage: waChat?.jailbroken ? SYSTEM_MESSAGE : undefined,
+      systemMessage: waChat?.jailbroken ? BING_SYSTEM_MESSAGE : undefined,
       imageBase64,
       toneStyle: BING_TONESTYLE,
       context,

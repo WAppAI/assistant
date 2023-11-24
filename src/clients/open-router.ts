@@ -1,5 +1,5 @@
 import fetch from "node-fetch";
-import { OPENROUTER_API_KEY } from "../constants";
+import { OPENROUTER_API_KEY, OPEN_ROUTER_SYSTEM_MESSAGE } from "../constants";
 
 interface ChatCompletionResponse {
   choices: Array<{
@@ -13,9 +13,10 @@ export async function callOpenRouterAPI(
   messageText: string,
   model: string,
   context: string
-): Promise<string | null> {
+) {
   const apiUrl = "https://openrouter.ai/api/v1/chat/completions";
-
+  let completeContext = OPEN_ROUTER_SYSTEM_MESSAGE + context;
+  console.log(" context = ", completeContext);
   const requestData = {
     method: "POST",
     headers: {
@@ -29,7 +30,7 @@ export async function callOpenRouterAPI(
       messages: [
         {
           role: "system",
-          content: "Your name is Luis, you are a whatsapp chatbot",
+          content: completeContext,
         },
         { role: "user", content: messageText },
       ],

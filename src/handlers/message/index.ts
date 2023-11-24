@@ -22,7 +22,7 @@ export async function handleMessage(message: Message) {
   await log(message);
   await setStatusFor(message, "working");
   const streamingReply = await message.reply("...");
-  let response: string;
+  let response: string | null;
 
   try {
     const context = await createContextFromMessage(message);
@@ -45,16 +45,18 @@ export async function handleMessage(message: Message) {
       if (ENABLE_SOURCES === "true")
         response = response + "\n\n" + getSources(completion);
     } else if (DEFAULT_LLM_MODEL === "openai/gpt-3.5-turbo") {
-      let response = await callOpenRouterAPI(
+      response = await callOpenRouterAPI(
         message.body,
         DEFAULT_LLM_MODEL,
         context
       );
-
+      console.log("type of response:", typeof response);
       if (!response) throw new Error("Error when calling Open Router API");
 
       //if (ENABLE_REMINDERS === "true")
       //  response = await handleReminderFor(message, response);
+    } else {
+      throw new Error("Invalid LLM model");
     }
 
     // @ts-ignore
