@@ -51,17 +51,9 @@ pnpm install
 cp .env.example .env
 ```
 
-4. Edit `.env`'s `BING_COOKIES` environment variable to the `cookies` string from [bing.com](https://bing.com) GET request header.
+4. Login with your Bing account and edit `.env`'s `BING_COOKIES` environment variable to the cookies string from [bing.com](https://bing.com). For detailed instructions [here](https://github.com/danny-avila/LibreChat/issues/370#issuecomment-1560382302).
 
-To obtain the cookies string, perform the following steps:
-
-- Open the developer tools in your browser (by pressing `F12` or right-clicking anywhere and selecting `Inspect element`).
-- Select the `Network` tab within the devtools.
-- Ensure you're logged in to [Bing](https://bing.com) using your Microsoft account.
-- With the devtools panel open, press `F5` to reload the page.
-- Locate the first listed network request (a GET request to the [bing.com](https://bing.com) endpoint/url).
-- Right-click on the `cookie` value in the request headers and select the "Copy value" option.
-- Paste the the copied value into the `BING_COOKIES` environment variable in the `.env` file.
+   **NOTE:** Occasionally, you might encounter an error stating, `User needs to solve CAPTCHA to continue.` To resolve this issue, please solve the captcha [here]https://www.bing.com/turing/captcha/challenge, while logged in with the same account associated with your BING_COOKIES.
 
 5. Read and fill in the remaining information in the `.env` file.
 
