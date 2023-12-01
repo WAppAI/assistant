@@ -21,21 +21,23 @@ export const openRouterChat = new ChatOpenAI(
   }
 );
 
-export const memory = new ConversationSummaryMemory({
+const memory = new ConversationSummaryMemory({
   memoryKey: "chat_history",
   llm: openRouterChat,
 });
 
-const openRouterContext = OPEN_ROUTER_SYSTEM_MESSAGE;
+const systemMessageOpenRouter = PromptTemplate.fromTemplate(` 
+${OPEN_ROUTER_SYSTEM_MESSAGE}
 
-const prompt = PromptTemplate.fromTemplate(` 
-    ${openRouterContext}
-
-    The following is a friendly conversation between a human and an AI. The AI is talkative and provides lots of specific details from its context. If the AI does not know the answer to a question, it truthfully says it does not know.
-
-    Current conversation:
+## Current conversation:
     {chat_history}
     Human: {input}
-    AI:`);
+    AI:
 
-export const chain = new LLMChain({ llm: openRouterChat, prompt, memory });
+    `);
+
+export const chain = new LLMChain({
+  llm: openRouterChat,
+  prompt: systemMessageOpenRouter,
+  memory,
+});
