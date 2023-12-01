@@ -1,10 +1,6 @@
-import { chain, memory } from "../../clients/open-router";
+import { chain } from "../../clients/open-router";
 
-export async function getCompletionWithOpenRouter(
-  messageText: string,
-  model: string,
-  context: string
-) {
+export async function getCompletionWithOpenRouter(messageText: string) {
   let response = await chain.call({ input: messageText });
 
   return response.text;

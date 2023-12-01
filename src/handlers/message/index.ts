@@ -45,11 +45,7 @@ export async function handleMessage(message: Message) {
       if (ENABLE_SOURCES === "true")
         response = response + "\n\n" + getSources(completion);
     } else {
-      response = await getCompletionWithOpenRouter(
-        message.body,
-        LLM_MODEL,
-        context
-      );
+      response = await getCompletionWithOpenRouter(message.body);
 
       if (!response) throw new Error("Error when calling Open Router API");
 
