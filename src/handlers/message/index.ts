@@ -1,4 +1,3 @@
-import { DEFAULT_LLM_MODEL } from "./../../constants";
 import { Message } from "whatsapp-web.js";
 import { setStatusFor } from "../../helpers/message";
 import { createContextFromMessage } from "../context";
@@ -13,10 +12,11 @@ import {
   ENABLE_REMINDERS,
   ENABLE_SOURCES,
   ENABLE_SUGGESTIONS,
+  LLM_MODEL,
 } from "../../constants";
 import { handleReminderFor } from "../reminder/reminder.ts";
 import { updateWaMessageId } from "../../crud/conversation";
-import { callOpenRouterAPI } from "../../clients/open-router.ts";
+import { getCompletionWithOpenRouter } from "../llm-models/completion-open-router.ts";
 
 export async function handleMessage(message: Message) {
   await log(message);
@@ -27,7 +27,7 @@ export async function handleMessage(message: Message) {
   try {
     const context = await createContextFromMessage(message);
 
-    if (DEFAULT_LLM_MODEL === "bing") {
+    if (LLM_MODEL === "bing") {
       const completion = await getCompletionWithBing(
         message,
         context,
@@ -45,12 +45,12 @@ export async function handleMessage(message: Message) {
       if (ENABLE_SOURCES === "true")
         response = response + "\n\n" + getSources(completion);
     } else {
-      response = await callOpenRouterAPI(
+      response = await getCompletionWithOpenRouter(
         message.body,
-        DEFAULT_LLM_MODEL,
+        LLM_MODEL,
         context
       );
-      console.log("type of response:", typeof response);
+
       if (!response) throw new Error("Error when calling Open Router API");
 
       //if (ENABLE_REMINDERS === "true")
