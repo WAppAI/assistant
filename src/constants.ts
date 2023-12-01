@@ -38,4 +38,4 @@ export const TRANSCRIPTION_MODEL = process.env.TRANSCRIPTION_MODEL as string;
 export const IGNORE_MESSAGES_WARNING = process.env
   .IGNORE_MESSAGES_WARNING as string;
 export const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY as string;
-export const DEFAULT_LLM_MODEL = process.env.DEFAULT_LLM_MODEL as string;
+export const LLM_MODEL = process.env.LLM_MODEL as string;

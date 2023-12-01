@@ -5,11 +5,11 @@ import { whatsapp } from "../clients/whatsapp";
 import dayjs from "dayjs";
 
 export function checkEnv() {
-  if (!process.env.DEFAULT_LLM_MODEL) {
+  if (!process.env.LLM_MODEL) {
     console.warn(
       "DEFAULT_LLM_MODEL not provided. You must set a LLM_MODEL. Please check your .env file."
     );
-  } else if (process.env.DEFAULT_LLM_MODEL != "bing") {
+  } else if (process.env.LLM_MODEL != "bing") {
     if (!process.env.OPENROUTER_API_KEY) {
       console.warn(
         "OPENROUTER_API_KEY not provided. You must set a OPENROUTER_API_KEY. Please check your .env file."
@@ -125,11 +125,6 @@ export function checkEnv() {
         );
       }
     });
-
-  if (!process.env.ALLOWED_USERS)
-    console.warn(
-      "ALLOWED_USERS not provided. The bot will work, but will answer to everyone."
-    );
 
   if (process.env.BLOCKED_USERS)
     console.warn(
