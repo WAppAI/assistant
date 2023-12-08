@@ -45,12 +45,16 @@ export async function handleMessage(message: Message) {
       if (ENABLE_SOURCES === "true")
         response = response + "\n\n" + getSources(completion);
     } else {
-      response = await getCompletionWithOpenRouter(message.body);
+      response = await getCompletionWithOpenRouter(
+        message,
+        context,
+        streamingReply
+      );
 
       if (!response) throw new Error("Error when calling Open Router API");
 
-      //if (ENABLE_REMINDERS === "true")
-      //  response = await handleReminderFor(message, response);
+      if (ENABLE_REMINDERS === "true")
+        response = await handleReminderFor(message, response);
     }
 
     // @ts-ignore

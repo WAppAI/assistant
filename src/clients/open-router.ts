@@ -8,12 +8,13 @@ import {
   OPEN_ROUTER_SYSTEM_MESSAGE,
 } from "../constants";
 
-export const OPENROUTER_BASE_URL = "https://openrouter.ai";
+const OPENROUTER_BASE_URL = "https://openrouter.ai";
 
-export const openRouterChat = new ChatOpenAI(
+const openRouterChat = new ChatOpenAI(
   {
     modelName: LLM_MODEL,
     streaming: true,
+    temperature: 1,
     openAIApiKey: OPENROUTER_API_KEY,
   },
   {
@@ -23,6 +24,7 @@ export const openRouterChat = new ChatOpenAI(
 
 const memory = new ConversationSummaryMemory({
   memoryKey: "chat_history",
+  inputKey: "input",
   llm: openRouterChat,
 });
 
