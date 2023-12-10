@@ -1,5 +1,8 @@
 import { Message } from "whatsapp-web.js";
-import { chain, createMemoryForOpenRouter } from "../../clients/open-router";
+import {
+  createChainForOpenRouter,
+  createMemoryForOpenRouter,
+} from "../../clients/open-router";
 import { STREAM_RESPONSES } from "../../constants";
 import { createChat, getChatFor } from "../../crud/chat";
 import {
@@ -21,6 +24,8 @@ export async function getCompletionWithOpenRouter(
   const conversation = await getOpenRouterConversationFor(chat.id._serialized);
 
   if (conversation) await createMemoryForOpenRouter(chat.id._serialized);
+
+  const chain = await createChainForOpenRouter(context);
 
   let response = await chain.call(
     { input: messageWithContext },
@@ -46,7 +51,6 @@ export async function getCompletionWithOpenRouter(
 
   if (!waChat) await createChat(chat.id._serialized); // Creates the chat if it doesn't exist yet
 
-  //console.dir(chain, { depth: null, colors: true });
   let currentSummaryRaw = await chain.memory?.loadMemoryVariables({});
   let currentSummary = currentSummaryRaw?.chat_history;
 

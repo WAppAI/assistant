@@ -2,7 +2,6 @@
 // @ts-ignore
 import { BingAIClientResponse } from "@waylaidwanderer/chatgpt-api";
 import { prisma } from "../clients/prisma";
-import { ConversationSummaryMemory } from "langchain/memory";
 
 export async function createConversation(
   completion: BingAIClientResponse,

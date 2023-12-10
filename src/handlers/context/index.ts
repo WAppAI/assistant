@@ -5,6 +5,7 @@ import { getChatContext } from "./chat";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone"; // dependent on utc plugin
+import { LLM_MODEL } from "../../constants";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -27,7 +28,7 @@ export async function createContextFromMessage(message: Message) {
   - You **MUST ALWAYS** use the user's local date and time when asked about dates and/or times
   - You **MUST ALWAYS** use the user's local date and time when creating reminders
 
-  ${reminderContext}
+  ${LLM_MODEL === "bing" ? reminderContext : ""}
   `;
 
   return context;
