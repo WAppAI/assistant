@@ -9,19 +9,19 @@ Welcome to the WhatsApp AI Assistant repository, where you'll find a remarkable 
 
 ## Feature Comparison
 
-| Feature                       | Sydney                    | OpenRouter LLMs*           |
-|-------------------------------|---------------------------|---------------------------|
-| Google/Bing Searching         | ✅                        | ❌                        |
-| Google Calendar               | ❌                        | ❌                        |
-| Google Places                 | ❌                        | ❌                        |
-| Gmail                         | ❌                        | ❌                        |
-| Communication Capability      | ✅                        | ✅                        |
-| Group Chat Compatibility      | ✅                        | ✅                        |
-| Voice Message Capability      | ✅                        | ❌                        |
-| Create Basic Text Reminders   | ✅                        | ❌                        |
-| Image Recognition             | ✅                        | ❌                        |
-| Image Generation              | ❌                        | ❌                        |
-| PDF Reading                   | ❌                        | ❌                        |
+| Feature                       | Sydney (BingAI Jailbreak) | OpenRouter LLMs*            |
+|:------------------------------|:-------------------------:|:---------------------------:|
+| Google/Bing Searching         |          ✅               |            ❌              |
+| Google Calendar               |          ❌               |            ❌              |
+| Google Places                 |          ❌               |            ❌              |
+| Gmail                         |          ❌               |            ❌              |
+| Communication Capability      |          ✅               |            ✅              |
+| Group Chat Compatibility      |          ✅               |            ✅              |
+| Voice Message Capability      |          ✅               |            ❌              |
+| Create Basic Text Reminders   |          ✅               |            ❌              |
+| Image Recognition             |          ✅               |            ❌              |
+| Image Generation              |          ❌               |            ❌              |
+| PDF Reading                   |          ❌               |            ❌              |
 
 **NOTE:** We do not test every LLM that OpenRouter provides. Typically, we only test OpenAI GPT-3.5, Anthropic Claude 2, Google PaLM 2, and whatever is free and trending in the rankings.
 
