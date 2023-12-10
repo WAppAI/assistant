@@ -7,6 +7,7 @@ import {
   OPENROUTER_API_KEY,
   OPEN_ROUTER_SYSTEM_MESSAGE,
 } from "../constants";
+import { getOpenRouterMemoryFor } from "../crud/conversation";
 
 const OPENROUTER_BASE_URL = "https://openrouter.ai";
 
@@ -27,6 +28,14 @@ const memory = new ConversationSummaryMemory({
   inputKey: "input",
   llm: openRouterChat,
 });
+
+export async function createMemoryForOpenRouter(chat: string) {
+  let memoryString = await getOpenRouterMemoryFor(chat);
+  if (memoryString === undefined) return;
+  else {
+    memory.buffer = memoryString;
+  }
+}
 
 const systemMessageOpenRouter = PromptTemplate.fromTemplate(` 
 ${OPEN_ROUTER_SYSTEM_MESSAGE}

@@ -50,7 +50,7 @@ export async function generateCompletionWithBing(
 
   if (conversation) {
     // If the conversation already exists
-    if (waChat?.jailbroken) {
+    if (conversation?.jailbroken) {
       // If the conversation is jailbroken
       completion = await bing.sendMessage(message.body, {
         jailbreakConversationId: conversation.jailbreakId as string,
@@ -65,7 +65,7 @@ export async function generateCompletionWithBing(
     else
       completion = await bing.sendMessage(message.body, {
         encryptedConversationSignature: conversation.encryptedSignature,
-        conversationId: conversation.id,
+        conversationId: conversation.waChatId,
         clientId: conversation.clientId,
         invocationId: conversation.invocationId,
         imageBase64,
@@ -77,8 +77,8 @@ export async function generateCompletionWithBing(
   } else {
     // If the conversation doesn't exist yet
     completion = await bing.sendMessage(message.body, {
-      jailbreakConversationId: waChat?.jailbroken !== false,
-      systemMessage: waChat?.jailbroken ? BING_SYSTEM_MESSAGE : undefined,
+      jailbreakConversationId: true,
+      systemMessage: BING_SYSTEM_MESSAGE,
       imageBase64,
       toneStyle: BING_TONESTYLE,
       context,

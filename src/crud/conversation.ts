@@ -2,6 +2,7 @@
 // @ts-ignore
 import { BingAIClientResponse } from "@waylaidwanderer/chatgpt-api";
 import { prisma } from "../clients/prisma";
+import { ConversationSummaryMemory } from "langchain/memory";
 
 export async function createConversation(
   completion: BingAIClientResponse,
@@ -10,7 +11,6 @@ export async function createConversation(
 ) {
   return await prisma.bingConversation.create({
     data: {
-      id: completion.conversationId,
       clientId: completion.clientId,
       encryptedSignature: completion.encryptedConversationSignature,
       invocationId: completion.invocationId,
@@ -19,6 +19,18 @@ export async function createConversation(
       expiryTime: completion.conversationExpiryTime,
       waMessageId: messageId,
       waChatId: chatId,
+    },
+  });
+}
+
+export async function createOpenRouterConversation(
+  chatId: string,
+  memory: string
+) {
+  return await prisma.openRouterConversation.create({
+    data: {
+      waChatId: chatId,
+      memory: memory,
     },
   });
 }
@@ -48,10 +60,36 @@ export async function getConversationFor(chatId: string) {
   });
 }
 
+export async function getOpenRouterConversationFor(chatId: string) {
+  return prisma.openRouterConversation.findFirst({
+    where: { waChatId: chatId },
+  });
+}
+
+export async function getOpenRouterMemoryFor(chatId: string) {
+  const conversation = await getOpenRouterConversationFor(chatId);
+  return conversation?.memory;
+}
+
 export async function updateWaMessageId(chatId: string, waMessageId: string) {
   const conversation = await getConversationFor(chatId);
   await prisma.bingConversation.update({
     data: { waMessageId },
     where: { waChatId: conversation?.waChatId },
+  });
+}
+
+export async function updateOpenRouterConversation(
+  chatId: string,
+  memory: string
+) {
+  return await prisma.openRouterConversation.update({
+    data: {
+      waChatId: chatId,
+      memory: memory,
+    },
+    where: {
+      waChatId: chatId,
+    },
   });
 }
