@@ -37,8 +37,11 @@ export async function createMemoryForOpenRouter(chat: string) {
   }
 }
 
-const systemMessageOpenRouter = PromptTemplate.fromTemplate(` 
+export async function createChainForOpenRouter(context: string) {
+  const systemMessageOpenRouter = PromptTemplate.fromTemplate(` 
 ${OPEN_ROUTER_SYSTEM_MESSAGE}
+
+${context}
 
 ## Current conversation:
     {chat_history}
@@ -47,8 +50,9 @@ ${OPEN_ROUTER_SYSTEM_MESSAGE}
 
     `);
 
-export const chain = new LLMChain({
-  llm: openRouterChat,
-  prompt: systemMessageOpenRouter,
-  memory,
-});
+  return new LLMChain({
+    llm: openRouterChat,
+    prompt: systemMessageOpenRouter,
+    memory,
+  });
+}
