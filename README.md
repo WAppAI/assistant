@@ -9,15 +9,19 @@ Welcome to the WhatsApp AI Assistant repository, where you'll find a remarkable 
 
 ## Feature Comparison
 
-| Feature                       | Sydney (BingAI Jailbreak) | GPT 3.5                   | Claude                    |
-|-------------------------------|---------------------------|---------------------------|---------------------------|
-| Communication Capability      | ✅                        | ❌                        | ❌                        |
-| Group Chat Compatibility      | ✅                        | ❌                        | ❌                        |
-| Voice Message Capability      | ✅                        | ❌                        | ❌                        |
-| Create Reminders              | ✅                        | ❌                        | ❌                        |
-| Image Recognition             | ✅                        | ❌                        | ❌                        |
-| PDF and OCR Reading           | ❌                        | ❌                        | ❌                        |
-| Image Generation              | ❌                        | ❌                        | ❌                        |
+| Feature                       | Sydney (BingAI Jailbreak) | OpenRouter LLMs           |
+|-------------------------------|---------------------------|---------------------------|
+| Google/Bing Searching         | ✅                        | ❌                        |
+| Google Calendar               | ❌                        | ❌                        |
+| Google Places                 | ❌                        | ❌                        |
+| Gmail                         | ❌                        | ❌                        |
+| Communication Capability      | ✅                        | ✅                        |
+| Group Chat Compatibility      | ✅                        | ✅                        |
+| Voice Message Capability      | ✅                        | ❌                        |
+| Create Basic Text Reminders   | ✅                        | ❌                        |
+| Image Recognition             | ✅                        | ❌                        |
+| Image Generation              | ❌                        | ❌                        |
+| PDF Reading                   | ❌                        | ❌                        |
 
 ## Getting Started
 
@@ -36,7 +40,7 @@ Welcome to the WhatsApp AI Assistant repository, where you'll find a remarkable 
 1. Clone this repository
 
 ```
-git clone https://github.com/veigamann/sydney-whatsapp-chatbot.git
+git clone https://github.com/WAppAI/assistant.git
 ```
 
 2. Install the dependencies
@@ -75,6 +79,48 @@ pnpm start
 
 </details>
 
+<details>
+<summary><b>OpenRouter</b></summary>
+<br>
+
+1. Clone this repository
+
+```
+git clone https://github.com/WAppAI/assistant.git
+```
+
+2. Install the dependencies
+
+```
+pnpm install
+```
+
+3. Rename [.env.example](../master/.env.example) to `.env`
+
+```
+cp .env.example .env
+```
+
+4. Read and fill in the remaining information in the `.env` file.
+
+5. Run 
+
+```
+pnpm build
+```
+
+6. Start the bot
+
+```
+pnpm start
+```
+
+7. Connect your WhatsApp account to the bot by scanning the generated QR Code in the CLI.
+
+8. Send a message to your WhatsApp account to start a conversation with the bot!
+
+</details>
+
 ## Usage
 
 The AI's are designed to respond to natural language queries from users. You can ask them questions, or just have a casual conversation.
@@ -97,7 +143,7 @@ When dealing with voice messages, you have two options for transcription: utiliz
    - **Cost:** The local method is free but may be slower and less precise.
    - **Setup:**
      1. Download a model of your choice from [here](https://huggingface.co/ggerganov/whisper.cpp/tree/main). Download any `.bin` file and place it in the `./whisper/models` folder.
-     2. Modify the `.env` file by changing `TRANSCRIPTION_ENABLED` to `"true"`, `TRANSCRIPTION_METHOD` to `"local"`, and `"TRANSCRIPTION_MODEL"` with the name of the model you downloaded.
+     2. Modify the `.env` file by changing `TRANSCRIPTION_ENABLED` to `"true"`, `TRANSCRIPTION_METHOD` to `"local"`, and `"TRANSCRIPTION_MODEL"` with the name of the model you downloaded. While setting a language in `TRANSCRIPTION_LANGUAGE` is not mandatory, it is recommended for better performance.
 </details>
 
 ### Group Chat
