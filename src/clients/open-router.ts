@@ -18,7 +18,7 @@ const openRouterChat = new ChatOpenAI(
   {
     modelName: LLM_MODEL,
     //streaming: true,
-    temperature: 1,
+    temperature: 0.7,
     openAIApiKey: OPENROUTER_API_KEY,
   },
   {
