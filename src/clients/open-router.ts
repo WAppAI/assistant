@@ -17,7 +17,7 @@ const OPENROUTER_BASE_URL = "https://openrouter.ai";
 const openRouterChat = new ChatOpenAI(
   {
     modelName: LLM_MODEL,
-    //streaming: true,
+    streaming: true,
     temperature: 0.7,
     openAIApiKey: OPENROUTER_API_KEY,
   },
