@@ -56,7 +56,6 @@ export async function handleMessage(message: Message) {
       if (ENABLE_REMINDERS === "true")
         response = await handleReminderFor(message, response);
     }
-
     // @ts-ignore
     const finalReply = await streamingReply.edit(response);
 

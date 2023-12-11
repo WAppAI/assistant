@@ -42,3 +42,5 @@ export const LLM_MODEL = process.env.LLM_MODEL as string;
 export const OPENROUTER_MSG_MEMORY_LIMIT = parseInt(
   process.env.OPENROUTER_MSG_MEMORY_LIMIT as string
 );
+export const OPENROUTER_MEMORY_TYPE = process.env
+  .OPENROUTER_MEMORY_TYPE as string;
