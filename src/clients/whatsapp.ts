@@ -86,7 +86,7 @@ whatsapp.on("message", async (message) => {
   }
 });
 
-// TODO: may be possible to use only 'message_create' instead of 'message' and still handle self
+/*// TODO: may be possible to use only 'message_create' instead of 'message' and still handle self
 whatsapp.on("message_create", async (message) => {
   const isSelf = message.to === message.from;
   const isBotMessage = message.body.startsWith(BOT_PREFIX);
@@ -99,4 +99,4 @@ whatsapp.on("message_create", async (message) => {
   } else {
     return handleSelfMessage(message);
   }
-});
+});*/

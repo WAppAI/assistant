@@ -78,5 +78,9 @@ export async function handleMessage(message: Message) {
   // Just gotta reply to this message (finalReply) in a thread
   // streamingReply.id === finalReply.id === errorReply.id
   if (chat.isGroup)
-    await updateWaMessageId(chat.id._serialized, streamingReply.id._serialized);
+    if (LLM_MODEL === "bing")
+      await updateWaMessageId(
+        chat.id._serialized,
+        streamingReply.id._serialized
+      );
 }
