@@ -39,3 +39,6 @@ export const IGNORE_MESSAGES_WARNING = process.env
   .IGNORE_MESSAGES_WARNING as string;
 export const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY as string;
 export const LLM_MODEL = process.env.LLM_MODEL as string;
+export const OPENROUTER_MSG_MEMORY_LIMIT = parseInt(
+  process.env.OPENROUTER_MSG_MEMORY_LIMIT as string
+);

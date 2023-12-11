@@ -69,13 +69,13 @@ export async function getCompletionWithOpenRouter(
 
   if (!waChat) await createChat(chat.id._serialized); // Creates the chat if it doesn't exist yet
 
-  let currentSummaryRaw = await chain.memory?.loadMemoryVariables({});
-  let currentSummary = currentSummaryRaw?.chat_history;
+  let chatistoryRaw = await chain.memory?.loadMemoryVariables({});
+  let chatHistory: string = chatistoryRaw?.chat_history;
 
   if (conversation) {
-    await updateOpenRouterConversation(chat.id._serialized, currentSummary); // Updates the conversation
+    await updateOpenRouterConversation(chat.id._serialized, chatHistory); // Updates the conversation
   } else {
-    await createOpenRouterConversation(chat.id._serialized, currentSummary); // Creates the conversation
+    await createOpenRouterConversation(chat.id._serialized, chatHistory); // Creates the conversation
   }
 
   return response.text;
