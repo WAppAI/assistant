@@ -2,6 +2,7 @@
 // @ts-ignore
 import { BingAIClientResponse } from "@waylaidwanderer/chatgpt-api";
 import { prisma } from "../clients/prisma";
+import { BingConversation, OpenRouterConversation } from "@prisma/client";
 
 export async function createConversation(
   completion: BingAIClientResponse,
@@ -39,16 +40,22 @@ export async function deleteAllConversations() {
   return await prisma.bingConversation.deleteMany();
 }
 
-export async function deleteConversation(chatId: string) {
-  const conversation = await getConversationFor(chatId);
-  if (!conversation) return;
-
+export async function deleteBingConversation(
+  chatId: string,
+  conversation: BingConversation
+) {
   if (conversation.jailbreakId)
     await prisma.cache.delete({
       where: { key: `bing:${conversation.jailbreakId}` },
     });
 
   return await prisma.bingConversation.delete({
+    where: { waChatId: chatId },
+  });
+}
+
+export async function deleteOpenRouterConversation(chatId: string) {
+  return await prisma.openRouterConversation.delete({
     where: { waChatId: chatId },
   });
 }
@@ -75,6 +82,12 @@ export async function updateWaMessageId(chatId: string, waMessageId: string) {
   await prisma.bingConversation.update({
     data: { waMessageId },
     where: { waChatId: conversation?.waChatId },
+  });
+}
+
+export async function getWAChat(id: string) {
+  return await prisma.wAChat.findFirst({
+    where: { id },
   });
 }
 

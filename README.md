@@ -3,25 +3,25 @@
 Welcome to the WhatsApp AI Assistant repository, where you'll find a remarkable WhatsApp chatbot designed to function as your very own AI-powered personal assistant. This chatbot leverages the power of Language Model (LLM) technology. As of now, it only supports Bing Chat and the jailbreak for it, codenamed Sydney.
 
 
-| Sydney | OpenRouter LLMs |
-| :------: | :------: |
-| <video src="https://github.com/WAppAI/assistant/assets/50471205/5d300910-099d-4ceb-9f87-0852389a4c5b"> | Coming soon |
+|                                                 Sydney                                                 | OpenRouter LLMs |
+| :----------------------------------------------------------------------------------------------------: | :-------------: |
+| <video src="https://github.com/WAppAI/assistant/assets/50471205/5d300910-099d-4ceb-9f87-0852389a4c5b"> |   Coming soon   |
 
 ## Feature Comparison
 
-| Feature                       | Sydney (BingAI Jailbreak) | OpenRouter LLMs*            |
-|:------------------------------|:-------------------------:|:---------------------------:|
-| Google/Bing Searching         |          ✅               |            ❌              |
-| Google Calendar               |          ❌               |            ❌              |
-| Google Places                 |          ❌               |            ❌              |
-| Gmail                         |          ❌               |            ❌              |
-| Communication Capability      |          ✅               |            ✅              |
-| Group Chat Compatibility      |          ✅               |            ✅              |
-| Voice Message Capability      |          ✅               |            ❌              |
-| Create Basic Text Reminders   |          ✅               |            ❌              |
-| Image Recognition             |          ✅               |            ❌              |
-| Image Generation              |          ❌               |            ❌              |
-| PDF Reading                   |          ❌               |            ❌              |
+| Feature                     | Sydney (BingAI Jailbreak) | OpenRouter LLMs* |
+| :-------------------------- | :-----------------------: | :--------------: |
+| Google/Bing Searching       |             ✅             |        ❌         |
+| Google Calendar             |             ❌             |        ❌         |
+| Google Places               |             ❌             |        ❌         |
+| Gmail                       |             ❌             |        ❌         |
+| Communication Capability    |             ✅             |        ✅         |
+| Group Chat Compatibility    |             ✅             |        ✅         |
+| Voice Message Capability    |             ✅             |        ✅         |
+| Create Basic Text Reminders |             ✅             |        ❌         |
+| Image Recognition           |             ✅             |        ❌         |
+| Image Generation            |             ❌             |        ❌         |
+| PDF Reading                 |             ❌             |        ❌         |
 
 **NOTE:** We do not test every LLM that OpenRouter provides. Typically, we only test OpenAI GPT-3.5, Anthropic Claude 2, Google PaLM 2, and whatever is free and trending in the rankings.
 

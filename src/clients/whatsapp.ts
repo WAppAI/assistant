@@ -1,17 +1,15 @@
 import qrcode from "qrcode";
 import WAWebJS from "whatsapp-web.js";
-import { handleMessage } from "../handlers/message";
-import { handleSelfMessage } from "../handlers/message/self";
-import { BOT_PREFIX, CMD_PREFIX } from "../constants";
+import { CMD_PREFIX } from "../constants";
 import { handleCommand } from "../handlers/command";
+import { handleGroupJoin } from "../handlers/group-join";
+import { handleMessage } from "../handlers/message";
+import { loadAllRemindersAndSchedule } from "../handlers/reminder/load-reminder";
 import {
-  shouldIgnoreUnread,
   shouldIgnore,
+  shouldIgnoreUnread,
   shouldReply,
 } from "../helpers/message";
-import { handleGroupJoin } from "../handlers/group-join";
-import { loadAllReminders } from "../crud/reminder";
-import { loadAllRemindersAndSchedule } from "../handlers/reminder/load-reminder";
 
 // Doing this for now because ts-node complains about commonjs modules, will fix later
 const { Client, LocalAuth } = WAWebJS;

@@ -1,12 +1,17 @@
 import { Message } from "whatsapp-web.js";
 import { createChainForOpenRouter } from "../../clients/open-router";
-import { STREAM_RESPONSES } from "../../constants";
+import {
+  BOT_PREFIX,
+  STREAM_RESPONSES,
+  TRANSCRIPTION_ENABLED,
+} from "../../constants";
 import { createChat, getChatFor } from "../../crud/chat";
 import {
   createOpenRouterConversation,
   getOpenRouterConversationFor,
   updateOpenRouterConversation,
 } from "../../crud/conversation";
+import { handleAudioMessage } from "../audio-message";
 
 export async function getCompletionWithOpenRouter(
   message: Message,
@@ -17,9 +22,28 @@ export async function getCompletionWithOpenRouter(
 
   const chat = await message.getChat();
   const waChat = await getChatFor(chat.id._serialized);
+  let imageBase64: string | undefined;
   const conversation = await getOpenRouterConversationFor(chat.id._serialized);
-
   const chain = await createChainForOpenRouter(context, chat.id._serialized);
+
+  if (message.hasMedia) {
+    const media = await message.downloadMedia();
+    const mimetype = media.mimetype;
+
+    const isImage = mimetype?.includes("image");
+    const isAudio = mimetype?.includes("audio");
+
+    if (isImage) imageBase64 = media.data;
+    if (isAudio) {
+      if (TRANSCRIPTION_ENABLED === "true") {
+        message.body = await handleAudioMessage(media, message);
+      } else {
+        // Handle the case when transcription is not enabled
+        message.reply(BOT_PREFIX + "Transcription not enabled");
+        throw new Error("Transcription not enabled");
+      }
+    }
+  }
 
   let response = await chain.call(
     { input: message.body },
@@ -47,8 +71,6 @@ export async function getCompletionWithOpenRouter(
 
   let currentSummaryRaw = await chain.memory?.loadMemoryVariables({});
   let currentSummary = currentSummaryRaw?.chat_history;
-
-  console.log("Current summary: ", currentSummary);
 
   if (conversation) {
     await updateOpenRouterConversation(chat.id._serialized, currentSummary); // Updates the conversation

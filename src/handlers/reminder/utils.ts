@@ -161,9 +161,6 @@ export async function deleteReminderByIndex(
     where: { id: waChatId },
     include: { reminders: true },
   });
-
-  console.log("reminders: ", reminders);
-
   if (!reminders) {
     return `No reminders found for user ${waChatId}`;
   }
