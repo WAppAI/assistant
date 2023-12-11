@@ -2,6 +2,7 @@ import { Message } from "whatsapp-web.js";
 import { createChainForOpenRouter } from "../../clients/open-router";
 import {
   BOT_PREFIX,
+  OPENROUTER_MEMORY_TYPE,
   STREAM_RESPONSES,
   TRANSCRIPTION_ENABLED,
 } from "../../constants";
@@ -69,13 +70,24 @@ export async function getCompletionWithOpenRouter(
 
   if (!waChat) await createChat(chat.id._serialized); // Creates the chat if it doesn't exist yet
 
-  let chatistoryRaw = await chain.memory?.loadMemoryVariables({});
-  let chatHistory: string = chatistoryRaw?.chat_history;
+  if (OPENROUTER_MEMORY_TYPE === "summary") {
+    let currentSummaryRaw = await chain.memory?.loadMemoryVariables({});
+    let currentSummary = currentSummaryRaw?.chat_history;
 
-  if (conversation) {
-    await updateOpenRouterConversation(chat.id._serialized, chatHistory); // Updates the conversation
+    if (conversation) {
+      await updateOpenRouterConversation(chat.id._serialized, currentSummary); // Updates the conversation
+    } else {
+      await createOpenRouterConversation(chat.id._serialized, currentSummary); // Creates the conversation
+    }
   } else {
-    await createOpenRouterConversation(chat.id._serialized, chatHistory); // Creates the conversation
+    let chatistoryRaw = await chain.memory?.loadMemoryVariables({});
+    let chatHistory: string = chatistoryRaw?.chat_history;
+
+    if (conversation) {
+      await updateOpenRouterConversation(chat.id._serialized, chatHistory); // Updates the conversation
+    } else {
+      await createOpenRouterConversation(chat.id._serialized, chatHistory); // Creates the conversation
+    }
   }
 
   return response.text;

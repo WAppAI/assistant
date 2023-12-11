@@ -46,6 +46,14 @@ export function checkEnv() {
         `Invalid OPENROUTER_MSG_MEMORY_LIMIT="${process.env.OPENROUTER_MSG_MEMORY_LIMIT}" provided. Please check the OPENROUTER_MSG_MEMORY_LIMIT variable your .env file.`
       );
     }
+    if (
+      !process.env.OPENROUTER_MEMORY_TYPE ||
+      !["buffer", "summary"].includes(process.env.OPENROUTER_MEMORY_TYPE)
+    ) {
+      throw new Error(
+        `Invalid OPENROUTER_MEMORY_TYPE="${process.env.OPENROUTER_MEMORY_TYPE}" provided. Please check the OPENROUTER_MEMORY_TYPE variable your .env file.`
+      );
+    }
   }
 
   if (process.env.BOT_PREFIX === process.env.CMD_PREFIX)
