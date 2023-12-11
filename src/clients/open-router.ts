@@ -7,14 +7,17 @@ import {
   OPENROUTER_API_KEY,
   OPEN_ROUTER_SYSTEM_MESSAGE,
 } from "../constants";
-import { getOpenRouterMemoryFor } from "../crud/conversation";
+import {
+  getOpenRouterConversationFor,
+  getOpenRouterMemoryFor,
+} from "../crud/conversation";
 
 const OPENROUTER_BASE_URL = "https://openrouter.ai";
 
 const openRouterChat = new ChatOpenAI(
   {
     modelName: LLM_MODEL,
-    streaming: true,
+    //streaming: true,
     temperature: 1,
     openAIApiKey: OPENROUTER_API_KEY,
   },
@@ -23,21 +26,26 @@ const openRouterChat = new ChatOpenAI(
   }
 );
 
-const memory = new ConversationSummaryMemory({
-  memoryKey: "chat_history",
-  inputKey: "input",
-  llm: openRouterChat,
-});
+async function createMemoryForOpenRouter(chat: string) {
+  const conversation = await getOpenRouterConversationFor(chat);
 
-export async function createMemoryForOpenRouter(chat: string) {
-  let memoryString = await getOpenRouterMemoryFor(chat);
-  if (memoryString === undefined) return;
-  else {
+  const memory = new ConversationSummaryMemory({
+    memoryKey: "chat_history",
+    inputKey: "input",
+    llm: openRouterChat,
+  });
+
+  if (conversation) {
+    let memoryString = await getOpenRouterMemoryFor(chat);
+    if (memoryString === undefined) return;
     memory.buffer = memoryString;
   }
+
+  return memory;
 }
 
-export async function createChainForOpenRouter(context: string) {
+export async function createChainForOpenRouter(context: string, chat: string) {
+  const memory = await createMemoryForOpenRouter(chat);
   const systemMessageOpenRouter = PromptTemplate.fromTemplate(` 
 ${OPEN_ROUTER_SYSTEM_MESSAGE}
 

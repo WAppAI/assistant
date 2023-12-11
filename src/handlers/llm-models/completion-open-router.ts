@@ -1,8 +1,5 @@
 import { Message } from "whatsapp-web.js";
-import {
-  createChainForOpenRouter,
-  createMemoryForOpenRouter,
-} from "../../clients/open-router";
+import { createChainForOpenRouter } from "../../clients/open-router";
 import { STREAM_RESPONSES } from "../../constants";
 import { createChat, getChatFor } from "../../crud/chat";
 import {
@@ -16,19 +13,16 @@ export async function getCompletionWithOpenRouter(
   context: string,
   streamingReply: Message
 ) {
-  let messageWithContext = message.body;
   let tokenBuffer: string[] = ["..."];
 
   const chat = await message.getChat();
   const waChat = await getChatFor(chat.id._serialized);
   const conversation = await getOpenRouterConversationFor(chat.id._serialized);
 
-  if (conversation) await createMemoryForOpenRouter(chat.id._serialized);
-
-  const chain = await createChainForOpenRouter(context);
+  const chain = await createChainForOpenRouter(context, chat.id._serialized);
 
   let response = await chain.call(
-    { input: messageWithContext },
+    { input: message.body },
     {
       callbacks: [
         {
@@ -56,10 +50,11 @@ export async function getCompletionWithOpenRouter(
 
   console.log("Current summary: ", currentSummary);
 
-  if (!conversation)
-    await createOpenRouterConversation(chat.id._serialized, currentSummary);
-  // Creates the conversation
-  else await updateOpenRouterConversation(chat.id._serialized, currentSummary); // Updates the conversation
+  if (conversation) {
+    await updateOpenRouterConversation(chat.id._serialized, currentSummary); // Updates the conversation
+  } else {
+    await createOpenRouterConversation(chat.id._serialized, currentSummary); // Creates the conversation
+  }
 
   return response.text;
 }
