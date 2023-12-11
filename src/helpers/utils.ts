@@ -40,6 +40,12 @@ export function checkEnv() {
       throw new Error(
         `Invalid ENABLE_SUGGESTIONS="${process.env.ENABLE_SUGGESTIONS}" provided. Accepted values are "true" or "false". Please check the ENABLE_SUGGESTIONS variable your .env file.`
       );
+  } else {
+    if (!process.env.OPENROUTER_MSG_MEMORY_LIMIT) {
+      throw new Error(
+        `Invalid OPENROUTER_MSG_MEMORY_LIMIT="${process.env.OPENROUTER_MSG_MEMORY_LIMIT}" provided. Please check the OPENROUTER_MSG_MEMORY_LIMIT variable your .env file.`
+      );
+    }
   }
 
   if (process.env.BOT_PREFIX === process.env.CMD_PREFIX)
