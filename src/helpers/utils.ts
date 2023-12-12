@@ -54,6 +54,21 @@ export function checkEnv() {
         `Invalid OPENROUTER_MEMORY_TYPE="${process.env.OPENROUTER_MEMORY_TYPE}" provided. Please check the OPENROUTER_MEMORY_TYPE variable your .env file.`
       );
     }
+    if (process.env.OPENROUTER_MEMORY_TYPE === "summary") {
+      if (!process.env.SUMMARY_LLM_MODEL) {
+        throw new Error(
+          `Invalid SUMMARY_LLM_MODEL="${process.env.SUMMARY_LLM_MODEL}" provided. Please check the SUMMARY_LLM_MODEL variable your .env file.`
+        );
+      }
+      if (
+        !process.env.DEBUG_SUMMARY ||
+        !["true", "false"].includes(process.env.DEBUG_SUMMARY)
+      ) {
+        throw new Error(
+          `Invalid DEBUG_SUMMARY="${process.env.DEBUG_SUMMARY}" provided. Accepted values are "true" or "false". Please check the DEBUG_SUMMARY variable your .env file.`
+        );
+      }
+    }
   }
 
   if (process.env.BOT_PREFIX === process.env.CMD_PREFIX)

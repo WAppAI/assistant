@@ -13,6 +13,7 @@ import {
   OPENROUTER_MEMORY_TYPE,
   OPENROUTER_MSG_MEMORY_LIMIT,
   OPEN_ROUTER_SYSTEM_MESSAGE,
+  SUMMARY_LLM_MODEL,
 } from "../constants";
 import {
   getOpenRouterConversationFor,
@@ -55,8 +56,7 @@ async function createMemoryForOpenRouter(chat: string) {
   if (OPENROUTER_MEMORY_TYPE === "summary") {
     const summaryLLM = new ChatOpenAI(
       {
-        modelName: "openai/gpt-3.5-turbo",
-        streaming: true,
+        modelName: SUMMARY_LLM_MODEL,
         temperature: 0.7,
         openAIApiKey: OPENROUTER_API_KEY,
       },
