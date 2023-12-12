@@ -91,6 +91,19 @@ export async function getWAChat(id: string) {
   });
 }
 
+export async function getLLMModel(chatId: string) {
+  const conversation = await getWAChat(chatId);
+  return conversation?.llmModel;
+}
+
+export async function updateLLMModel(chatId: string, llmModel: string) {
+  const conversation = await getWAChat(chatId);
+  await prisma.wAChat.update({
+    data: { llmModel },
+    where: { id: conversation?.id },
+  });
+}
+
 export async function updateOpenRouterConversation(
   chatId: string,
   memory: string

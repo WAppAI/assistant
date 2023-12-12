@@ -78,9 +78,9 @@ whatsapp.on("message", async (message) => {
 
   const isCommand = message.body.startsWith(CMD_PREFIX);
   if (isCommand) {
-    return handleCommand(message);
+    return await handleCommand(message);
   } else {
-    return handleMessage(message);
+    return await handleMessage(message);
   }
 });
 

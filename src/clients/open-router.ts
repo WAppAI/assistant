@@ -8,7 +8,6 @@ import {
 import { PromptTemplate } from "langchain/prompts";
 import { AIMessage, HumanMessage } from "langchain/schema";
 import {
-  LLM_MODEL,
   OPENROUTER_API_KEY,
   OPENROUTER_MEMORY_TYPE,
   OPENROUTER_MSG_MEMORY_LIMIT,
@@ -16,6 +15,7 @@ import {
   SUMMARY_LLM_MODEL,
 } from "../constants";
 import {
+  getLLMModel,
   getOpenRouterConversationFor,
   getOpenRouterMemoryFor,
 } from "../crud/conversation";
@@ -36,18 +36,6 @@ function parseMessageHistory(rawHistory: string): (HumanMessage | AIMessage)[] {
       (message): message is HumanMessage | AIMessage => message !== undefined
     );
 }
-
-const openRouterChat = new ChatOpenAI(
-  {
-    modelName: LLM_MODEL,
-    streaming: true,
-    temperature: 0.7,
-    openAIApiKey: OPENROUTER_API_KEY,
-  },
-  {
-    basePath: `${OPENROUTER_BASE_URL}/api/v1`,
-  }
-);
 
 async function createMemoryForOpenRouter(chat: string) {
   const conversation = await getOpenRouterConversationFor(chat);
@@ -96,7 +84,20 @@ async function createMemoryForOpenRouter(chat: string) {
 }
 
 export async function createChainForOpenRouter(context: string, chat: string) {
+  const llmModel = await getLLMModel(chat);
+  const openRouterChat = new ChatOpenAI(
+    {
+      modelName: llmModel,
+      streaming: true,
+      temperature: 0.7,
+      openAIApiKey: OPENROUTER_API_KEY,
+    },
+    {
+      basePath: `${OPENROUTER_BASE_URL}/api/v1`,
+    }
+  );
   const memory = await createMemoryForOpenRouter(chat);
+
   const systemMessageOpenRouter = PromptTemplate.fromTemplate(` 
 ${OPEN_ROUTER_SYSTEM_MESSAGE}
 
