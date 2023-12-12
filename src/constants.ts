@@ -44,3 +44,5 @@ export const OPENROUTER_MSG_MEMORY_LIMIT = parseInt(
 );
 export const OPENROUTER_MEMORY_TYPE = process.env
   .OPENROUTER_MEMORY_TYPE as string;
+export const SUMMARY_LLM_MODEL = process.env.SUMMARY_LLM_MODEL as string;
+export const DEBUG_SUMMARY = process.env.DEBUG_SUMMARY as string;

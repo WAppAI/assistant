@@ -57,8 +57,8 @@ dependencies:
     specifier: ^2.7.2
     version: 2.7.2
   whatsapp-web.js:
-    specifier: 1.22.2-alpha.1
-    version: 1.22.2-alpha.1
+    specifier: 1.23.1-alpha.0
+    version: 1.23.1-alpha.0
   zod:
     specifier: ^3.22.2
     version: 3.22.2
@@ -340,8 +340,8 @@ packages:
     resolution: {integrity: sha512-WUtIVRUZ9i5dYXefDEAI7sh9/O7jGvHg7Df/5O/gtH3Yabe5odI3UWopVR1qbPXQtvOxWu3mM4XxlYeZtMWF4g==}
     dev: false
 
-  /@types/yauzl@2.10.1:
-    resolution: {integrity: sha512-CHzgNU3qYBnp/O4S3yv2tXPlvMTq0YWSTVg2/JYLqWZGHwwgJGAwd00poay/11asPq8wLFwHzubyInqHIFmmiw==}
+  /@types/yauzl@2.10.3:
+    resolution: {integrity: sha512-oJoftv0LSuaDZE3Le4DbKX+KS9G36NzOeSap90UIK0yMA/NhKJhqlSGtNDORNRaIbQfzjXDrQa0ytJ6mNRGz/Q==}
     requiresBuild: true
     dependencies:
       '@types/node': 20.8.0
@@ -1207,7 +1207,7 @@ packages:
       get-stream: 5.2.0
       yauzl: 2.10.0
     optionalDependencies:
-      '@types/yauzl': 2.10.1
+      '@types/yauzl': 2.10.3
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -3003,7 +3003,7 @@ packages:
   /puppeteer@13.7.0:
     resolution: {integrity: sha512-U1uufzBjz3+PkpCxFrWzh4OrMIdIb2ztzCu0YEPfRHjHswcSwHZswnK+WdsOQJsRV8WeTg3jLhJR4D867+fjsA==}
     engines: {node: '>=10.18.1'}
-    deprecated: < 19.4.0 is no longer supported
+    deprecated: < 21.3.7 is no longer supported
     requiresBuild: true
     dependencies:
       cross-fetch: 3.1.5
@@ -3663,8 +3663,8 @@ packages:
     resolution: {integrity: sha512-2JAn3z8AR6rjK8Sm8orRC0h/bcl/DqL7tRPdGZ4I1CjdF+EaMLmYxBHyXuKL849eucPFhvBoxMsflfOb8kxaeQ==}
     dev: false
 
-  /whatsapp-web.js@1.22.2-alpha.1:
-    resolution: {integrity: sha512-E3fLtkybS/t1cYEIRtnsqwYrvIOsZz5odHFHvdZPxnQFdTvsf/rb6iSc9W2KQmhHxLU3YdNankvOBabmMc3Qnw==}
+  /whatsapp-web.js@1.23.1-alpha.0:
+    resolution: {integrity: sha512-E2nykLcee/aMnz/MY6mNkqb23Fm1sZjpf6yMzOY5XEx0aye2jTEEuHBUSi40G/ZZLPfBShGrTNa9w2rX8b+aWg==}
     engines: {node: '>=12.0.0'}
     dependencies:
       '@pedroslopez/moduleraid': 5.0.2

@@ -2,6 +2,7 @@ import { Message } from "whatsapp-web.js";
 import { createChainForOpenRouter } from "../../clients/open-router";
 import {
   BOT_PREFIX,
+  DEBUG_SUMMARY,
   OPENROUTER_MEMORY_TYPE,
   STREAM_RESPONSES,
   TRANSCRIPTION_ENABLED,
@@ -46,7 +47,7 @@ export async function getCompletionWithOpenRouter(
     }
   }
 
-  let response = await chain.call(
+  const response = await chain.call(
     { input: message.body },
     {
       callbacks: [
@@ -73,6 +74,10 @@ export async function getCompletionWithOpenRouter(
   if (OPENROUTER_MEMORY_TYPE === "summary") {
     let currentSummaryRaw = await chain.memory?.loadMemoryVariables({});
     let currentSummary = currentSummaryRaw?.chat_history;
+
+    if (DEBUG_SUMMARY === "true") {
+      console.log("Current summary: ", currentSummary);
+    }
 
     if (conversation) {
       await updateOpenRouterConversation(chat.id._serialized, currentSummary); // Updates the conversation
