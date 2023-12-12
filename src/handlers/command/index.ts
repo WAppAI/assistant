@@ -8,8 +8,9 @@ import { stripIndents } from "common-tags";
 import { helpStatement, unauthorizedCommandFor } from "../../helpers/command";
 import { handleHelp } from "./help";
 import { handleReminderCommand } from "./reminder";
+import { handleChangeLLM } from "./change-llm";
 
-const adminCommands = ["jailbreak", "reset"];
+const adminCommands = ["jailbreak", "reset", "change"];
 
 export async function handleCommand(message: Message) {
   const [command, ..._args] = message.body.split(CMD_PREFIX)[1].split(" ");
@@ -48,6 +49,9 @@ export async function handleCommand(message: Message) {
       break;
     case "reminder":
       reply = await handleReminderCommand(message, args);
+      break;
+    case "change":
+      reply = await handleChangeLLM(message, args);
       break;
     case "help":
       reply = await handleHelp(message, args);

@@ -22,6 +22,9 @@ export async function handleHelp(message: Message, args: string) {
     case "reminder":
       reply = await message.reply(reminderHelpMessage);
       break;
+    case "change":
+      reply = await message.reply(changeHelpMessage);
+      break;
     case "":
       reply = await message.reply(helpMessage);
       break;
@@ -41,9 +44,6 @@ const helpMessage = stripIndents`${BOT_PREFIX}Available commands:
 Displays the available commands, their functionalities and how to use them.
 - Run *${CMD_PREFIX}help _<command>_* for more information about a specific command.
 
-🏓 *${CMD_PREFIX}ping*
-Checks if the bot is alive by responding with '*_pong!_*'.
-
 🗑️ *${CMD_PREFIX}reset*
 Clears the conversation history for _this_ chat.
 - Run *${CMD_PREFIX}reset bing* to clear the Bing conversation for this chat.
@@ -51,16 +51,26 @@ Clears the conversation history for _this_ chat.
 - Run *${CMD_PREFIX}reset all* to clear the Bing and OpenRouter conversations for this chat, along with all the reminders.
 - Run *${CMD_PREFIX}help reset* for more information.
 
-🔓 *${CMD_PREFIX}jailbreak _<enable|disable|on|off>_*
-Enables or disables *_${ASSISTANT_NAME}_*'s jailbreak mode.
-- Run *${CMD_PREFIX}help jailbreak* for more information.
+🔄 *${CMD_PREFIX}change*
+Change the LLM model used by the bot.
+- Run *${CMD_PREFIX}change* to see the current LLM model.
+- Run *${CMD_PREFIX}change <model>* to change the LLM model.
+- Run *${CMD_PREFIX}help change* for more information.
 
 ⏰ *${CMD_PREFIX}reminder*
 Manage reminders with the following commands:
 - *${CMD_PREFIX}reminder list* List all reminders.
 - *${CMD_PREFIX}reminder delete <index>⠀* Delete a specific reminder.
 - *${CMD_PREFIX}reminder delete all* Delete all reminders.
-- Run *${CMD_PREFIX}help reminder* for more information.`;
+- Run *${CMD_PREFIX}help reminder* for more information.
+
+🔓 *${CMD_PREFIX}jailbreak _<enable|disable|on|off>_*
+Enables or disables *_${ASSISTANT_NAME}_*'s jailbreak mode.
+- Run *${CMD_PREFIX}help jailbreak* for more information.
+
+🏓 *${CMD_PREFIX}ping*
+Checks if the bot is alive by responding with '*_pong!_*'.
+`;
 
 const helpHelpMessage = stripIndents`I see what you did there.
 
@@ -105,3 +115,15 @@ Manage reminders with the following commands:
 - *${CMD_PREFIX}reminder delete <index>* Allows you to delete a specific reminder by providing its index in the list. You can find the index next to each reminder when you list them. For example, *${CMD_PREFIX}reminder delete 2* would delete the second reminder in your list.
 
 - *${CMD_PREFIX}reminder delete all* Removes all of your active reminders. Use this command if you want to clear your entire reminders list.`;
+
+const changeHelpMessage = stripIndents`🔄 *${CMD_PREFIX}change*
+Change the LLM model used by the bot.
+
+- *${CMD_PREFIX}change* will show you the current LLM model being used, along with a list of available models.
+
+- *${CMD_PREFIX}change <model>* will change the LLM model used by the bot. The model that you change to will be used *only* for your conversations.
+
+- An example of changing the LLM model would be *${CMD_PREFIX}change mistralai/mixtral-8x7b-instruct*
+
+- See the list of available models at OpenRouter docs in https://openrouter.ai/docs#models.
+`;

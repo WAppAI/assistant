@@ -12,22 +12,23 @@ import {
   ENABLE_REMINDERS,
   ENABLE_SOURCES,
   ENABLE_SUGGESTIONS,
-  LLM_MODEL,
 } from "../../constants";
 import { handleReminderFor } from "../reminder/reminder.ts";
-import { updateWaMessageId } from "../../crud/conversation";
+import { getLLMModel, updateWaMessageId } from "../../crud/conversation";
 import { getCompletionWithOpenRouter } from "../llm-models/completion-open-router.ts";
 
 export async function handleMessage(message: Message) {
   await log(message);
   await setStatusFor(message, "working");
+  const chat = await message.getChat();
   const streamingReply = await message.reply("...");
+  const llmModel = await getLLMModel(chat.id._serialized);
   let response: string | null;
 
   try {
     const context = await createContextFromMessage(message);
 
-    if (LLM_MODEL === "bing") {
+    if (llmModel === "bing") {
       const completion = await getCompletionWithBing(
         message,
         context,
@@ -69,14 +70,12 @@ export async function handleMessage(message: Message) {
     await setStatusFor(message, "error");
   }
 
-  const chat = await message.getChat();
-
   // The waMessageId is used to track the last completion sent by the bot in the chat (finalReply)
   // Allows the user to get completions from the bot without having to mention it in groups
   // Just gotta reply to this message (finalReply) in a thread
   // streamingReply.id === finalReply.id === errorReply.id
   if (chat.isGroup)
-    if (LLM_MODEL === "bing")
+    if (llmModel === "bing")
       await updateWaMessageId(
         chat.id._serialized,
         streamingReply.id._serialized

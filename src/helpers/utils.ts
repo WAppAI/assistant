@@ -1,73 +1,71 @@
-import { TRANSCRIPTION_METHOD, OPENAI_API_KEY } from "./../constants";
+import {
+  TRANSCRIPTION_METHOD,
+  OPENAI_API_KEY,
+  LOG_MESSAGES,
+} from "./../constants";
 import { Message } from "whatsapp-web.js";
 import { REACTIONS } from "../handlers/reactions";
 import { whatsapp } from "../clients/whatsapp";
 import dayjs from "dayjs";
 
 export function checkEnv() {
-  if (!process.env.LLM_MODEL) {
+  if (!process.env.OPENROUTER_API_KEY) {
     console.warn(
-      "DEFAULT_LLM_MODEL not provided. You must set a LLM_MODEL. Please check your .env file."
+      "OPENROUTER_API_KEY not provided. You must set a OPENROUTER_API_KEY. Please check your .env file."
     );
-  } else if (process.env.LLM_MODEL != "bing") {
-    if (!process.env.OPENROUTER_API_KEY) {
-      console.warn(
-        "OPENROUTER_API_KEY not provided. You must set a OPENROUTER_API_KEY. Please check your .env file."
-      );
-    }
+  }
 
-    if (!process.env.BING_COOKIES) {
-      console.warn(
-        "BING_COOKIES not provided. The bot will work, but you may soon need to solve captchas."
-      );
-    }
+  if (!process.env.BING_COOKIES) {
+    console.warn(
+      "BING_COOKIES not provided. The bot will work, but you may soon need to solve captchas."
+    );
+  }
 
-    if (!process.env.BING_TONESTYLE) {
-      console.warn(
-        "invalid BING_TONESTYLE provided. You must set a tonestyle. Please check your .env file."
-      );
-    }
+  if (!process.env.BING_TONESTYLE) {
+    console.warn(
+      "invalid BING_TONESTYLE provided. You must set a tonestyle. Please check your .env file."
+    );
+  }
 
-    if (!process.env.BING_SYSTEM_MESSAGE)
+  if (!process.env.BING_SYSTEM_MESSAGE)
+    throw new Error(
+      `Invalid BING_SYSTEM_MESSAGE="${process.env.BING_SYSTEM_MESSAGE}" provided. Please check the SYSTEM_MESSAGE variable your .env file.`
+    );
+
+  if (
+    !process.env.ENABLE_SUGGESTIONS ||
+    !["true", "false"].includes(process.env.ENABLE_SUGGESTIONS)
+  )
+    throw new Error(
+      `Invalid ENABLE_SUGGESTIONS="${process.env.ENABLE_SUGGESTIONS}" provided. Accepted values are "true" or "false". Please check the ENABLE_SUGGESTIONS variable your .env file.`
+    );
+
+  if (!process.env.OPENROUTER_MSG_MEMORY_LIMIT) {
+    throw new Error(
+      `Invalid OPENROUTER_MSG_MEMORY_LIMIT="${process.env.OPENROUTER_MSG_MEMORY_LIMIT}" provided. Please check the OPENROUTER_MSG_MEMORY_LIMIT variable your .env file.`
+    );
+  }
+  if (
+    !process.env.OPENROUTER_MEMORY_TYPE ||
+    !["buffer", "summary"].includes(process.env.OPENROUTER_MEMORY_TYPE)
+  ) {
+    throw new Error(
+      `Invalid OPENROUTER_MEMORY_TYPE="${process.env.OPENROUTER_MEMORY_TYPE}" provided. Please check the OPENROUTER_MEMORY_TYPE variable your .env file.`
+    );
+  }
+  if (process.env.OPENROUTER_MEMORY_TYPE === "summary") {
+    if (!process.env.SUMMARY_LLM_MODEL) {
       throw new Error(
-        `Invalid BING_SYSTEM_MESSAGE="${process.env.BING_SYSTEM_MESSAGE}" provided. Please check the SYSTEM_MESSAGE variable your .env file.`
+        `Invalid SUMMARY_LLM_MODEL="${process.env.SUMMARY_LLM_MODEL}" provided. Please check the SUMMARY_LLM_MODEL variable your .env file.`
       );
-
+    }
     if (
-      !process.env.ENABLE_SUGGESTIONS ||
-      !["true", "false"].includes(process.env.ENABLE_SUGGESTIONS)
-    )
-      throw new Error(
-        `Invalid ENABLE_SUGGESTIONS="${process.env.ENABLE_SUGGESTIONS}" provided. Accepted values are "true" or "false". Please check the ENABLE_SUGGESTIONS variable your .env file.`
-      );
-  } else {
-    if (!process.env.OPENROUTER_MSG_MEMORY_LIMIT) {
-      throw new Error(
-        `Invalid OPENROUTER_MSG_MEMORY_LIMIT="${process.env.OPENROUTER_MSG_MEMORY_LIMIT}" provided. Please check the OPENROUTER_MSG_MEMORY_LIMIT variable your .env file.`
-      );
-    }
-    if (
-      !process.env.OPENROUTER_MEMORY_TYPE ||
-      !["buffer", "summary"].includes(process.env.OPENROUTER_MEMORY_TYPE)
+      !process.env.DEBUG_SUMMARY ||
+      !["true", "false"].includes(process.env.DEBUG_SUMMARY)
     ) {
       throw new Error(
-        `Invalid OPENROUTER_MEMORY_TYPE="${process.env.OPENROUTER_MEMORY_TYPE}" provided. Please check the OPENROUTER_MEMORY_TYPE variable your .env file.`
+        `Invalid DEBUG_SUMMARY="${process.env.DEBUG_SUMMARY}" provided. Accepted values are "true" or "false". Please check the DEBUG_SUMMARY variable your .env file.`
       );
-    }
-    if (process.env.OPENROUTER_MEMORY_TYPE === "summary") {
-      if (!process.env.SUMMARY_LLM_MODEL) {
-        throw new Error(
-          `Invalid SUMMARY_LLM_MODEL="${process.env.SUMMARY_LLM_MODEL}" provided. Please check the SUMMARY_LLM_MODEL variable your .env file.`
-        );
-      }
-      if (
-        !process.env.DEBUG_SUMMARY ||
-        !["true", "false"].includes(process.env.DEBUG_SUMMARY)
-      ) {
-        throw new Error(
-          `Invalid DEBUG_SUMMARY="${process.env.DEBUG_SUMMARY}" provided. Accepted values are "true" or "false". Please check the DEBUG_SUMMARY variable your .env file.`
-        );
-      }
     }
   }
 
@@ -185,15 +183,18 @@ export function checkEnv() {
       throw new Error(
         `Invalid OPENAI_API_KEY="${process.env.OPENAI_API_KEY}" provided. Please check the OPENAI_API_KEY variable your .env file.`
       );
-  } else if (process.env.TRANSCRIPTION_ENABLED === "false") {
-  } else {
-    throw new Error(
-      `Invalid TRANSCRIPTION_ENABLED="${process.env.TRANSCRIPTION_ENABLED}" provided. Accepted values are "true" or "false". Please check the TRANSCRIPTION_ENABLED variable your .env file.`
-    );
   }
+  if (
+    !process.env.LOG_MESSAGES ||
+    !["true", "false"].includes(process.env.LOG_MESSAGES)
+  )
+    throw new Error(
+      `Invalid LOG_MESSAGES="${process.env.LOG_MESSAGES}" provided. Accepted values are "true" or "false". Please check the LOG_MESSAGES variable your .env file.`
+    );
 }
 
 export async function log(message: Message | null, isReply: boolean = false) {
+  if (LOG_MESSAGES === "false") return;
   if (!message) return;
 
   const chat = await message.getChat();
