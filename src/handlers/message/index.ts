@@ -50,12 +50,11 @@ export async function handleMessage(message: Message) {
         context,
         streamingReply
       );
-
-      if (!response) throw new Error("Error when calling Open Router API");
-
-      if (ENABLE_REMINDERS === "true")
-        response = await handleReminderFor(message, response);
+      //  if (ENABLE_REMINDERS === "true")
+      //    response = await handleReminderFor(message, response);
     }
+    if (!response) throw new Error("No response from LLM");
+
     // @ts-ignore
     const finalReply = await streamingReply.edit(response);
 

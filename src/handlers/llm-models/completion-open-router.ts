@@ -47,7 +47,7 @@ export async function getCompletionWithOpenRouter(
     }
   }
 
-  let response = await chain.call(
+  const response = await chain.call(
     { input: message.body },
     {
       callbacks: [
