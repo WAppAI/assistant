@@ -8,26 +8,33 @@ datasource db {
 }
 
 model WAChat {
-  id               String             @id
-  BingConversation BingConversation[]
-  jailbroken       Boolean            @default(true)
-  reminders        Reminder[]
+  id                      String                   @id
+  bingConversations       BingConversation[]
+  openRouterConversations OpenRouterConversation[]
+  reminders               Reminder[]
+  llmModel                String                   @default("bing")
 }
 
 model BingConversation {
   waChatId    String @id
   waMessageId String
 
-  id              String
   clientId        String
   jailbreakId     String?
+  jailbroken      Boolean @default(true)
   parentMessageId String?
   invocationId    Int
 
   encryptedSignature String
   expiryTime         String
 
-  waChat WAChat? @relation(fields: [waChatId], references: [id])
+  waChat WAChat @relation(fields: [waChatId], references: [id])
+}
+
+model OpenRouterConversation {
+  waChatId String @id
+  memory   String
+  waChat   WAChat @relation(fields: [waChatId], references: [id])
 }
 
 model Reminder {
@@ -38,7 +45,7 @@ model Reminder {
   waChat   WAChat @relation(fields: [waChatId], references: [id])
 }
 
-model cache {
+model Cache {
   key   String @id
   value String
 }

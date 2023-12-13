@@ -1,22 +1,23 @@
-import { TRANSCRIPTION_METHOD, OPENAI_API_KEY } from "./../constants";
+import {
+  TRANSCRIPTION_METHOD,
+  OPENAI_API_KEY,
+  LOG_MESSAGES,
+} from "./../constants";
 import { Message } from "whatsapp-web.js";
 import { REACTIONS } from "../handlers/reactions";
 import { whatsapp } from "../clients/whatsapp";
 import dayjs from "dayjs";
 
 export function checkEnv() {
-  if (!process.env.BING_COOKIES) {
+  if (!process.env.OPENROUTER_API_KEY) {
     console.warn(
-      "BING_COOKIES not provided. The bot will work, but you may soon need to solve captchas."
+      "OPENROUTER_API_KEY not provided. You must set a OPENROUTER_API_KEY. Please check your .env file."
     );
   }
 
-  if (
-    !process.env.IGNORE_MESSAGES_WARNING ||
-    !["true", "false"].includes(process.env.IGNORE_MESSAGES_WARNING)
-  ) {
-    throw new Error(
-      `Invalid IGNORE_MESSAGES_WARNING="${process.env.IGNORE_MESSAGES_WARNING}" provided. Accepted values are "true" or "false". Please check the IGNORE_MESSAGES_WARNING variable your .env file.`
+  if (!process.env.BING_COOKIES) {
+    console.warn(
+      "BING_COOKIES not provided. The bot will work, but you may soon need to solve captchas."
     );
   }
 
@@ -24,6 +25,48 @@ export function checkEnv() {
     console.warn(
       "invalid BING_TONESTYLE provided. You must set a tonestyle. Please check your .env file."
     );
+  }
+
+  if (!process.env.BING_SYSTEM_MESSAGE)
+    throw new Error(
+      `Invalid BING_SYSTEM_MESSAGE="${process.env.BING_SYSTEM_MESSAGE}" provided. Please check the SYSTEM_MESSAGE variable your .env file.`
+    );
+
+  if (
+    !process.env.ENABLE_SUGGESTIONS ||
+    !["true", "false"].includes(process.env.ENABLE_SUGGESTIONS)
+  )
+    throw new Error(
+      `Invalid ENABLE_SUGGESTIONS="${process.env.ENABLE_SUGGESTIONS}" provided. Accepted values are "true" or "false". Please check the ENABLE_SUGGESTIONS variable your .env file.`
+    );
+
+  if (!process.env.OPENROUTER_MSG_MEMORY_LIMIT) {
+    throw new Error(
+      `Invalid OPENROUTER_MSG_MEMORY_LIMIT="${process.env.OPENROUTER_MSG_MEMORY_LIMIT}" provided. Please check the OPENROUTER_MSG_MEMORY_LIMIT variable your .env file.`
+    );
+  }
+  if (
+    !process.env.OPENROUTER_MEMORY_TYPE ||
+    !["buffer", "summary"].includes(process.env.OPENROUTER_MEMORY_TYPE)
+  ) {
+    throw new Error(
+      `Invalid OPENROUTER_MEMORY_TYPE="${process.env.OPENROUTER_MEMORY_TYPE}" provided. Please check the OPENROUTER_MEMORY_TYPE variable your .env file.`
+    );
+  }
+  if (process.env.OPENROUTER_MEMORY_TYPE === "summary") {
+    if (!process.env.SUMMARY_LLM_MODEL) {
+      throw new Error(
+        `Invalid SUMMARY_LLM_MODEL="${process.env.SUMMARY_LLM_MODEL}" provided. Please check the SUMMARY_LLM_MODEL variable your .env file.`
+      );
+    }
+    if (
+      !process.env.DEBUG_SUMMARY ||
+      !["true", "false"].includes(process.env.DEBUG_SUMMARY)
+    ) {
+      throw new Error(
+        `Invalid DEBUG_SUMMARY="${process.env.DEBUG_SUMMARY}" provided. Accepted values are "true" or "false". Please check the DEBUG_SUMMARY variable your .env file.`
+      );
+    }
   }
 
   if (process.env.BOT_PREFIX === process.env.CMD_PREFIX)
@@ -40,7 +83,7 @@ export function checkEnv() {
       `Invalid ASSISTANT_NAME="${process.env.ASSISTANT_NAME}" provided. Please check the ASSISTANT_NAME variable your .env file.`
     );
 
-  if (!process.env.SYSTEM_MESSAGE)
+  if (!process.env.OPEN_ROUTER_SYSTEM_MESSAGE)
     throw new Error(
       `Invalid SYSTEM_MESSAGE="${process.env.SYSTEM_MESSAGE}" provided. Please check the SYSTEM_MESSAGE variable your .env file.`
     );
@@ -100,14 +143,6 @@ export function checkEnv() {
       `Invalid ENABLE_REACTIONS="${process.env.ENABLE_REACTIONS}" provided. Accepted values are "true", "dms_only", "groups_only" or "false". Please check the ENABLE_REACTIONS variable your .env file.`
     );
 
-  if (
-    !process.env.ENABLE_SUGGESTIONS ||
-    !["true", "false"].includes(process.env.ENABLE_SUGGESTIONS)
-  )
-    throw new Error(
-      `Invalid ENABLE_SUGGESTIONS="${process.env.ENABLE_SUGGESTIONS}" provided. Accepted values are "true" or "false". Please check the ENABLE_SUGGESTIONS variable your .env file.`
-    );
-
   if (process.env.ENABLE_REACTIONS !== "false")
     // Checks if all reactions are valid emojis
     Object.values(REACTIONS).forEach((reaction) => {
@@ -148,15 +183,18 @@ export function checkEnv() {
       throw new Error(
         `Invalid OPENAI_API_KEY="${process.env.OPENAI_API_KEY}" provided. Please check the OPENAI_API_KEY variable your .env file.`
       );
-  } else if (process.env.TRANSCRIPTION_ENABLED === "false") {
-  } else {
-    throw new Error(
-      `Invalid TRANSCRIPTION_ENABLED="${process.env.TRANSCRIPTION_ENABLED}" provided. Accepted values are "true" or "false". Please check the TRANSCRIPTION_ENABLED variable your .env file.`
-    );
   }
+  if (
+    !process.env.LOG_MESSAGES ||
+    !["true", "false"].includes(process.env.LOG_MESSAGES)
+  )
+    throw new Error(
+      `Invalid LOG_MESSAGES="${process.env.LOG_MESSAGES}" provided. Accepted values are "true" or "false". Please check the LOG_MESSAGES variable your .env file.`
+    );
 }
 
 export async function log(message: Message | null, isReply: boolean = false) {
+  if (LOG_MESSAGES === "false") return;
   if (!message) return;
 
   const chat = await message.getChat();

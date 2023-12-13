@@ -1,15 +1,15 @@
 {
   "compilerOptions": {
-    "lib": ["esnext"],
+    "lib": [
+      "esnext"
+    ],
     "module": "esnext",
     "target": "esnext",
-
     "moduleResolution": "node",
     "noEmit": true,
     "allowImportingTsExtensions": true,
     "moduleDetection": "force",
     "esModuleInterop": true,
-
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,

@@ -13,15 +13,11 @@ import { addOffset, parseReminderString, scheduleReminderJob } from "./utils";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-export async function handleReminderFor(
-  message: Message,
-  completion: BingAIClientResponse
-) {
-  const isReminder =
-    completion.response.startsWith("{") && completion.response.endsWith("}");
-  if (!isReminder) return completion.response;
+export async function handleReminderFor(message: Message, llmAnswer: string) {
+  const isReminder = llmAnswer.startsWith("{") && llmAnswer.endsWith("}");
+  if (!isReminder) return llmAnswer;
 
-  const reminder = parseReminderString(completion.response);
+  const reminder = parseReminderString(llmAnswer);
   const recurrenceRule = rrule.rrulestr(reminder.rrule, {
     // this makes sure that the first recurrence can happen today
     dtstart: dayjs().subtract(1, "day").toDate(),
