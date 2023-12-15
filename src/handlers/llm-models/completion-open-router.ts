@@ -1,5 +1,4 @@
 import { Message } from "whatsapp-web.js";
-import { createChainForOpenRouter } from "../../clients/open-router";
 import {
   BOT_PREFIX,
   DEBUG_SUMMARY,
@@ -14,6 +13,7 @@ import {
   updateOpenRouterConversation,
 } from "../../crud/conversation";
 import { handleAudioMessage } from "../audio-message";
+import { createExecutorForOpenRouter } from "../../clients/open-router";
 
 export async function getCompletionWithOpenRouter(
   message: Message,
@@ -26,7 +26,10 @@ export async function getCompletionWithOpenRouter(
   const waChat = await getChatFor(chat.id._serialized);
   let imageBase64: string | undefined;
   const conversation = await getOpenRouterConversationFor(chat.id._serialized);
-  const chain = await createChainForOpenRouter(context, chat.id._serialized);
+  const executor = await createExecutorForOpenRouter(
+    context,
+    chat.id._serialized
+  );
 
   if (message.hasMedia) {
     const media = await message.downloadMedia();
@@ -47,7 +50,7 @@ export async function getCompletionWithOpenRouter(
     }
   }
 
-  const response = await chain.call(
+  const response = await executor.invoke(
     { input: message.body },
     {
       callbacks: [
@@ -68,11 +71,12 @@ export async function getCompletionWithOpenRouter(
       ],
     }
   );
+  console.log("response:", response);
 
   if (!waChat) await createChat(chat.id._serialized); // Creates the chat if it doesn't exist yet
 
   if (OPENROUTER_MEMORY_TYPE === "summary") {
-    let currentSummaryRaw = await chain.memory?.loadMemoryVariables({});
+    let currentSummaryRaw = await executor.memory?.loadMemoryVariables({});
     let currentSummary = currentSummaryRaw?.chat_history;
 
     if (DEBUG_SUMMARY === "true") {
@@ -85,7 +89,7 @@ export async function getCompletionWithOpenRouter(
       await createOpenRouterConversation(chat.id._serialized, currentSummary); // Creates the conversation
     }
   } else {
-    let chatistoryRaw = await chain.memory?.loadMemoryVariables({});
+    let chatistoryRaw = await executor.memory?.loadMemoryVariables({});
     let chatHistory: string = chatistoryRaw?.chat_history;
 
     if (conversation) {
@@ -95,5 +99,5 @@ export async function getCompletionWithOpenRouter(
     }
   }
 
-  return response.text;
+  return response.output;
 }

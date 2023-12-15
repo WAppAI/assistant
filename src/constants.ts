@@ -46,3 +46,4 @@ export const OPENROUTER_MEMORY_TYPE = process.env
 export const SUMMARY_LLM_MODEL = process.env.SUMMARY_LLM_MODEL as string;
 export const DEBUG_SUMMARY = process.env.DEBUG_SUMMARY as string;
 export const LOG_MESSAGES = process.env.LOG_MESSAGES as string;
+export const SEARCH_API = process.env.SEARCH_API as string;
