@@ -18,6 +18,7 @@ export const whatsapp = new Client({
   authStrategy: new LocalAuth(),
 
   puppeteer: {
+    headless: true,
     handleSIGTERM: false,
     handleSIGINT: false,
     executablePath: process.env.PUPPETEER_EXECUTABLE_PATH,
