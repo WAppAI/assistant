@@ -1,6 +1,6 @@
 {
   "name": "whatsapp-ai-assistant",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "WhatsApp chatbot",
   "module": "src/index.ts",
   "type": "module",
@@ -16,7 +16,7 @@
     "docker:stop": "docker stop sydney-whatsapp-chatbot",
     "build": "npm run generate && npm run migrate"
   },
-  "repository": "https://github.com/veigamann/sydney-whatsapp-chatbot.git",
+  "repository": "https://github.com/WAppAI/assistant.git",
   "author": "Matheus Veiga <veigamann@gmail.com>",
   "devDependencies": {
     "@types/fluent-ffmpeg": "^2.1.22",
