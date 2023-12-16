@@ -42,7 +42,7 @@
     "langchain": "^0.0.198",
     "node-fetch": "^3.3.2",
     "node-schedule": "^2.1.1",
-    "openai": "^4.11.1",
+    "openai": "^4.22.1",
     "qrcode": "^1.5.3",
     "rrule": "^2.7.2",
     "whatsapp-web.js": "1.23.1-alpha.0",
