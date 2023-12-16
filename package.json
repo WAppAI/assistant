@@ -20,7 +20,7 @@
   "author": "Matheus Veiga <veigamann@gmail.com>",
   "devDependencies": {
     "@types/fluent-ffmpeg": "^2.1.22",
-    "@types/node": "^20.8.0",
+    "@types/node": "^20.10.4",
     "@types/qrcode": "^1.5.2",
     "nodemon": "^3.0.1",
     "prisma": "^5.3.1",
