@@ -33,11 +33,11 @@ import {
 
 const OPENROUTER_BASE_URL = "https://openrouter.ai";
 
-const tools = [
-  new SearchApi(SEARCH_API, {
-    engine: "google_news",
-  }),
-];
+const searchTool = new SearchApi(SEARCH_API, {
+  engine: "google_news",
+});
+
+const tools = [searchTool];
 const toolNames = tools.map((tool) => tool.name);
 
 function parseMessageHistory(rawHistory: string): (HumanMessage | AIMessage)[] {

@@ -9,7 +9,7 @@ const LLM_OPTIONS = {
   "1": "bing",
   "2": "openai/gpt-3.5-turbo",
   "3": "anthropic/claude-2",
-  "4": "google/palm-2-chat-bison-32k",
+  "4": "google/gemini-pro",
 };
 
 export async function handleChangeLLM(message: Message, args: string) {
@@ -32,7 +32,7 @@ export async function handleChangeLLM(message: Message, args: string) {
   *${CMD_PREFIX}change 1* for _bing_
   *${CMD_PREFIX}change 2* for _openai/gpt-3.5-turbo_
   *${CMD_PREFIX}change 3* for _anthropic/claude-2_
-  *${CMD_PREFIX}change 4* for _google/palm-2-chat-bison-32k_
+  *${CMD_PREFIX}change 4* for _google/gemini-pro_
 
   You can also type the name of your desired model, like *${CMD_PREFIX}change mistralai/mixtral-8x7b-instruct*
 
