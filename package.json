@@ -1,6 +1,6 @@
 {
   "name": "whatsapp-ai-assistant",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "description": "WhatsApp chatbot",
   "module": "src/index.ts",
   "type": "module",
@@ -40,7 +40,7 @@
     "dotenv-expand": "^10.0.0",
     "fluent-ffmpeg": "^2.1.2",
     "keyv": "^4.5.3",
-    "langchain": "^0.0.198",
+    "langchain": "^0.0.208",
     "node-fetch": "^3.3.2",
     "node-schedule": "^2.1.1",
     "openai": "^4.11.1",

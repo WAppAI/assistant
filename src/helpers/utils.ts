@@ -69,6 +69,21 @@ export function checkEnv() {
     }
   }
 
+  if (
+    !process.env.ENABLE_SEARCH_OPENROUTER ||
+    !["true", "false"].includes(process.env.ENABLE_SEARCH_OPENROUTER)
+  ) {
+    throw new Error(
+      `Invalid ENABLE_SEARCH_OPENROUTER="${process.env.ENABLE_SEARCH_OPENROUTER}" provided. Accepted values are "true" or "false". Please check the ENABLE_SEARCH_OPENROUTER variable your .env file.`
+    );
+  } else if (process.env.ENABLE_SEARCH_OPENROUTER === "true") {
+    if (!process.env.SEARCH_API) {
+      throw new Error(
+        `Invalid SEARCH_API="${process.env.SEARCH_API}" provided. Please check the SEARCH_API variable your .env file.`
+      );
+    }
+  }
+
   if (process.env.BOT_PREFIX === process.env.CMD_PREFIX)
     throw new Error(
       `Invalid BOT_PREFIX/CMD_PREFIX provided. The bot prefix and the command prefix must be different. Please check your .env file.`

@@ -3,34 +3,34 @@
 Welcome to the WhatsApp AI Assistant repository, where you'll find a remarkable WhatsApp chatbot designed to function as your very own AI-powered personal assistant. This chatbot leverages the power of Language Model (LLM) technology. As of now, it only supports Bing Chat and the jailbreak for it, codenamed Sydney.
 
 
-|                                                 Sydney                                                 | OpenRouter LLMs |
-| :----------------------------------------------------------------------------------------------------: | :-------------: |
-| <video src="https://github.com/WAppAI/assistant/assets/50471205/5d300910-099d-4ceb-9f87-0852389a4c5b"> |   Coming soon   |
+|                                                 Sydney                                                 | OpenRouter Models* |
+| :----------------------------------------------------------------------------------------------------: | :----------------: |
+| <video src="https://github.com/WAppAI/assistant/assets/50471205/5d300910-099d-4ceb-9f87-0852389a4c5b"> |    Coming soon     |
 
 ## Feature Comparison
 
-| Feature                     | Sydney (BingAI Jailbreak) | OpenRouter LLMs* |
-| :-------------------------- | :-----------------------: | :--------------: |
-| Google/Bing Searching       |             ✅             |        ❌         |
-| Google Calendar             |             ❌             |        ❌         |
-| Google Places               |             ❌             |        ❌         |
-| Gmail                       |             ❌             |        ❌         |
-| Communication Capability    |             ✅             |        ✅         |
-| Group Chat Compatibility    |             ✅             |        ✅         |
-| Voice Message Capability    |             ✅             |        ✅         |
-| Create Basic Text Reminders |             ✅             |        ❌         |
-| Image Recognition           |             ✅             |        ❌         |
-| Image Generation            |             ❌             |        ❌         |
-| PDF Reading                 |             ❌             |        ❌         |
+| Feature                     | Sydney (BingAI Jailbreak) | OpenRouter Models* |
+| :-------------------------- | :-----------------------: | :----------------: |
+| Google/Bing Searching       |             ✅             |         ✅          |
+| Google Calendar             |             ❌             |         ❌          |
+| Google Places               |             ❌             |         ❌          |
+| Gmail                       |             ❌             |         ❌          |
+| Communication Capability    |             ✅             |         ✅          |
+| Group Chat Compatibility    |             ✅             |         ✅          |
+| Voice Message Capability    |             ✅             |         ✅          |
+| Create Basic Text Reminders |             ✅             |         ❌          |
+| Image Recognition           |             ✅             |         ❌          |
+| Image Generation            |             ❌             |         ❌          |
+| PDF Reading                 |             ❌             |         ❌          |
 
-**NOTE:** We do not test every LLM that OpenRouter provides. Typically, we only test OpenAI GPT-3.5, Anthropic Claude 2, Google PaLM 2, and whatever is free and trending in the rankings.
+**NOTE:** We do not test every LLM that OpenRouter provides. Typically, we only test OpenAI GPT-3.5, Anthropic Claude 2 and Google Gemini Pro.
 
 ## Getting Started
 
 ### Prerequisites
 
 - Node.js >= 18.15.0
-- Node.js version >= 20.x.x users should use the following command instead of `pnpm start`: `node --loader ts-node/esm src/index.ts`
+- Node.js version >= 20.x.x users you should use `node --loader ts-node/esm src/index.ts` instead of `pnpm start`
 - A spare WhatsApp number 
 
 ### Installation
