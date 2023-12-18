@@ -15,14 +15,12 @@ import {
   HumanMessage,
 } from "langchain/schema";
 import { RunnableSequence } from "langchain/schema/runnable";
-import { SearchApi } from "langchain/tools";
 import { renderTextDescription } from "langchain/tools/render";
 import {
   OPENROUTER_API_KEY,
   OPENROUTER_MEMORY_TYPE,
   OPENROUTER_MSG_MEMORY_LIMIT,
   OPEN_ROUTER_SYSTEM_MESSAGE,
-  SEARCH_API,
   SUMMARY_LLM_MODEL,
 } from "../constants";
 import {
@@ -30,15 +28,9 @@ import {
   getOpenRouterConversationFor,
   getOpenRouterMemoryFor,
 } from "../crud/conversation";
+import { toolNames, tools } from "./tools-openrouter";
 
 const OPENROUTER_BASE_URL = "https://openrouter.ai";
-
-const searchTool = new SearchApi(SEARCH_API, {
-  engine: "google_news",
-});
-
-const tools = [searchTool];
-const toolNames = tools.map((tool) => tool.name);
 
 function parseMessageHistory(rawHistory: string): (HumanMessage | AIMessage)[] {
   const lines = rawHistory.split("\n");
