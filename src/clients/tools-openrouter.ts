@@ -1,5 +1,5 @@
-import { OpenAI } from "langchain/llms/openai";
 import { SearchApi } from "@langchain/community/tools/searchapi";
+import { OpenAI } from "langchain/llms/openai";
 import {
   GoogleCalendarCreateTool,
   GoogleCalendarViewTool,
@@ -11,7 +11,6 @@ import {
   OPENROUTER_API_KEY,
   SEARCH_API,
 } from "../constants";
-import { Calculator } from "langchain/tools/calculator";
 
 const OPENROUTER_BASE_URL = "https://openrouter.ai";
 
@@ -47,5 +46,5 @@ const CalendarCreateTool = new GoogleCalendarCreateTool(googleCalendarParams);
 
 const CalendarViewTool = new GoogleCalendarViewTool(googleCalendarParams);
 
-export const tools = [searchTool, CalendarCreateTool, CalendarViewTool, new Calculator()];
+export const tools = [searchTool, CalendarCreateTool, CalendarViewTool];
 export const toolNames = tools.map((tool) => tool.name);
