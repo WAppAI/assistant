@@ -6,7 +6,7 @@ import dayjs from "dayjs";
 export function checkEnv() {
   if (!process.env.OPENROUTER_API_KEY) {
     console.warn(
-      "OPENROUTER_API_KEY not provided. You must set OPENROUTER_API_KEY. Please check your .env file."
+      "OPENROUTER_API_KEY not provided. You will not be able to use any other model than Bing."
     );
   } else {
     if (!process.env.SEARCH_API) {
@@ -18,7 +18,7 @@ export function checkEnv() {
 
   if (!process.env.BING_COOKIES) {
     console.warn(
-      "BING_COOKIES not provided. The bot will work, but you may soon need to solve captchas."
+      "BING_COOKIES not provided. You will not be able to use the Bing model."
     );
   }
 

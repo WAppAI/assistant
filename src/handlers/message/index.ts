@@ -8,10 +8,12 @@ import {
 } from "../llm-models/completion-bing.ts";
 import { log } from "../../helpers/utils";
 import {
+  BING_COOKIES,
   BOT_PREFIX,
   ENABLE_REMINDERS,
   ENABLE_SOURCES,
   ENABLE_SUGGESTIONS,
+  OPENROUTER_API_KEY,
 } from "../../constants";
 import { handleReminderFor } from "../reminder/reminder.ts";
 import { getLLMModel, updateWaMessageId } from "../../crud/conversation";
@@ -27,8 +29,9 @@ export async function handleMessage(message: Message) {
 
   try {
     const context = await createContextFromMessage(message);
+    let response: string | null = null;
 
-    if (llmModel === "bing") {
+    if (llmModel === "bing" && BING_COOKIES !== "") {
       const completion = await getCompletionWithBing(
         message,
         context,
@@ -45,15 +48,18 @@ export async function handleMessage(message: Message) {
         response = response + "\n\n" + getSuggestions(completion);
       if (ENABLE_SOURCES === "true")
         response = response + "\n\n" + getSources(completion);
-    } else {
+    } else if (llmModel !== "bing" && OPENROUTER_API_KEY !== "") {
+      console.log("Using Open Router");
       response = await getCompletionWithOpenRouter(
         message,
         context,
         streamingReply
       );
-      //  if (ENABLE_REMINDERS === "true")
-      //    response = await handleReminderFor(message, response);
     }
+    else {
+      throw new Error("No LLM model specified or no API key provided for the selected model");
+    }
+
     if (!response) throw new Error("No response from LLM");
 
     // @ts-ignore

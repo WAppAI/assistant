@@ -2,6 +2,7 @@
 // @ts-ignore
 import { BingAIClient } from "@waylaidwanderer/chatgpt-api";
 import KeyvSqlite from "@keyv/sqlite";
+import { BING_COOKIES } from "../constants";
 
 function convertFileToSQLite(string: string) {
   // Check if the inputString starts with "file:./"
@@ -20,6 +21,6 @@ const store = new KeyvSqlite({
 });
 
 export const bing = new BingAIClient({
-  cookies: process.env.BING_COOKIES,
+  cookies: BING_COOKIES,
   cache: { store },
 });
