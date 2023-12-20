@@ -24,14 +24,24 @@ export async function handleMessage(message: Message) {
   await setStatusFor(message, "working");
   const chat = await message.getChat();
   const streamingReply = await message.reply("...");
-  const llmModel = await getLLMModel(chat.id._serialized);
+  let llmModel = await getLLMModel(chat.id._serialized);
+  if (!llmModel) {
+    llmModel = "bing";
+  }
   let response: string | null;
 
   try {
     const context = await createContextFromMessage(message);
-    let response: string | null = null;
 
-    if (llmModel === "bing" && BING_COOKIES !== "") {
+    if (llmModel !== "bing" && OPENROUTER_API_KEY !== "") {
+      console.log("Using Open Router");
+      response = await getCompletionWithOpenRouter(
+        message,
+        context,
+        streamingReply
+      );
+    }
+    else {
       const completion = await getCompletionWithBing(
         message,
         context,
@@ -48,16 +58,6 @@ export async function handleMessage(message: Message) {
         response = response + "\n\n" + getSuggestions(completion);
       if (ENABLE_SOURCES === "true")
         response = response + "\n\n" + getSources(completion);
-    } else if (llmModel !== "bing" && OPENROUTER_API_KEY !== "") {
-      console.log("Using Open Router");
-      response = await getCompletionWithOpenRouter(
-        message,
-        context,
-        streamingReply
-      );
-    }
-    else {
-      throw new Error("No LLM model specified or no API key provided for the selected model");
     }
 
     if (!response) throw new Error("No response from LLM");
