@@ -71,7 +71,6 @@ export async function getCompletionWithOpenRouter(
       ],
     }
   );
-  console.log("response:", response);
 
   if (!waChat) await createChat(chat.id._serialized); // Creates the chat if it doesn't exist yet
 

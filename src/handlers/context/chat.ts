@@ -20,8 +20,6 @@ export async function getChatContext(message: Message) {
       .map((contact) => contact.pushname)
       .join(", ");
 
-    console.log("groupContactNames:", groupContactNames);
-
     chatContext = stripIndents`- You are in a group chat
     - There are ${groupChat.participants.length} participants in the group
     - The group's name is '${groupChat.name}'
