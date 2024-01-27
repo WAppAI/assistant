@@ -41,7 +41,7 @@
     "dotenv": "^16.3.1",
     "dotenv-expand": "^10.0.0",
     "fluent-ffmpeg": "^2.1.2",
-    "googleapis": "^129.0.0",
+    "googleapis": "^126.0.1",
     "keyv": "^4.5.3",
     "langchain": "^0.1.8",
     "node-fetch": "^3.3.2",

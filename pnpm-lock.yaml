@@ -10,7 +10,7 @@ dependencies:
     version: 3.6.6
   '@langchain/community':
     specifier: ^0.0.21
-    version: 0.0.21(googleapis@129.0.0)
+    version: 0.0.21(googleapis@126.0.1)
   '@langchain/openai':
     specifier: ^0.0.13
     version: 0.0.13
@@ -42,14 +42,14 @@ dependencies:
     specifier: ^2.1.2
     version: 2.1.2
   googleapis:
-    specifier: ^129.0.0
-    version: 129.0.0
+    specifier: ^126.0.1
+    version: 126.0.1
   keyv:
     specifier: ^4.5.3
     version: 4.5.3
   langchain:
     specifier: ^0.1.8
-    version: 0.1.8(googleapis@129.0.0)
+    version: 0.1.8(googleapis@126.0.1)
   node-fetch:
     specifier: ^3.3.2
     version: 3.3.2
@@ -194,7 +194,7 @@ packages:
       - supports-color
     dev: false
 
-  /@langchain/community@0.0.21(googleapis@129.0.0):
+  /@langchain/community@0.0.21(googleapis@126.0.1):
     resolution: {integrity: sha512-2b3azTwY3i4hKeNpxXhZ34h9CQHvPu1kNTxAT8mSuOwkA0ZZ+DQ1niOT0Ai1K0ZrSyice5aivgvy6v7Jf0yFZw==}
     engines: {node: '>=18'}
     peerDependencies:
@@ -446,7 +446,7 @@ packages:
       '@langchain/core': 0.1.18
       '@langchain/openai': 0.0.13
       flat: 5.0.2
-      googleapis: 129.0.0
+      googleapis: 126.0.1
       langsmith: 0.0.63
       uuid: 9.0.1
       zod: 3.22.4
@@ -1915,8 +1915,8 @@ packages:
       - supports-color
     dev: false
 
-  /googleapis@129.0.0:
-    resolution: {integrity: sha512-gFatrzby+oh/GxEeMhJOKzgs9eG7yksRcTon9b+kPie4ZnDSgGQ85JgtUaBtLSBkcKpUKukdSP6Km1aCjs4y4Q==}
+  /googleapis@126.0.1:
+    resolution: {integrity: sha512-4N8LLi+hj6ytK3PhE52KcM8iSGhJjtXnCDYB4fp6l+GdLbYz4FoDmx074WqMbl7iYMDN87vqD/8drJkhxW92mQ==}
     engines: {node: '>=14.0.0'}
     dependencies:
       google-auth-library: 9.4.1
@@ -2326,7 +2326,7 @@ packages:
       json-buffer: 3.0.1
     dev: false
 
-  /langchain@0.1.8(googleapis@129.0.0):
+  /langchain@0.1.8(googleapis@126.0.1):
     resolution: {integrity: sha512-lTtAffavm6BNoRUsGvwuXfsjP3yU2v2zL08g/XntwboDCPGpEL7QX5LSYezdJlwTAp3PMbIcDOD7CQIrGOQKLA==}
     engines: {node: '>=18'}
     peerDependencies:
@@ -2489,12 +2489,12 @@ packages:
         optional: true
     dependencies:
       '@anthropic-ai/sdk': 0.9.1
-      '@langchain/community': 0.0.21(googleapis@129.0.0)
+      '@langchain/community': 0.0.21(googleapis@126.0.1)
       '@langchain/core': 0.1.18
       '@langchain/openai': 0.0.13
       binary-extensions: 2.2.0
       expr-eval: 2.0.2
-      googleapis: 129.0.0
+      googleapis: 126.0.1
       js-tiktoken: 1.0.8
       js-yaml: 4.1.0
       jsonpointer: 5.0.1
