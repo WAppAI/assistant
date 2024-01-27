@@ -1,7 +1,7 @@
 import { AgentExecutor } from "langchain/agents";
 import { formatLogToString } from "langchain/agents/format_scratchpad/log";
 import { ReActSingleInputOutputParser } from "langchain/agents/react/output_parser";
-import { ChatOpenAI } from "langchain/chat_models/openai";
+import { ChatOpenAI } from "@langchain/openai";
 import {
   BufferWindowMemory,
   ChatMessageHistory,
@@ -66,12 +66,14 @@ async function createMemoryForOpenRouter(chat: string) {
     memory = new ConversationSummaryMemory({
       memoryKey: "chat_history",
       inputKey: "input",
+      outputKey: 'output',
       llm: summaryLLM,
     });
   } else {
     memory = new BufferWindowMemory({
       memoryKey: "chat_history",
       inputKey: "input",
+      outputKey: 'output',
       k: OPENROUTER_MSG_MEMORY_LIMIT,
     });
   }

@@ -1,5 +1,5 @@
 import { OpenAI } from "langchain/llms/openai";
-import { SearchApi } from "langchain/tools";
+import { SearchApi } from "@langchain/community/tools/searchapi";
 import {
   GoogleCalendarCreateTool,
   GoogleCalendarViewTool,

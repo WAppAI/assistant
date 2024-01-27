@@ -13,7 +13,7 @@ export async function handleGroupJoin(notification: GroupNotification) {
 
     await groupChat
       .sendMessage(`Sorry, @${adder.id.user}, you're not allowed to add me to groups. Bye!`, {
-        mentions: [adder],
+        mentions: [adder.toString()],
       })
       .then(async () => {
         await groupChat.leave();

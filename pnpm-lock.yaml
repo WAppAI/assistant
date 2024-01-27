@@ -8,6 +8,12 @@ dependencies:
   '@keyv/sqlite':
     specifier: ^3.6.6
     version: 3.6.6
+  '@langchain/community':
+    specifier: ^0.0.21
+    version: 0.0.21(googleapis@129.0.0)
+  '@langchain/openai':
+    specifier: ^0.0.13
+    version: 0.0.13
   '@prisma/client':
     specifier: 5.3.1
     version: 5.3.1(prisma@5.3.1)
@@ -42,8 +48,8 @@ dependencies:
     specifier: ^4.5.3
     version: 4.5.3
   langchain:
-    specifier: ^0.0.208
-    version: 0.0.208(googleapis@129.0.0)
+    specifier: ^0.1.8
+    version: 0.1.8(googleapis@129.0.0)
   node-fetch:
     specifier: ^3.3.2
     version: 3.3.2
@@ -60,8 +66,8 @@ dependencies:
     specifier: ^2.7.2
     version: 2.7.2
   whatsapp-web.js:
-    specifier: 1.23.1-alpha.0
-    version: 1.23.1-alpha.0
+    specifier: 1.23.1-alpha.4
+    version: 1.23.1-alpha.4
   zod:
     specifier: ^3.22.2
     version: 3.22.2
@@ -188,11 +194,12 @@ packages:
       - supports-color
     dev: false
 
-  /@langchain/community@0.0.6(googleapis@129.0.0):
-    resolution: {integrity: sha512-GrRZ3i6hmXBxUtwnF9N5SAEHSW4EkHI/50hxGITACRxP2Nt6D+/xJGENtLFtzpSh/nzDSWNTF1GWivHAs+Zylg==}
+  /@langchain/community@0.0.21(googleapis@129.0.0):
+    resolution: {integrity: sha512-2b3azTwY3i4hKeNpxXhZ34h9CQHvPu1kNTxAT8mSuOwkA0ZZ+DQ1niOT0Ai1K0ZrSyice5aivgvy6v7Jf0yFZw==}
     engines: {node: '>=18'}
     peerDependencies:
       '@aws-crypto/sha256-js': ^5.0.0
+      '@aws-sdk/client-bedrock-agent-runtime': ^3.485.0
       '@aws-sdk/client-bedrock-runtime': ^3.422.0
       '@aws-sdk/client-dynamodb': ^3.310.0
       '@aws-sdk/client-kendra': ^3.352.0
@@ -200,8 +207,10 @@ packages:
       '@aws-sdk/client-sagemaker-runtime': ^3.310.0
       '@aws-sdk/client-sfn': ^3.310.0
       '@aws-sdk/credential-provider-node': ^3.388.0
+      '@azure/search-documents': ^12.0.0
       '@clickhouse/client': ^0.2.5
       '@cloudflare/ai': ^1.0.12
+      '@datastax/astra-db-ts': ^0.1.4
       '@elastic/elasticsearch': ^8.4.0
       '@getmetal/metal-sdk': '*'
       '@getzep/zep-js': ^0.9.0
@@ -251,6 +260,7 @@ packages:
       jsdom: '*'
       llmonitor: ^0.5.9
       lodash: ^4.17.21
+      lunary: ^0.6.11
       mongodb: ^5.2.0
       mysql2: ^3.3.3
       neo4j-driver: '*'
@@ -272,6 +282,8 @@ packages:
     peerDependenciesMeta:
       '@aws-crypto/sha256-js':
         optional: true
+      '@aws-sdk/client-bedrock-agent-runtime':
+        optional: true
       '@aws-sdk/client-bedrock-runtime':
         optional: true
       '@aws-sdk/client-dynamodb':
@@ -286,9 +298,13 @@ packages:
         optional: true
       '@aws-sdk/credential-provider-node':
         optional: true
+      '@azure/search-documents':
+        optional: true
       '@clickhouse/client':
         optional: true
       '@cloudflare/ai':
+        optional: true
+      '@datastax/astra-db-ts':
         optional: true
       '@elastic/elasticsearch':
         optional: true
@@ -388,6 +404,8 @@ packages:
         optional: true
       lodash:
         optional: true
+      lunary:
+        optional: true
       mongodb:
         optional: true
       mysql2:
@@ -425,42 +443,43 @@ packages:
       ws:
         optional: true
     dependencies:
-      '@langchain/core': 0.1.1
-      '@langchain/openai': 0.0.5
+      '@langchain/core': 0.1.18
+      '@langchain/openai': 0.0.13
       flat: 5.0.2
       googleapis: 129.0.0
-      langsmith: 0.0.51
+      langsmith: 0.0.63
       uuid: 9.0.1
       zod: 3.22.4
     transitivePeerDependencies:
       - encoding
     dev: false
 
-  /@langchain/core@0.1.1:
-    resolution: {integrity: sha512-p+BzmILzGAWjHxzNy1ZygfsNWxZcipWH3zvY0WC33ly+nmBp4n+MCVd25hKQ4YYWOqoOGGWSzFJukd5PxaXMDQ==}
+  /@langchain/core@0.1.18:
+    resolution: {integrity: sha512-fDjocs899HDq3nf3PE0TveQoVabO0vyedt9i74Yef4Ds2o22TEDSh3MfoMxM8stcHiV3/9i+0wH4Xdm0E2YLdg==}
     engines: {node: '>=18'}
     dependencies:
       ansi-styles: 5.2.0
       camelcase: 6.3.0
       decamelize: 1.2.0
       js-tiktoken: 1.0.8
-      langsmith: 0.0.51
+      langsmith: 0.0.63
       ml-distance: 4.0.1
       p-queue: 6.6.2
       p-retry: 4.6.2
       uuid: 9.0.1
       zod: 3.22.4
+      zod-to-json-schema: 3.22.3(zod@3.22.4)
     dev: false
 
-  /@langchain/openai@0.0.5:
-    resolution: {integrity: sha512-ojNx33zQPk29otCeeO4wn8Je79KMGWXcXe2ofUSL4VxK3EC6BuSeINzfODozP7KhQ24TWo7DKkl7vBqPzTI98w==}
+  /@langchain/openai@0.0.13:
+    resolution: {integrity: sha512-kgPwFiUA5Abmt8Q/cDhC4o1o5QAYuq962CqneVieMIgTUOJhYqB8Na4/7JI0EIfEZuUP2uuTrtqsulbLpGNQ8w==}
     engines: {node: '>=18'}
     dependencies:
-      '@langchain/core': 0.1.1
+      '@langchain/core': 0.1.18
       js-tiktoken: 1.0.8
-      openai: 4.23.0
+      openai: 4.26.0
       zod: 3.22.4
-      zod-to-json-schema: 3.20.3(zod@3.22.4)
+      zod-to-json-schema: 3.22.3(zod@3.22.4)
     transitivePeerDependencies:
       - encoding
     dev: false
@@ -2276,10 +2295,6 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: false
 
-  /jsqr@1.4.0:
-    resolution: {integrity: sha512-dxLob7q65Xg2DvstYkRpkYtmKm2sPJ9oFhrhmudT1dZvNFFTlroai3AWSpLey/w5vMcLBXRgOJsbXpdN9HzU/A==}
-    dev: false
-
   /jwa@2.0.0:
     resolution: {integrity: sha512-jrZ2Qx916EA+fq9cEAeCROWPTfCwi1IVHqT2tapuqLEVVDKFDENFw1oL+MwrTvH6msKxsd1YTDVw6uKEcsrLEA==}
     dependencies:
@@ -2311,8 +2326,8 @@ packages:
       json-buffer: 3.0.1
     dev: false
 
-  /langchain@0.0.208(googleapis@129.0.0):
-    resolution: {integrity: sha512-EYcYe/uTlFFFEAt6iAdOHmlHQ8UouzQrvyN+l3sPS2+AqzZ+ZN0mT+k7RV/VEqjOa3/yBnqvr3okElaJ6csgqw==}
+  /langchain@0.1.8(googleapis@129.0.0):
+    resolution: {integrity: sha512-lTtAffavm6BNoRUsGvwuXfsjP3yU2v2zL08g/XntwboDCPGpEL7QX5LSYezdJlwTAp3PMbIcDOD7CQIrGOQKLA==}
     engines: {node: '>=18'}
     peerDependencies:
       '@aws-sdk/client-s3': ^3.310.0
@@ -2326,7 +2341,7 @@ packages:
       '@google-ai/generativelanguage': ^0.2.1
       '@google-cloud/storage': ^6.10.1
       '@notionhq/client': ^2.2.10
-      '@pinecone-database/pinecone': ^1.1.0
+      '@pinecone-database/pinecone': '*'
       '@supabase/supabase-js': ^2.10.0
       '@vercel/kv': ^0.2.3
       '@xata.io/client': ^0.28.0
@@ -2342,11 +2357,12 @@ packages:
       fast-xml-parser: ^4.2.7
       google-auth-library: ^8.9.0
       googleapis: ^126.0.1
+      handlebars: ^4.7.8
       html-to-text: ^9.0.5
       ignore: ^5.2.0
       ioredis: ^5.3.2
       jsdom: '*'
-      mammoth: '*'
+      mammoth: ^1.6.0
       mongodb: ^5.2.0
       node-llama-cpp: '*'
       notion-to-md: ^3.1.0
@@ -2358,7 +2374,7 @@ packages:
       pyodide: ^0.24.1
       redis: ^4.6.4
       sonix-speech-recognition: ^2.1.1
-      srt-parser-2: ^1.2.2
+      srt-parser-2: ^1.2.3
       typeorm: ^0.3.12
       vectordb: ^0.1.4
       weaviate-ts-client: ^1.4.0
@@ -2421,6 +2437,8 @@ packages:
         optional: true
       googleapis:
         optional: true
+      handlebars:
+        optional: true
       html-to-text:
         optional: true
       ignore:
@@ -2471,9 +2489,9 @@ packages:
         optional: true
     dependencies:
       '@anthropic-ai/sdk': 0.9.1
-      '@langchain/community': 0.0.6(googleapis@129.0.0)
-      '@langchain/core': 0.1.1
-      '@langchain/openai': 0.0.5
+      '@langchain/community': 0.0.21(googleapis@129.0.0)
+      '@langchain/core': 0.1.18
+      '@langchain/openai': 0.0.13
       binary-extensions: 2.2.0
       expr-eval: 2.0.2
       googleapis: 129.0.0
@@ -2481,22 +2499,25 @@ packages:
       js-yaml: 4.1.0
       jsonpointer: 5.0.1
       langchainhub: 0.0.6
-      langsmith: 0.0.51
+      langsmith: 0.0.63
       ml-distance: 4.0.1
       openapi-types: 12.1.3
       p-retry: 4.6.2
       uuid: 9.0.1
       yaml: 2.3.4
       zod: 3.22.4
-      zod-to-json-schema: 3.20.3(zod@3.22.4)
+      zod-to-json-schema: 3.22.3(zod@3.22.4)
     transitivePeerDependencies:
       - '@aws-crypto/sha256-js'
+      - '@aws-sdk/client-bedrock-agent-runtime'
       - '@aws-sdk/client-bedrock-runtime'
       - '@aws-sdk/client-dynamodb'
       - '@aws-sdk/client-kendra'
       - '@aws-sdk/client-lambda'
+      - '@azure/search-documents'
       - '@clickhouse/client'
       - '@cloudflare/ai'
+      - '@datastax/astra-db-ts'
       - '@elastic/elasticsearch'
       - '@getmetal/metal-sdk'
       - '@getzep/zep-js'
@@ -2532,6 +2553,7 @@ packages:
       - hnswlib-node
       - llmonitor
       - lodash
+      - lunary
       - mysql2
       - neo4j-driver
       - pg
@@ -2548,8 +2570,8 @@ packages:
     resolution: {integrity: sha512-SW6105T+YP1cTe0yMf//7kyshCgvCTyFBMTgH2H3s9rTAR4e+78DA/BBrUL/Mt4Q5eMWui7iGuAYb3pgGsdQ9w==}
     dev: false
 
-  /langsmith@0.0.51:
-    resolution: {integrity: sha512-3DCW4E1hZibsotB4pX+hobBIhwltqj4h48wm5Yxdwk7Fgt9FntLLxhKpiLCWVx8SkTUCMGkG+dtSk0CX94984Q==}
+  /langsmith@0.0.63:
+    resolution: {integrity: sha512-8KtbiltWP8Ta7xErfXRvLudKgIoc/yRb9oSU8Ozh2215rlz9tnYicl37lS/ZdyeSbpSX8Rh8XhLTN5zVQ+5euA==}
     hasBin: true
     dependencies:
       '@types/uuid': 9.0.7
@@ -2962,8 +2984,8 @@ packages:
       sorted-array-functions: 1.3.0
     dev: false
 
-  /node-webpmux@3.1.9:
-    resolution: {integrity: sha512-H0vrFU0jJXMy7kJK71tn7/NP+JU7Srif32+iU/PqJecJZ/wsDLOD3iJ2Ec4dnEIlf8OEzhO4sH8D5UMiR4cuMw==}
+  /node-webpmux@3.1.0:
+    resolution: {integrity: sha512-0fBo2eDIxLBVyFLqLJwPxQAgwRnMhv/l8M8kKWRuFvPz+InrLh+AAt8faVLaOlO8bQBA7MPEt5o12nc9uHu21g==}
     dev: false
 
   /nodemon@3.0.1:
@@ -3083,8 +3105,8 @@ packages:
       - encoding
     dev: false
 
-  /openai@4.23.0:
-    resolution: {integrity: sha512-ey2CXh1OTcTUa0AWZWuTpgA9t5GuAG3DVU1MofCRUI7fQJij8XJ3Sr0VtgxoAE69C9wbHBMCux8Z/IQZfSwHiA==}
+  /openai@4.26.0:
+    resolution: {integrity: sha512-HPC7tgYdeP38F3uHA5WgnoXZyGbAp9jgcIo23p6It+q/07u4C+NZ8xHKlMShsPbDDmFRpPsa3vdbXYpbhJH3eg==}
     hasBin: true
     dependencies:
       '@types/node': 18.19.3
@@ -3362,7 +3384,7 @@ packages:
   /puppeteer@13.7.0:
     resolution: {integrity: sha512-U1uufzBjz3+PkpCxFrWzh4OrMIdIb2ztzCu0YEPfRHjHswcSwHZswnK+WdsOQJsRV8WeTg3jLhJR4D867+fjsA==}
     engines: {node: '>=10.18.1'}
-    deprecated: < 21.3.7 is no longer supported
+    deprecated: < 21.5.0 is no longer supported
     requiresBuild: true
     dependencies:
       cross-fetch: 3.1.5
@@ -4055,16 +4077,15 @@ packages:
     resolution: {integrity: sha512-2JAn3z8AR6rjK8Sm8orRC0h/bcl/DqL7tRPdGZ4I1CjdF+EaMLmYxBHyXuKL849eucPFhvBoxMsflfOb8kxaeQ==}
     dev: false
 
-  /whatsapp-web.js@1.23.1-alpha.0:
-    resolution: {integrity: sha512-E2nykLcee/aMnz/MY6mNkqb23Fm1sZjpf6yMzOY5XEx0aye2jTEEuHBUSi40G/ZZLPfBShGrTNa9w2rX8b+aWg==}
+  /whatsapp-web.js@1.23.1-alpha.4:
+    resolution: {integrity: sha512-GDWfWdd9YlIppExgziHhQLsVWstD9yNhRwqMPQsFfyXD/DcN5b9wFONsvzRTD+Twc6RTjBUzoUA8BkvSgh8tUg==}
     engines: {node: '>=12.0.0'}
     dependencies:
       '@pedroslopez/moduleraid': 5.0.2
       fluent-ffmpeg: 2.1.2
-      jsqr: 1.4.0
       mime: 3.0.0
       node-fetch: 2.7.0
-      node-webpmux: 3.1.9
+      node-webpmux: 3.1.0
       puppeteer: 13.7.0
     optionalDependencies:
       archiver: 5.3.2
@@ -4226,10 +4247,10 @@ packages:
     dev: false
     optional: true
 
-  /zod-to-json-schema@3.20.3(zod@3.22.4):
-    resolution: {integrity: sha512-/Q3wnyxAfCt94ZcrGiXXoiAfRqasxl9CX64LZ9fj+4dKH68zulUtU0uk1WMxQPfAxQ0ZI70dKzcoW7hHj+DwSQ==}
+  /zod-to-json-schema@3.22.3(zod@3.22.4):
+    resolution: {integrity: sha512-9isG8SqRe07p+Aio2ruBZmLm2Q6Sq4EqmXOiNpDxp+7f0LV6Q/LX65fs5Nn+FV/CzfF3NLBoksXbS2jNYIfpKw==}
     peerDependencies:
-      zod: ^3.20.0
+      zod: ^3.22.4
     dependencies:
       zod: 3.22.4
     dev: false
