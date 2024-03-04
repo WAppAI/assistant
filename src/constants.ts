@@ -48,3 +48,4 @@ export const DEBUG_SUMMARY = process.env.DEBUG_SUMMARY as string;
 export const LOG_MESSAGES = process.env.LOG_MESSAGES as string;
 export const SEARCH_API = process.env.SEARCH_API as string;
 export const BING_COOKIES = process.env.BING_COOKIES as string;
+

@@ -1,6 +1,6 @@
 {
   "name": "whatsapp-ai-assistant",
-  "version": "2.2.1",
+  "version": "2.2.2",
   "description": "WhatsApp chatbot",
   "module": "src/index.ts",
   "type": "module",
@@ -30,6 +30,8 @@
   },
   "dependencies": {
     "@keyv/sqlite": "^3.6.6",
+    "@langchain/community": "^0.0.21",
+    "@langchain/openai": "^0.0.13",
     "@prisma/client": "5.3.1",
     "@types/common-tags": "^1.8.2",
     "@types/node-schedule": "^2.1.1",
@@ -39,14 +41,15 @@
     "dotenv": "^16.3.1",
     "dotenv-expand": "^10.0.0",
     "fluent-ffmpeg": "^2.1.2",
+    "googleapis": "^126.0.1",
     "keyv": "^4.5.3",
-    "langchain": "^0.0.208",
+    "langchain": "^0.1.8",
     "node-fetch": "^3.3.2",
     "node-schedule": "^2.1.1",
     "openai": "^4.11.1",
     "qrcode": "^1.5.3",
     "rrule": "^2.7.2",
-    "whatsapp-web.js": "1.23.1-alpha.0",
+    "whatsapp-web.js": "1.23.1-alpha.4",
     "zod": "^3.22.2"
   }
 }
