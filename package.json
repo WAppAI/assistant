@@ -1,6 +1,6 @@
 {
   "name": "whatsapp-ai-assistant",
-  "version": "2.2.2",
+  "version": "2.3.0",
   "description": "WhatsApp chatbot",
   "module": "src/index.ts",
   "type": "module",
@@ -36,6 +36,8 @@
     "@types/common-tags": "^1.8.2",
     "@types/node-schedule": "^2.1.1",
     "@waylaidwanderer/chatgpt-api": "github:Luisotee/node-chatgpt-api",
+    "axios": "^1.6.7",
+    "cheerio": "1.0.0-rc.12",
     "common-tags": "^1.8.2",
     "dayjs": "^1.11.10",
     "dotenv": "^16.3.1",
