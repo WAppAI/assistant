@@ -48,4 +48,7 @@ export const DEBUG_SUMMARY = process.env.DEBUG_SUMMARY as string;
 export const LOG_MESSAGES = process.env.LOG_MESSAGES as string;
 export const SEARCH_API = process.env.SEARCH_API as string;
 export const BING_COOKIES = process.env.BING_COOKIES as string;
-
+export const ENABLE_GOOGLE_CALENDAR = process.env.ENABLE_GOOGLE_CALENDAR as string;
+export const GOOGLE_CALENDAR_CLIENT_EMAIL = process.env.GOOGLE_CALENDAR_CLIENT_EMAIL as string;
+export const GOOGLE_CALENDAR_PRIVATE_KEY = process.env.GOOGLE_CALENDAR_PRIVATE_KEY as string;
+export const GOOGLE_CALENDAR_CALENDAR_ID = process.env.GOOGLE_CALENDAR_CALENDAR_ID as string;

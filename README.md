@@ -12,7 +12,7 @@ Welcome to the WhatsApp AI Assistant repository, where you'll find a remarkable 
 | Feature                     | Sydney (BingAI Jailbreak) | OpenRouter Models* |
 | :-------------------------- | :-----------------------: | :----------------: |
 | Google/Bing Searching       |             ✅             |         ✅          |
-| Google Calendar             |             ❌             |         ❌          |
+| Google Calendar             |             ❌             |         ✅          |
 | Google Places               |             ❌             |         ❌          |
 | Gmail                       |             ❌             |         ❌          |
 | Communication Capability    |             ✅             |         ✅          |
@@ -105,7 +105,9 @@ cp .env.example .env
 
 4. Read and fill in the remaining information in the `.env` file.
 
-5. Run 
+5.  Instructions on how to use langchain tools like Google Calendar and search will be in the `.env`
+
+6. Run 
 
 ```
 pnpm build
