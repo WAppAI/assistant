@@ -1,5 +1,9 @@
 import { SearchApi } from "@langchain/community/tools/searchapi";
 import {
+  ENABLE_GOOGLE_CALENDAR,
+  GOOGLE_CALENDAR_CALENDAR_ID,
+  GOOGLE_CALENDAR_CLIENT_EMAIL,
+  GOOGLE_CALENDAR_PRIVATE_KEY,
   OPENAI_API_KEY,
   OPENROUTER_API_KEY,
   SEARCH_API
@@ -23,24 +27,33 @@ const model = new ChatOpenAI(
     basePath: `${OPENROUTER_BASE_URL}/api/v1`,
   }
 );
+let googleCalendarCreateTool = null;
+let googleCalendarViewTool = null;
 
-const googleCalendarModel = new OpenAI({
-  temperature: 0,
-  openAIApiKey: OPENAI_API_KEY,
-});
 
-const googleCalendarParams = {
-  credentials: {
-    clientEmail: process.env.GOOGLE_CALENDAR_CLIENT_EMAIL,
-    privateKey: process.env.GOOGLE_CALENDAR_PRIVATE_KEY,
-    calendarId: process.env.GOOGLE_CALENDAR_CALENDAR_ID,
-  },
-  scopes: [
-    "https://www.googleapis.com/auth/calendar",
-    "https://www.googleapis.com/auth/calendar.events",
-  ],
-  model: googleCalendarModel,
-};
+if (ENABLE_GOOGLE_CALENDAR === "true") {
+  const googleCalendarModel = new OpenAI({
+    temperature: 0,
+    openAIApiKey: OPENAI_API_KEY,
+  });
+
+  const googleCalendarParams = {
+    credentials: {
+      clientEmail: GOOGLE_CALENDAR_CLIENT_EMAIL,
+      privateKey: GOOGLE_CALENDAR_PRIVATE_KEY,
+      calendarId: GOOGLE_CALENDAR_CALENDAR_ID,
+    },
+    scopes: [
+      "https://www.googleapis.com/auth/calendar",
+      "https://www.googleapis.com/auth/calendar.events",
+    ],
+    model: googleCalendarModel,
+  };
+
+  googleCalendarCreateTool = new GoogleCalendarCreateTool(googleCalendarParams);
+  googleCalendarViewTool = new GoogleCalendarViewTool(googleCalendarParams);
+}
+
 
 const embeddings = new OpenAIEmbeddings();
 
@@ -51,9 +64,12 @@ if (SEARCH_API !== '') {
   });
 }
 
-const googleCalendarCreateTool = new GoogleCalendarCreateTool(googleCalendarParams)
-const googleCalendarViewTool = new GoogleCalendarViewTool(googleCalendarParams)
 const webBrowserTool = new WebBrowser({ model, embeddings });
 
-export const tools = [...(searchTool ? [searchTool] : []), webBrowserTool, googleCalendarCreateTool, googleCalendarViewTool];
+export const tools = [
+  ...(searchTool ? [searchTool] : []),
+  webBrowserTool,
+  ...(googleCalendarCreateTool ? [googleCalendarCreateTool] : []),
+  ...(googleCalendarViewTool ? [googleCalendarViewTool] : []),
+];
 export const toolNames = tools.map((tool) => tool.name);

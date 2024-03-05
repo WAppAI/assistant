@@ -14,6 +14,13 @@ export function checkEnv() {
         "SEARCH_API not provided. You must set SEARCH_API. Please check your .env file."
       );
     }
+    if (process.env.ENABLE_GOOGLE_CALENDAR === "true") {
+      if (!process.env.GOOGLE_CALENDAR_CLIENT_EMAIL || !process.env.GOOGLE_CALENDAR_PRIVATE_KEY || !process.env.GOOGLE_CALENDAR_CALENDAR_ID) {
+        console.warn(
+          "Google Calendar is enabled but one or more environment variables (GOOGLE_CALENDAR_CLIENT_EMAIL, GOOGLE_CALENDAR_PRIVATE_KEY, GOOGLE_CALENDAR_CALENDAR_ID) are not set. Please check your .env file."
+        );
+      }
+    }
   }
 
   if (!process.env.BING_COOKIES) {
