@@ -20,6 +20,11 @@ export function checkEnv() {
           "Google Calendar is enabled but one or more environment variables (GOOGLE_CALENDAR_CLIENT_EMAIL, GOOGLE_CALENDAR_PRIVATE_KEY, GOOGLE_CALENDAR_CALENDAR_ID) are not set. Please check your .env file."
         );
       }
+      if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === "") {
+        throw new Error(
+          `Invalid OPENAI_API_KEY="${process.env.OPENAI_API_KEY}" provided. Please check the OPENAI_API_KEY variable in your .env file.`
+        );
+      }
     }
   }
 
