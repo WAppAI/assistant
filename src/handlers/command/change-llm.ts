@@ -3,13 +3,13 @@ import { stripIndents } from "common-tags";
 import { Message } from "whatsapp-web.js";
 import { CMD_PREFIX } from "../../constants";
 import { getLLMModel, updateLLMModel } from "../../crud/conversation";
-import { get } from "http";
 
 const LLM_OPTIONS = {
   "1": "bing",
   "2": "openai/gpt-3.5-turbo",
-  "3": "anthropic/claude-2",
+  "3": "anthropic/claude-3-opus:beta",
   "4": "google/gemini-pro",
+  "5": "anthropic/claude-3-sonnet:beta",
 };
 
 export async function handleChangeLLM(message: Message, args: string) {
@@ -31,13 +31,14 @@ export async function handleChangeLLM(message: Message, args: string) {
 
   *${CMD_PREFIX}change 1* for _bing_
   *${CMD_PREFIX}change 2* for _openai/gpt-3.5-turbo_
-  *${CMD_PREFIX}change 3* for _anthropic/claude-2_
+  *${CMD_PREFIX}change 3* for _anthropic/claude-3-opus_
   *${CMD_PREFIX}change 4* for _google/gemini-pro_
+  *${CMD_PREFIX}change 5* for _anthropic/claude-3-sonnet_
 
   You can also type the name of your desired model, like *${CMD_PREFIX}change mistralai/mixtral-8x7b-instruct*
 
   See the list of available models at OpenRouter docs in https://openrouter.ai/docs#models.
-`);
+`, chat.id._serialized, { linkPreview: false });
   } else {
     newModel = args;
     await updateLLMModel(chat.id._serialized, newModel);
