@@ -13,7 +13,6 @@ Welcome to the WhatsApp AI Assistant repository, where you'll find a remarkable 
 | :-------------------------- | :-----------------------: | :----------------: |
 | Google/Bing Searching       |             ✅             |         ✅          |
 | Google Calendar             |             ❌             |         ✅          |
-| Google Places               |             ❌             |         ❌          |
 | Gmail                       |             ❌             |         ❌          |
 | Communication Capability    |             ✅             |         ✅          |
 | Group Chat Compatibility    |             ✅             |         ✅          |
@@ -23,7 +22,7 @@ Welcome to the WhatsApp AI Assistant repository, where you'll find a remarkable 
 | Image Generation            |             ❌             |         ❌          |
 | PDF Reading                 |             ❌             |         ❌          |
 
-**NOTE:** We do not test every LLM that OpenRouter provides. Typically, we only test OpenAI GPT-3.5, Anthropic Claude 2 and Google Gemini Pro.
+**NOTE:** We do not test every LLM that OpenRouter provides. Typically, we only test OpenAI GPT-3.5 and Google Gemini Pro.
 
 ## Getting Started
 
