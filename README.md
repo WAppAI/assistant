@@ -5,7 +5,7 @@ Welcome to the WhatsApp AI Assistant repository, where you'll find a remarkable 
 
 |                                                 Sydney                                                 | OpenRouter Models* |
 | :----------------------------------------------------------------------------------------------------: | :----------------: |
-| <video src="https://github.com/WAppAI/assistant/assets/50471205/5d300910-099d-4ceb-9f87-0852389a4c5b"> |    Coming soon     |
+| <video src="https://github.com/WAppAI/assistant/assets/50471205/5d300910-099d-4ceb-9f87-0852389a4c5b"> |  <video  src="https://github.com/WAppAI/assistant/assets/50471205/155e8c11-691d-42d2-ab1c-845e6239bffb">    |
 
 ## Feature Comparison
 
@@ -166,6 +166,8 @@ Your contributions to Sydney are welcome in any form. Whether you'd like to:
 - Report Issues: If you come across bugs or have ideas for new features, please open an issue to discuss and track these items.
 
 - Submit Pull Requests (PRs): Feel free to contribute directly by opening pull requests. Your contributions are greatly appreciated and help improve Sydney.
+
+- If you want us to add a tool from the js langchain open an issue asking for it.
 
 Your involvement is valued, and you're encouraged to contribute in the way that suits you best.
 
