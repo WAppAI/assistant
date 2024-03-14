@@ -26,6 +26,13 @@ export function checkEnv() {
         );
       }
     }
+    if (process.env.ENABLE_WEB_BROWSER_TOOL === "true") {
+      if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === "") {
+        throw new Error(
+          `Invalid OPENAI_API_KEY="${process.env.OPENAI_API_KEY}" provided. Please check the OPENAI_API_KEY variable in your .env file.`
+        );
+      }
+    }
   }
 
   if (!process.env.BING_COOKIES) {
