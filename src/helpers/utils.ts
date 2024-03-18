@@ -33,6 +33,18 @@ export function checkEnv() {
         );
       }
     }
+    if (process.env.ENABLE_DALLE_TOOL === "true") {
+      if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === "") {
+        throw new Error(
+          `Invalid OPENAI_API_KEY="${process.env.OPENAI_API_KEY}" provided. Please check the OPENAI_API_KEY variable in your .env file.`
+        );
+      }
+      if (process.env.DALLE_MODEL !== "dall-e-3" && process.env.DALLE_MODEL !== "dall-e-2") {
+        throw new Error(
+          `Invalid DALLE_MODEL="${process.env.DALLE_MODEL}" provided. Please check the DALLE_MODEL variable in your .env file.`
+        );
+      }
+    }
   }
 
   if (!process.env.BING_COOKIES) {

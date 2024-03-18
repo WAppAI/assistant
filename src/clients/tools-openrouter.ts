@@ -1,5 +1,7 @@
 import { SearchApi } from "@langchain/community/tools/searchapi";
 import {
+  DALLE_MODEL,
+  ENABLE_DALLE_TOOL,
   ENABLE_GOOGLE_CALENDAR,
   ENABLE_WEB_BROWSER_TOOL,
   GOOGLE_CALENDAR_CALENDAR_ID,
@@ -10,7 +12,7 @@ import {
   SEARCH_API
 } from "../constants";
 import { WebBrowser } from "langchain/tools/webbrowser";
-import { ChatOpenAI, OpenAI, OpenAIEmbeddings } from "@langchain/openai";
+import { ChatOpenAI, DallEAPIWrapper, OpenAI, OpenAIEmbeddings } from "@langchain/openai";
 import {
   GoogleCalendarCreateTool,
   GoogleCalendarViewTool,
@@ -22,6 +24,15 @@ let googleCalendarCreateTool = null;
 let googleCalendarViewTool = null;
 let searchTool = null;
 let webBrowserTool = null;
+let dalleTool = null;
+
+if (ENABLE_DALLE_TOOL === "true") {
+  dalleTool = new DallEAPIWrapper({
+    n: 1, // Default
+    modelName: DALLE_MODEL, // Default
+    openAIApiKey: OPENAI_API_KEY, // Default
+  });
+}
 
 if (ENABLE_WEB_BROWSER_TOOL === "true") {
   const model = new ChatOpenAI(
@@ -72,5 +83,6 @@ export const tools = [
   ...(webBrowserTool ? [webBrowserTool] : []),
   ...(googleCalendarCreateTool ? [googleCalendarCreateTool] : []),
   ...(googleCalendarViewTool ? [googleCalendarViewTool] : []),
+  ...(dalleTool ? [dalleTool] : [])
 ];
 export const toolNames = tools.map((tool) => tool.name);
