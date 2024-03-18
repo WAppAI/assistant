@@ -34,7 +34,6 @@ export async function handleMessage(message: Message) {
     const context = await createContextFromMessage(message);
 
     if (llmModel !== "bing" && OPENROUTER_API_KEY !== "") {
-      console.log("Using Open Router");
       response = await getCompletionWithOpenRouter(
         message,
         context,
