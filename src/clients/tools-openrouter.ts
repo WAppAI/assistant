@@ -1,5 +1,14 @@
-import { SearchApi } from "@langchain/community/tools/searchapi";
 import {
+  GoogleCalendarCreateTool,
+  GoogleCalendarViewTool,
+} from "@langchain/community/tools/google_calendar";
+import { SearchApi } from "@langchain/community/tools/searchapi";
+import { ChatOpenAI, DallEAPIWrapper, OpenAI, OpenAIEmbeddings } from "@langchain/openai";
+import { Calculator } from "langchain/tools/calculator";
+import { WebBrowser } from "langchain/tools/webbrowser";
+import {
+  DALLE_MODEL,
+  ENABLE_DALLE_TOOL,
   ENABLE_GOOGLE_CALENDAR,
   ENABLE_WEB_BROWSER_TOOL,
   GOOGLE_CALENDAR_CALENDAR_ID,
@@ -9,12 +18,6 @@ import {
   OPENROUTER_API_KEY,
   SEARCH_API
 } from "../constants";
-import { WebBrowser } from "langchain/tools/webbrowser";
-import { ChatOpenAI, OpenAI, OpenAIEmbeddings } from "@langchain/openai";
-import {
-  GoogleCalendarCreateTool,
-  GoogleCalendarViewTool,
-} from "@langchain/community/tools/google_calendar";
 
 const OPENROUTER_BASE_URL = "https://openrouter.ai";
 
@@ -22,6 +25,15 @@ let googleCalendarCreateTool = null;
 let googleCalendarViewTool = null;
 let searchTool = null;
 let webBrowserTool = null;
+let dalleTool = null;
+
+if (ENABLE_DALLE_TOOL === "true") {
+  dalleTool = new DallEAPIWrapper({
+    n: 1, // Default
+    modelName: DALLE_MODEL, // Default
+    openAIApiKey: OPENAI_API_KEY, // Default
+  });
+}
 
 if (ENABLE_WEB_BROWSER_TOOL === "true") {
   const model = new ChatOpenAI(
@@ -67,10 +79,14 @@ if (SEARCH_API !== '') {
   });
 }
 
+const calculatorTool = new Calculator()
+
 export const tools = [
   ...(searchTool ? [searchTool] : []),
   ...(webBrowserTool ? [webBrowserTool] : []),
   ...(googleCalendarCreateTool ? [googleCalendarCreateTool] : []),
   ...(googleCalendarViewTool ? [googleCalendarViewTool] : []),
+  ...(dalleTool ? [dalleTool] : []),
+  calculatorTool
 ];
 export const toolNames = tools.map((tool) => tool.name);

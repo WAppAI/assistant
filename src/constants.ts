@@ -53,3 +53,5 @@ export const GOOGLE_CALENDAR_CLIENT_EMAIL = process.env.GOOGLE_CALENDAR_CLIENT_E
 export const GOOGLE_CALENDAR_PRIVATE_KEY = process.env.GOOGLE_CALENDAR_PRIVATE_KEY as string;
 export const GOOGLE_CALENDAR_CALENDAR_ID = process.env.GOOGLE_CALENDAR_CALENDAR_ID as string;
 export const ENABLE_WEB_BROWSER_TOOL = process.env.ENABLE_WEB_BROWSER_TOOL as string;
+export const ENABLE_DALLE_TOOL = process.env.ENABLE_DALLE_TOOL as string;
+export const DALLE_MODEL = process.env.DALLE_MODEL as string;
