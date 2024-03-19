@@ -1,4 +1,5 @@
 import { Message } from "whatsapp-web.js";
+import { createExecutorForOpenRouter } from "../../clients/open-router";
 import {
   BOT_PREFIX,
   DEBUG_SUMMARY,
@@ -13,7 +14,6 @@ import {
   updateOpenRouterConversation,
 } from "../../crud/conversation";
 import { handleAudioMessage } from "../audio-message";
-import { createExecutorForOpenRouter } from "../../clients/open-router";
 
 export async function getCompletionWithOpenRouter(
   message: Message,

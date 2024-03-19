@@ -1,6 +1,6 @@
 {
   "name": "whatsapp-ai-assistant",
-  "version": "2.5.0",
+  "version": "2.6.0",
   "description": "WhatsApp chatbot",
   "module": "src/index.ts",
   "type": "module",

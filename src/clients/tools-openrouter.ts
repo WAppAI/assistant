@@ -3,6 +3,7 @@ import {
   GoogleCalendarViewTool,
 } from "@langchain/community/tools/google_calendar";
 import { SearchApi } from "@langchain/community/tools/searchapi";
+import { WikipediaQueryRun } from "@langchain/community/tools/wikipedia_query_run";
 import { ChatOpenAI, DallEAPIWrapper, OpenAI, OpenAIEmbeddings } from "@langchain/openai";
 import { Calculator } from "langchain/tools/calculator";
 import { WebBrowser } from "langchain/tools/webbrowser";
@@ -81,12 +82,19 @@ if (SEARCH_API !== '') {
 
 const calculatorTool = new Calculator()
 
+const wikipediaTool = new WikipediaQueryRun({
+  topKResults: 3,
+  maxDocContentLength: 4000,
+});
+
+
 export const tools = [
   ...(searchTool ? [searchTool] : []),
   ...(webBrowserTool ? [webBrowserTool] : []),
   ...(googleCalendarCreateTool ? [googleCalendarCreateTool] : []),
   ...(googleCalendarViewTool ? [googleCalendarViewTool] : []),
   ...(dalleTool ? [dalleTool] : []),
+  wikipediaTool,
   calculatorTool
 ];
 export const toolNames = tools.map((tool) => tool.name);
