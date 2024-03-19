@@ -1,23 +1,22 @@
 import { Message } from "whatsapp-web.js";
+import {
+  BOT_PREFIX,
+  ENABLE_REMINDERS,
+  ENABLE_SOURCES,
+  ENABLE_SUGGESTIONS,
+  OPENROUTER_API_KEY
+} from "../../constants";
+import { getLLMModel, updateWaMessageId } from "../../crud/conversation";
 import { setStatusFor } from "../../helpers/message";
+import { log } from "../../helpers/utils";
 import { createContextFromMessage } from "../context";
 import {
   getCompletionWithBing,
   getSources,
   getSuggestions,
 } from "../llm-models/completion-bing.ts";
-import { log } from "../../helpers/utils";
-import {
-  BING_COOKIES,
-  BOT_PREFIX,
-  ENABLE_REMINDERS,
-  ENABLE_SOURCES,
-  ENABLE_SUGGESTIONS,
-  OPENROUTER_API_KEY,
-} from "../../constants";
-import { handleReminderFor } from "../reminder/reminder.ts";
-import { getLLMModel, updateWaMessageId } from "../../crud/conversation";
 import { getCompletionWithOpenRouter } from "../llm-models/completion-open-router.ts";
+import { handleReminderFor } from "../reminder/reminder.ts";
 
 export async function handleMessage(message: Message) {
   await log(message);
@@ -61,8 +60,11 @@ export async function handleMessage(message: Message) {
 
     if (!response) throw new Error("No response from LLM");
 
-    // @ts-ignore
-    const finalReply = await streamingReply.edit(response);
+    let finalReply = null;
+
+    while (finalReply === null) {
+      finalReply = await streamingReply.edit(response);
+    }
 
     await log(finalReply, true);
     await setStatusFor(message, "done");
