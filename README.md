@@ -5,7 +5,7 @@ Welcome to the WhatsApp AI Assistant repository, where you'll find a remarkable 
 
 |                                                 Sydney                                                 | OpenRouter Models* |
 | :----------------------------------------------------------------------------------------------------: | :----------------: |
-| <video src="https://github.com/WAppAI/assistant/assets/50471205/5d300910-099d-4ceb-9f87-0852389a4c5b"> |  <video  src="https://github.com/WAppAI/assistant/assets/50471205/155e8c11-691d-42d2-ab1c-845e6239bffb">    |
+| <video src="https://github.com/WAppAI/assistant/assets/50471205/5d300910-099d-4ceb-9f87-0852389a4c5b"> |  <video  src="https://github.com/WAppAI/assistant/assets/50471205/e8e8aabe-9ef7-4e3e-b0dc-156071c425f8">    |
 
 ## Feature Comparison
 
