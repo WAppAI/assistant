@@ -14,9 +14,14 @@ import {
 // Doing this for now because ts-node complains about commonjs modules, will fix later
 const { Client, LocalAuth } = WAWebJS;
 
+const wwebVersion = '2.2407.3';
+
 export const whatsapp = new Client({
   authStrategy: new LocalAuth(),
-
+  webVersionCache: {
+    type: 'remote',
+    remotePath: `https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/${wwebVersion}.html`,
+  },
   puppeteer: {
     headless: true,
     handleSIGTERM: false,

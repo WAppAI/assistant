@@ -75,8 +75,8 @@ dependencies:
     specifier: ^2.7.2
     version: 2.7.2
   whatsapp-web.js:
-    specifier: 1.23.1-alpha.4
-    version: 1.23.1-alpha.4
+    specifier: 1.23.1-alpha.5
+    version: 1.23.1-alpha.5
   zod:
     specifier: ^3.22.2
     version: 3.22.2
@@ -3537,7 +3537,7 @@ packages:
   /puppeteer@13.7.0:
     resolution: {integrity: sha512-U1uufzBjz3+PkpCxFrWzh4OrMIdIb2ztzCu0YEPfRHjHswcSwHZswnK+WdsOQJsRV8WeTg3jLhJR4D867+fjsA==}
     engines: {node: '>=10.18.1'}
-    deprecated: < 21.5.0 is no longer supported
+    deprecated: < 21.8.0 is no longer supported
     requiresBuild: true
     dependencies:
       cross-fetch: 3.1.5
@@ -3875,6 +3875,9 @@ packages:
   /sqlite3@5.1.6:
     resolution: {integrity: sha512-olYkWoKFVNSSSQNvxVUfjiVbz3YtBwTJj+mfV5zpHmqW3sELx2Cf4QCdirMelhM5Zh+KDVaKgQHqCxrqiWHybw==}
     requiresBuild: true
+    peerDependenciesMeta:
+      node-gyp:
+        optional: true
     dependencies:
       '@mapbox/node-pre-gyp': 1.0.11
       node-addon-api: 4.3.0
@@ -4232,8 +4235,8 @@ packages:
     resolution: {integrity: sha512-2JAn3z8AR6rjK8Sm8orRC0h/bcl/DqL7tRPdGZ4I1CjdF+EaMLmYxBHyXuKL849eucPFhvBoxMsflfOb8kxaeQ==}
     dev: false
 
-  /whatsapp-web.js@1.23.1-alpha.4:
-    resolution: {integrity: sha512-GDWfWdd9YlIppExgziHhQLsVWstD9yNhRwqMPQsFfyXD/DcN5b9wFONsvzRTD+Twc6RTjBUzoUA8BkvSgh8tUg==}
+  /whatsapp-web.js@1.23.1-alpha.5:
+    resolution: {integrity: sha512-eA2CWGZI4zmbFfX2buITZo/If31mzk/hVYGN07aDJublj4RxHCuGYiop4rouHH0e6HK9FX6Ak8Zp2Sr2BbTYcw==}
     engines: {node: '>=12.0.0'}
     dependencies:
       '@pedroslopez/moduleraid': 5.0.2
