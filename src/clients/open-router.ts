@@ -50,7 +50,7 @@ async function createMemoryForOpenRouter(chat: string) {
     const summaryLLM = new ChatOpenAI(
       {
         modelName: SUMMARY_LLM_MODEL,
-        temperature: 0.7,
+        temperature: 0,
         openAIApiKey: OPENROUTER_API_KEY,
       },
       {
