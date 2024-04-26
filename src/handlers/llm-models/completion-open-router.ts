@@ -1,6 +1,7 @@
 import { Message } from "whatsapp-web.js";
 import { createExecutorForOpenRouter } from "../../clients/open-router";
 import {
+  ASSISTANT_NAME,
   BOT_PREFIX,
   DEBUG_SUMMARY,
   OPENROUTER_MEMORY_TYPE,
@@ -51,7 +52,11 @@ export async function getCompletionWithOpenRouter(
   }
 
   const response = await executor.invoke(
-    { input: message.body },
+    {
+      input: message.body,
+      ASSISTANT_NAME: ASSISTANT_NAME,
+      context: context,
+    },
     {
       callbacks: [
         {
@@ -78,23 +83,47 @@ export async function getCompletionWithOpenRouter(
     let currentSummaryRaw = await executor.memory?.loadMemoryVariables({});
     let currentSummary = currentSummaryRaw?.chat_history;
 
+    let currentSummaryArray = currentSummary.map((message: any) => {
+      return {
+        [message.constructor.name]: message.content,
+      };
+    });
+
     if (DEBUG_SUMMARY === "true") {
-      console.log("Current summary: ", currentSummary);
+      console.log("Current summary: ", currentSummaryArray);
     }
 
     if (conversation) {
-      await updateOpenRouterConversation(chat.id._serialized, currentSummary); // Updates the conversation
+      await updateOpenRouterConversation(
+        chat.id._serialized,
+        JSON.stringify(currentSummaryArray)
+      ); // Updates the conversation
     } else {
-      await createOpenRouterConversation(chat.id._serialized, currentSummary); // Creates the conversation
+      await createOpenRouterConversation(
+        chat.id._serialized,
+        JSON.stringify(currentSummaryArray)
+      ); // Creates the conversation
     }
   } else {
-    let chatistoryRaw = await executor.memory?.loadMemoryVariables({});
-    let chatHistory: string = chatistoryRaw?.chat_history;
+    let chatHistoryRaw = await executor.memory?.loadMemoryVariables({});
+    let chatHistory: any[] = chatHistoryRaw?.chat_history;
+
+    let chatHistoryArray = chatHistory.map((message) => {
+      return {
+        [message.constructor.name]: message.content,
+      };
+    });
 
     if (conversation) {
-      await updateOpenRouterConversation(chat.id._serialized, chatHistory); // Updates the conversation
+      await updateOpenRouterConversation(
+        chat.id._serialized,
+        JSON.stringify(chatHistoryArray)
+      ); // Updates the conversation
     } else {
-      await createOpenRouterConversation(chat.id._serialized, chatHistory); // Creates the conversation
+      await createOpenRouterConversation(
+        chat.id._serialized,
+        JSON.stringify(chatHistoryArray)
+      ); // Creates the conversation
     }
   }
 

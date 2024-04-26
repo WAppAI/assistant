@@ -4,7 +4,12 @@ import {
 } from "@langchain/community/tools/google_calendar";
 import { SearchApi } from "@langchain/community/tools/searchapi";
 import { WikipediaQueryRun } from "@langchain/community/tools/wikipedia_query_run";
-import { ChatOpenAI, DallEAPIWrapper, OpenAI, OpenAIEmbeddings } from "@langchain/openai";
+import {
+  ChatOpenAI,
+  DallEAPIWrapper,
+  OpenAI,
+  OpenAIEmbeddings,
+} from "@langchain/openai";
 import { Calculator } from "langchain/tools/calculator";
 import { WebBrowser } from "langchain/tools/webbrowser";
 import {
@@ -17,10 +22,8 @@ import {
   GOOGLE_CALENDAR_PRIVATE_KEY,
   OPENAI_API_KEY,
   OPENROUTER_API_KEY,
-  SEARCH_API
+  SEARCH_API,
 } from "../constants";
-
-const OPENROUTER_BASE_URL = "https://openrouter.ai";
 
 let googleCalendarCreateTool = null;
 let googleCalendarViewTool = null;
@@ -44,7 +47,7 @@ if (ENABLE_WEB_BROWSER_TOOL === "true") {
       openAIApiKey: OPENROUTER_API_KEY,
     },
     {
-      basePath: `${OPENROUTER_BASE_URL}/api/v1`,
+      basePath: "https://openrouter.ai/api/v1",
     }
   );
   const embeddings = new OpenAIEmbeddings();
@@ -74,19 +77,18 @@ if (ENABLE_GOOGLE_CALENDAR === "true") {
   googleCalendarViewTool = new GoogleCalendarViewTool(googleCalendarParams);
 }
 
-if (SEARCH_API !== '') {
+if (SEARCH_API !== "") {
   searchTool = new SearchApi(SEARCH_API, {
     engine: "google_news",
   });
 }
 
-const calculatorTool = new Calculator()
+const calculatorTool = new Calculator();
 
 const wikipediaTool = new WikipediaQueryRun({
   topKResults: 3,
   maxDocContentLength: 4000,
 });
-
 
 export const tools = [
   ...(searchTool ? [searchTool] : []),
@@ -95,6 +97,6 @@ export const tools = [
   ...(googleCalendarViewTool ? [googleCalendarViewTool] : []),
   ...(dalleTool ? [dalleTool] : []),
   wikipediaTool,
-  calculatorTool
+  calculatorTool,
 ];
 export const toolNames = tools.map((tool) => tool.name);

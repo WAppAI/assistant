@@ -24,12 +24,6 @@ export async function createContextFromMessage(message: Message) {
   - The user's timezone is '${timezone}'
   - The user's local date and time is: ${timestampLocal}
 
-  [system](#additional_instructions)
-  ## Regarding dates and times:
-  - Do **NOT** use UTC/GMT dates and times. These are for internal use only.
-  - You **MUST ALWAYS** use the user's local date and time when asked about dates and/or times
-  - You **MUST ALWAYS** use the user's local date and time when creating reminders
-
   ${llmModel === "bing" ? reminderContext : ""}
   `;
 

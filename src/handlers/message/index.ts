@@ -1,10 +1,11 @@
 import { Message } from "whatsapp-web.js";
 import {
   BOT_PREFIX,
+  DEFAULT_MODEL,
   ENABLE_REMINDERS,
   ENABLE_SOURCES,
   ENABLE_SUGGESTIONS,
-  OPENROUTER_API_KEY
+  OPENROUTER_API_KEY,
 } from "../../constants";
 import { getLLMModel, updateWaMessageId } from "../../crud/conversation";
 import { setStatusFor } from "../../helpers/message";
@@ -25,7 +26,7 @@ export async function handleMessage(message: Message) {
   const streamingReply = await message.reply("...");
   let llmModel = await getLLMModel(chat.id._serialized);
   if (!llmModel) {
-    llmModel = "bing";
+    llmModel = DEFAULT_MODEL;
   }
   let response: string | null;
 
@@ -38,8 +39,7 @@ export async function handleMessage(message: Message) {
         context,
         streamingReply
       );
-    }
-    else {
+    } else {
       const completion = await getCompletionWithBing(
         message,
         context,
