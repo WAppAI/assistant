@@ -1,6 +1,7 @@
 import { Message } from "whatsapp-web.js";
 import {
   BOT_PREFIX,
+  DEFAULT_MODEL,
   ENABLE_REMINDERS,
   ENABLE_SOURCES,
   ENABLE_SUGGESTIONS,
@@ -25,7 +26,7 @@ export async function handleMessage(message: Message) {
   const streamingReply = await message.reply("...");
   let llmModel = await getLLMModel(chat.id._serialized);
   if (!llmModel) {
-    llmModel = "openai/gpt-3.5-turbo";
+    llmModel = DEFAULT_MODEL;
   }
   let response: string | null;
 

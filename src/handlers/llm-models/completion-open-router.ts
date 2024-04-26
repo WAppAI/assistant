@@ -56,6 +56,7 @@ export async function getCompletionWithOpenRouter(
     {
       input: message.body,
       ASSISTANT_NAME: ASSISTANT_NAME,
+      context: context,
     },
     {
       callbacks: [
@@ -83,14 +84,26 @@ export async function getCompletionWithOpenRouter(
     let currentSummaryRaw = await executor.memory?.loadMemoryVariables({});
     let currentSummary = currentSummaryRaw?.chat_history;
 
+    let currentSummaryArray = currentSummary.map((message: any) => {
+      return {
+        [message.constructor.name]: message.content,
+      };
+    });
+
     if (DEBUG_SUMMARY === "true") {
-      console.log("Current summary: ", currentSummary);
+      console.log("Current summary: ", currentSummaryArray);
     }
 
     if (conversation) {
-      await updateOpenRouterConversation(chat.id._serialized, currentSummary); // Updates the conversation
+      await updateOpenRouterConversation(
+        chat.id._serialized,
+        JSON.stringify(currentSummaryArray)
+      ); // Updates the conversation
     } else {
-      await createOpenRouterConversation(chat.id._serialized, currentSummary); // Creates the conversation
+      await createOpenRouterConversation(
+        chat.id._serialized,
+        JSON.stringify(currentSummaryArray)
+      ); // Creates the conversation
     }
   } else {
     let chatHistoryRaw = await executor.memory?.loadMemoryVariables({});
@@ -101,8 +114,6 @@ export async function getCompletionWithOpenRouter(
         [message.constructor.name]: message.content,
       };
     });
-
-    console.log("Chat history: ", chatHistoryArray);
 
     if (conversation) {
       await updateOpenRouterConversation(

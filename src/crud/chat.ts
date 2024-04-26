@@ -1,4 +1,5 @@
 import { prisma } from "../clients/prisma";
+import { DEFAULT_MODEL } from "../constants";
 
 export async function getChatFor(chatId: string) {
   return await prisma.wAChat.findFirst({
@@ -8,7 +9,7 @@ export async function getChatFor(chatId: string) {
 
 export async function createChat(chatId: string) {
   return await prisma.wAChat.create({
-    data: { id: chatId },
+    data: { id: chatId, llmModel: DEFAULT_MODEL },
   });
 }
 

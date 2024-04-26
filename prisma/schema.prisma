@@ -12,7 +12,7 @@ model WAChat {
   bingConversations       BingConversation[]
   openRouterConversations OpenRouterConversation[]
   reminders               Reminder[]
-  llmModel                String                   @default("google/gemini-pro")
+  llmModel                String                   @default("bing")
 }
 
 model BingConversation {

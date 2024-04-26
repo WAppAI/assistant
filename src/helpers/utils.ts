@@ -4,6 +4,11 @@ import { whatsapp } from "../clients/whatsapp";
 import dayjs from "dayjs";
 
 export function checkEnv() {
+  if (!process.env.DEFAULT_MODEL) {
+    throw new Error(
+      `Invalid DEFAULT_MODEL="${process.env.DEFAULT_MODEL}" provided. Please check the DEFAULT_MODEL variable in your .env file.`
+    );
+  }
   if (!process.env.OPENROUTER_API_KEY) {
     console.warn(
       "OPENROUTER_API_KEY not provided. You will not be able to use any other model than Bing."
@@ -15,7 +20,11 @@ export function checkEnv() {
       );
     }
     if (process.env.ENABLE_GOOGLE_CALENDAR === "true") {
-      if (!process.env.GOOGLE_CALENDAR_CLIENT_EMAIL || !process.env.GOOGLE_CALENDAR_PRIVATE_KEY || !process.env.GOOGLE_CALENDAR_CALENDAR_ID) {
+      if (
+        !process.env.GOOGLE_CALENDAR_CLIENT_EMAIL ||
+        !process.env.GOOGLE_CALENDAR_PRIVATE_KEY ||
+        !process.env.GOOGLE_CALENDAR_CALENDAR_ID
+      ) {
         console.warn(
           "Google Calendar is enabled but one or more environment variables (GOOGLE_CALENDAR_CLIENT_EMAIL, GOOGLE_CALENDAR_PRIVATE_KEY, GOOGLE_CALENDAR_CALENDAR_ID) are not set. Please check your .env file."
         );
@@ -39,7 +48,10 @@ export function checkEnv() {
           `Invalid OPENAI_API_KEY="${process.env.OPENAI_API_KEY}" provided. Please check the OPENAI_API_KEY variable in your .env file.`
         );
       }
-      if (process.env.DALLE_MODEL !== "dall-e-3" && process.env.DALLE_MODEL !== "dall-e-2") {
+      if (
+        process.env.DALLE_MODEL !== "dall-e-3" &&
+        process.env.DALLE_MODEL !== "dall-e-2"
+      ) {
         throw new Error(
           `Invalid DALLE_MODEL="${process.env.DALLE_MODEL}" provided. Please check the DALLE_MODEL variable in your .env file.`
         );

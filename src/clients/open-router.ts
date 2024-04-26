@@ -21,23 +21,22 @@ import {
 } from "../crud/conversation";
 import { tools } from "./tools-openrouter";
 
-function parseMessageHistory(rawHistory: string): (HumanMessage | AIMessage)[] {
-  const lines = rawHistory.split("\n");
-  return lines
-    .map((line) => {
-      if (line.startsWith("Human: ")) {
-        return new HumanMessage(line.replace("Human: ", ""));
-      } else {
-        return new AIMessage(line.replace("AI: ", ""));
-      }
-    })
-    .filter(
-      (message): message is HumanMessage | AIMessage => message !== undefined
-    );
+function parseMessageHistory(
+  rawHistory: { [key: string]: string }[]
+): (HumanMessage | AIMessage)[] {
+  return rawHistory.map((messageObj) => {
+    const messageType = Object.keys(messageObj)[0];
+    const messageContent = messageObj[messageType];
+
+    if (messageType === "HumanMessage") {
+      return new HumanMessage(messageContent);
+    } else {
+      return new AIMessage(messageContent);
+    }
+  });
 }
 
 async function createMemoryForOpenRouter(chat: string) {
-  console.log("Creating memory for OpenRouter");
   const conversation = await getOpenRouterConversationFor(chat);
   let memory;
 
@@ -57,6 +56,7 @@ async function createMemoryForOpenRouter(chat: string) {
       memoryKey: "chat_history",
       inputKey: "input",
       outputKey: "output",
+      returnMessages: true,
       llm: summaryLLM,
     });
   } else {
@@ -78,7 +78,7 @@ async function createMemoryForOpenRouter(chat: string) {
       let memoryString = await getOpenRouterMemoryFor(chat);
       if (memoryString === undefined) return;
 
-      const pastMessages = parseMessageHistory(memoryString);
+      const pastMessages = parseMessageHistory(JSON.parse(memoryString));
       memory.chatHistory = new ChatMessageHistory(pastMessages);
     }
   } else {
