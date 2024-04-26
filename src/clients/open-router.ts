@@ -1,21 +1,17 @@
 import { AIMessage, BaseMessage, HumanMessage } from "@langchain/core/messages";
-import { PromptTemplate } from "@langchain/core/prompts";
-import { RunnableSequence } from "@langchain/core/runnables";
-import { ChatOpenAI } from "@langchain/openai";
-import { AgentExecutor, AgentStep } from "langchain/agents";
-import { formatLogToString } from "langchain/agents/format_scratchpad/log";
-import { ReActSingleInputOutputParser } from "langchain/agents/react/output_parser";
+import type { ChatPromptTemplate } from "@langchain/core/prompts";
+import { ChatOpenAI, messageToOpenAIRole } from "@langchain/openai";
+import { AgentExecutor, createStructuredChatAgent } from "langchain/agents";
+import { pull } from "langchain/hub";
 import {
   BufferWindowMemory,
   ChatMessageHistory,
   ConversationSummaryMemory,
 } from "langchain/memory";
-import { renderTextDescription } from "langchain/tools/render";
 import {
   OPENROUTER_API_KEY,
   OPENROUTER_MEMORY_TYPE,
   OPENROUTER_MSG_MEMORY_LIMIT,
-  OPEN_ROUTER_SYSTEM_MESSAGE,
   SUMMARY_LLM_MODEL,
 } from "../constants";
 import {
@@ -23,9 +19,7 @@ import {
   getOpenRouterConversationFor,
   getOpenRouterMemoryFor,
 } from "../crud/conversation";
-import { toolNames, tools } from "./tools-openrouter";
-
-const OPENROUTER_BASE_URL = "https://openrouter.ai";
+import { tools } from "./tools-openrouter";
 
 function parseMessageHistory(rawHistory: string): (HumanMessage | AIMessage)[] {
   const lines = rawHistory.split("\n");
@@ -43,6 +37,7 @@ function parseMessageHistory(rawHistory: string): (HumanMessage | AIMessage)[] {
 }
 
 async function createMemoryForOpenRouter(chat: string) {
+  console.log("Creating memory for OpenRouter");
   const conversation = await getOpenRouterConversationFor(chat);
   let memory;
 
@@ -50,25 +45,26 @@ async function createMemoryForOpenRouter(chat: string) {
     const summaryLLM = new ChatOpenAI(
       {
         modelName: SUMMARY_LLM_MODEL,
-        temperature: 0.7,
+        temperature: 0,
         openAIApiKey: OPENROUTER_API_KEY,
       },
       {
-        basePath: `${OPENROUTER_BASE_URL}/api/v1`,
+        basePath: "https://openrouter.ai/api/v1",
       }
     );
 
     memory = new ConversationSummaryMemory({
       memoryKey: "chat_history",
       inputKey: "input",
-      outputKey: 'output',
+      outputKey: "output",
       llm: summaryLLM,
     });
   } else {
     memory = new BufferWindowMemory({
       memoryKey: "chat_history",
       inputKey: "input",
-      outputKey: 'output',
+      outputKey: "output",
+      returnMessages: true,
       k: OPENROUTER_MSG_MEMORY_LIMIT,
     });
   }
@@ -85,6 +81,10 @@ async function createMemoryForOpenRouter(chat: string) {
       const pastMessages = parseMessageHistory(memoryString);
       memory.chatHistory = new ChatMessageHistory(pastMessages);
     }
+  } else {
+    console.log("Creating new memory");
+    let memoryString: BaseMessage[] = [];
+    memory.chatHistory = new ChatMessageHistory(memoryString);
   }
 
   return memory;
@@ -103,52 +103,25 @@ export async function createExecutorForOpenRouter(
       openAIApiKey: OPENROUTER_API_KEY,
     },
     {
-      basePath: `${OPENROUTER_BASE_URL}/api/v1`,
+      basePath: "https://openrouter.ai/api/v1",
     }
   );
 
-  const modelWithStop = openRouterChat.bind({
-    stop: ["\nObservation"],
-  });
+  const prompt = await pull<ChatPromptTemplate>("luisotee/wa-assistant");
+
   const memory = await createMemoryForOpenRouter(chat);
 
-  const systemMessageOpenRouter = PromptTemplate.fromTemplate(` 
-${OPEN_ROUTER_SYSTEM_MESSAGE}
-
-${context}`);
-
-  const promptWithInputs = await systemMessageOpenRouter.partial({
-    tools: renderTextDescription(tools),
-    tool_names: toolNames.join(","),
+  const agent = await createStructuredChatAgent({
+    llm: openRouterChat,
+    tools,
+    prompt,
   });
-
-  const agent = RunnableSequence.from([
-    {
-      input: (i: {
-        input: string;
-        steps: AgentStep[];
-        chat_history: BaseMessage[];
-      }) => i.input,
-      agent_scratchpad: (i: {
-        input: string;
-        steps: AgentStep[];
-        chat_history: BaseMessage[];
-      }) => formatLogToString(i.steps),
-      chat_history: (i: {
-        input: string;
-        steps: AgentStep[];
-        chat_history: BaseMessage[];
-      }) => i.chat_history,
-    },
-    promptWithInputs,
-    modelWithStop,
-    new ReActSingleInputOutputParser({ toolNames }),
-  ]);
 
   const executor = AgentExecutor.fromAgentAndTools({
     agent,
     tools,
     memory,
+    //verbose: true,
   });
 
   return executor;

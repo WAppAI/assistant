@@ -1,6 +1,7 @@
 import { Message } from "whatsapp-web.js";
 import { createExecutorForOpenRouter } from "../../clients/open-router";
 import {
+  ASSISTANT_NAME,
   BOT_PREFIX,
   DEBUG_SUMMARY,
   OPENROUTER_MEMORY_TYPE,
@@ -14,6 +15,7 @@ import {
   updateOpenRouterConversation,
 } from "../../crud/conversation";
 import { handleAudioMessage } from "../audio-message";
+import { AIMessage, HumanMessage } from "@langchain/core/messages";
 
 export async function getCompletionWithOpenRouter(
   message: Message,
@@ -51,7 +53,10 @@ export async function getCompletionWithOpenRouter(
   }
 
   const response = await executor.invoke(
-    { input: message.body },
+    {
+      input: message.body,
+      ASSISTANT_NAME: ASSISTANT_NAME,
+    },
     {
       callbacks: [
         {
@@ -88,13 +93,27 @@ export async function getCompletionWithOpenRouter(
       await createOpenRouterConversation(chat.id._serialized, currentSummary); // Creates the conversation
     }
   } else {
-    let chatistoryRaw = await executor.memory?.loadMemoryVariables({});
-    let chatHistory: string = chatistoryRaw?.chat_history;
+    let chatHistoryRaw = await executor.memory?.loadMemoryVariables({});
+    let chatHistory: any[] = chatHistoryRaw?.chat_history;
+
+    let chatHistoryArray = chatHistory.map((message) => {
+      return {
+        [message.constructor.name]: message.content,
+      };
+    });
+
+    console.log("Chat history: ", chatHistoryArray);
 
     if (conversation) {
-      await updateOpenRouterConversation(chat.id._serialized, chatHistory); // Updates the conversation
+      await updateOpenRouterConversation(
+        chat.id._serialized,
+        JSON.stringify(chatHistoryArray)
+      ); // Updates the conversation
     } else {
-      await createOpenRouterConversation(chat.id._serialized, chatHistory); // Creates the conversation
+      await createOpenRouterConversation(
+        chat.id._serialized,
+        JSON.stringify(chatHistoryArray)
+      ); // Creates the conversation
     }
   }
 
