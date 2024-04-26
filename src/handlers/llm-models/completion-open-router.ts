@@ -15,7 +15,6 @@ import {
   updateOpenRouterConversation,
 } from "../../crud/conversation";
 import { handleAudioMessage } from "../audio-message";
-import { AIMessage, HumanMessage } from "@langchain/core/messages";
 
 export async function getCompletionWithOpenRouter(
   message: Message,

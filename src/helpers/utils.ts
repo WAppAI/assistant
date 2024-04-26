@@ -57,6 +57,11 @@ export function checkEnv() {
         );
       }
     }
+    if (!process.env.MODEL_TEMPERATURE) {
+      throw new Error(
+        `Invalid MODEL_TEMPERATURE="${process.env.MODEL_TEMPERATURE}" provided. Please check the MODEL_TEMPERATURE variable in your .env file.`
+      );
+    }
   }
 
   if (!process.env.BING_COOKIES) {
@@ -202,12 +207,6 @@ export function checkEnv() {
   if (!process.env.ASSISTANT_NAME) {
     throw new Error(
       `Invalid ASSISTANT_NAME="${process.env.ASSISTANT_NAME}" provided. Please check the ASSISTANT_NAME variable in your .env file.`
-    );
-  }
-
-  if (!process.env.OPEN_ROUTER_SYSTEM_MESSAGE) {
-    throw new Error(
-      `Invalid OPEN_ROUTER_SYSTEM_MESSAGE="${process.env.OPEN_ROUTER_SYSTEM_MESSAGE}" provided. Please check the OPEN_ROUTER_SYSTEM_MESSAGE variable in your .env file.`
     );
   }
 

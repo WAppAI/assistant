@@ -1,6 +1,6 @@
 import { AIMessage, BaseMessage, HumanMessage } from "@langchain/core/messages";
 import type { ChatPromptTemplate } from "@langchain/core/prompts";
-import { ChatOpenAI, messageToOpenAIRole } from "@langchain/openai";
+import { ChatOpenAI } from "@langchain/openai";
 import { AgentExecutor, createStructuredChatAgent } from "langchain/agents";
 import { pull } from "langchain/hub";
 import {
@@ -9,6 +9,7 @@ import {
   ConversationSummaryMemory,
 } from "langchain/memory";
 import {
+  MODEL_TEMPERATURE,
   OPENROUTER_API_KEY,
   OPENROUTER_MEMORY_TYPE,
   OPENROUTER_MSG_MEMORY_LIMIT,
@@ -82,7 +83,6 @@ async function createMemoryForOpenRouter(chat: string) {
       memory.chatHistory = new ChatMessageHistory(pastMessages);
     }
   } else {
-    console.log("Creating new memory");
     let memoryString: BaseMessage[] = [];
     memory.chatHistory = new ChatMessageHistory(memoryString);
   }
@@ -99,7 +99,7 @@ export async function createExecutorForOpenRouter(
     {
       modelName: llmModel,
       streaming: true,
-      temperature: 0.7,
+      temperature: MODEL_TEMPERATURE,
       openAIApiKey: OPENROUTER_API_KEY,
     },
     {

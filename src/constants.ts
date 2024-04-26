@@ -12,8 +12,6 @@ export const BING_TONESTYLE = process.env
   .BING_TONESTYLE as BingAIClientSendMessageOptions["toneStyle"];
 export const ASSISTANT_NAME = process.env.ASSISTANT_NAME?.trim() as string;
 export const BING_SYSTEM_MESSAGE = process.env.BING_SYSTEM_MESSAGE as string;
-export const OPEN_ROUTER_SYSTEM_MESSAGE = process.env
-  .OPEN_ROUTER_SYSTEM_MESSAGE as string;
 export const STREAM_RESPONSES = process.env.STREAM_RESPONSES as string;
 export const ENABLE_REMINDERS = process.env.ENABLE_REMINDERS as string;
 export const REPLY_RRULES = process.env.REPLY_RRULES as string;
@@ -61,3 +59,6 @@ export const ENABLE_WEB_BROWSER_TOOL = process.env
 export const ENABLE_DALLE_TOOL = process.env.ENABLE_DALLE_TOOL as string;
 export const DALLE_MODEL = process.env.DALLE_MODEL as string;
 export const DEFAULT_MODEL = process.env.DEFAULT_MODEL as string;
+export const MODEL_TEMPERATURE = parseFloat(
+  process.env.MODEL_TEMPERATURE as string
+);
