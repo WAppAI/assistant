@@ -10,7 +10,7 @@ import {
   OpenAI,
   OpenAIEmbeddings,
 } from "@langchain/openai";
-import { Calculator } from "langchain/tools/calculator";
+import { Calculator } from "@langchain/community/tools/calculator";
 import { WebBrowser } from "langchain/tools/webbrowser";
 import {
   DALLE_MODEL,
