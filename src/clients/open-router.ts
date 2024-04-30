@@ -1,7 +1,11 @@
 import { AIMessage, BaseMessage, HumanMessage } from "@langchain/core/messages";
-import type { ChatPromptTemplate } from "@langchain/core/prompts";
+import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { ChatOpenAI } from "@langchain/openai";
-import { AgentExecutor, createStructuredChatAgent } from "langchain/agents";
+import {
+  AgentExecutor,
+  createStructuredChatAgent,
+  createToolCallingAgent,
+} from "langchain/agents";
 import { pull } from "langchain/hub";
 import {
   BufferWindowMemory,
@@ -9,6 +13,7 @@ import {
   ConversationSummaryMemory,
 } from "langchain/memory";
 import {
+  DEFAULT_MODEL,
   MODEL_TEMPERATURE,
   OPENROUTER_API_KEY,
   OPENROUTER_MEMORY_TYPE,
@@ -20,6 +25,7 @@ import {
   getOpenRouterConversationFor,
   getOpenRouterMemoryFor,
 } from "../crud/conversation";
+import { openAIToolCallingModels } from "./tool-calling-models";
 import { tools } from "./tools-openrouter";
 
 function parseMessageHistory(
@@ -94,30 +100,60 @@ export async function createExecutorForOpenRouter(
   context: string,
   chat: string
 ) {
-  const llmModel = await getLLMModel(chat);
-  const openRouterChat = new ChatOpenAI(
-    {
-      modelName: llmModel,
-      streaming: true,
-      temperature: MODEL_TEMPERATURE,
-      openAIApiKey: OPENROUTER_API_KEY,
-    },
-    {
-      basePath: "https://openrouter.ai/api/v1",
-    }
-  );
-
-  const prompt = await pull<ChatPromptTemplate>("luisotee/wa-assistant");
+  let llmModel = await getLLMModel(chat);
+  if (!llmModel) {
+    llmModel = DEFAULT_MODEL;
+  }
 
   const memory = await createMemoryForOpenRouter(chat);
 
-  const agent = await createStructuredChatAgent({
-    llm: openRouterChat,
-    tools,
-    prompt,
-  });
+  let agent;
+  let llm;
+  let prompt;
 
-  const executor = AgentExecutor.fromAgentAndTools({
+  if (openAIToolCallingModels.includes(llmModel)) {
+    prompt = await pull<ChatPromptTemplate>(
+      "luisotee/wa-assistant-tool-calling"
+    );
+
+    llm = new ChatOpenAI(
+      {
+        modelName: llmModel,
+        streaming: true,
+        temperature: MODEL_TEMPERATURE,
+        openAIApiKey: OPENROUTER_API_KEY,
+      },
+      {
+        basePath: "https://openrouter.ai/api/v1",
+      }
+    );
+    agent = await createToolCallingAgent({
+      llm,
+      tools,
+      prompt,
+    });
+  } else {
+    prompt = await pull<ChatPromptTemplate>("luisotee/wa-assistant");
+
+    llm = new ChatOpenAI(
+      {
+        modelName: llmModel,
+        streaming: true,
+        temperature: MODEL_TEMPERATURE,
+        openAIApiKey: OPENROUTER_API_KEY,
+      },
+      {
+        basePath: "https://openrouter.ai/api/v1",
+      }
+    );
+    agent = await createStructuredChatAgent({
+      llm,
+      tools,
+      prompt,
+    });
+  }
+
+  const executor = new AgentExecutor({
     agent,
     tools,
     memory,
