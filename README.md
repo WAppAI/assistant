@@ -24,6 +24,8 @@ Welcome to the WhatsApp AI Assistant repository, where you'll find a remarkable 
 
 **NOTE:** We do not test every LLM that OpenRouter provides. Typically, we only test OpenAI GPT-3.5 and Google Gemini Pro.
 
+**NOTE:** Currently, GPT has a significant better performance than others due to it's agent type.
+
 ## Getting Started
 
 ### Prerequisites
