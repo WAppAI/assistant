@@ -2,29 +2,24 @@
 
 Welcome to the WhatsApp AI Assistant repository, where you'll find a remarkable WhatsApp chatbot designed to function as your very own AI-powered personal assistant. This chatbot leverages the power of Language Model (LLM) technology.
 
-
-|                                                 Sydney                                                 | OpenRouter Models* |
-| :----------------------------------------------------------------------------------------------------: | :----------------: |
-| <video src="https://github.com/WAppAI/assistant/assets/50471205/5d300910-099d-4ceb-9f87-0852389a4c5b"> |  <video  src="https://github.com/WAppAI/assistant/assets/50471205/e8e8aabe-9ef7-4e3e-b0dc-156071c425f8">    |
+|                                                 Sydney                                                 |                                                LangChain                                                |
+| :----------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------: |
+| <video src="https://github.com/WAppAI/assistant/assets/50471205/5d300910-099d-4ceb-9f87-0852389a4c5b"> | <video  src="https://github.com/WAppAI/assistant/assets/50471205/e8e8aabe-9ef7-4e3e-b0dc-156071c425f8"> |
 
 ## Feature Comparison
 
-| Feature                     | Sydney (BingAI Jailbreak) | OpenRouter Models* |
-| :-------------------------- | :-----------------------: | :----------------: |
-| Google/Bing Searching       |             ✅             |         ✅          |
-| Google Calendar             |             ❌             |         ✅          |
-| Gmail                       |             ❌             |         ❌          |
-| Communication Capability    |             ✅             |         ✅          |
-| Group Chat Compatibility    |             ✅             |         ✅          |
-| Voice Message Capability    |             ✅             |         ✅          |
-| Create Basic Text Reminders |             ✅             |         ❌          |
-| Image Recognition           |             ✅             |         ❌          |
-| Image Generation            |             ❌             |         ✅          |
-| PDF Reading                 |             ❌             |         ❌          |
-
-**NOTE:** We do not test every LLM that OpenRouter provides. Typically, we only test OpenAI GPT-3.5 and Google Gemini Pro.
-
-**NOTE:** Currently, GPT has a significant better performance than others due to it's agent type.
+| Feature                     | Sydney (BingAI Jailbreak) | LangChain |
+| :-------------------------- | :-----------------------: | :-------: |
+| Google/Bing Searching       |            ✅             |    ✅     |
+| Google Calendar             |            ❌             |    ✅     |
+| Gmail                       |            ❌             |    ❌     |
+| Communication Capability    |            ✅             |    ✅     |
+| Group Chat Compatibility    |            ✅             |    ✅     |
+| Voice Message Capability    |            ✅             |    ✅     |
+| Create Basic Text Reminders |            ✅             |    ❌     |
+| Image Recognition           |            ✅             |    ❌     |
+| Image Generation            |            ❌             |    ✅     |
+| PDF Reading                 |            ❌             |    ❌     |
 
 ## Getting Started
 
@@ -32,7 +27,7 @@ Welcome to the WhatsApp AI Assistant repository, where you'll find a remarkable 
 
 - Node.js >= 18.15.0
 - Node.js version >= 20.x.x users you should use `node --loader ts-node/esm src/index.ts` instead of `pnpm start`
-- A spare WhatsApp number 
+- A spare WhatsApp number
 
 ### Installation
 
@@ -64,7 +59,7 @@ cp .env.example .env
 
 5. Read and fill in the remaining information in the `.env` file.
 
-6. Run 
+6. Run
 
 ```
 pnpm build
@@ -83,7 +78,7 @@ pnpm start
 </details>
 
 <details>
-<summary><b>OpenRouter</b></summary>
+<summary><b>LangChain</b></summary>
 <br>
 
 1. Clone this repository
@@ -106,9 +101,9 @@ cp .env.example .env
 
 4. Read and fill in the remaining information in the `.env` file.
 
-5.  Instructions on how to use langchain tools like Google Calendar and search will be in the `.env`
+5. Instructions on how to use langchain tools like Google Calendar and search will be in the `.env`
 
-6. Run 
+6. Run
 
 ```
 pnpm build
@@ -137,18 +132,14 @@ When dealing with voice messages, you have two options for transcription: utiliz
 <details>
 <summary><strong>Whisper API:</strong></summary>
 
-   - **Cost:** Utilizing the Whisper API incurs a cost of US$0.06 per 10 minutes of audio.
-   - **Setup:**
-     1. Obtain an OpenAI API key and place it in the `.env` file under the `OPENAI_API_KEY` variable.
-     2. Set `TRANSCRIPTION_ENABLED` to `"true"` and `TRANSCRIPTION_METHOD` to `"whisper-api"`. While setting a language in `TRANSCRIPTION_LANGUAGE` is not mandatory, it is recommended for better performance.
+- **Cost:** Utilizing the Whisper API incurs a cost of US$0.06 per 10 minutes of audio.
+- **Setup:** 1. Obtain an OpenAI API key and place it in the `.env` file under the `OPENAI_API_KEY` variable. 2. Set `TRANSCRIPTION_ENABLED` to `"true"` and `TRANSCRIPTION_METHOD` to `"whisper-api"`. While setting a language in `TRANSCRIPTION_LANGUAGE` is not mandatory, it is recommended for better performance.
 </details>
 <details>
 <summary><strong>Local Mode:</strong></summary>
 
-   - **Cost:** The local method is free but may be slower and less precise.
-   - **Setup:**
-     1. Download a model of your choice from [here](https://huggingface.co/ggerganov/whisper.cpp/tree/main). Download any `.bin` file and place it in the `./whisper/models` folder.
-     2. Modify the `.env` file by changing `TRANSCRIPTION_ENABLED` to `"true"`, `TRANSCRIPTION_METHOD` to `"local"`, and `"TRANSCRIPTION_MODEL"` with the name of the model you downloaded. While setting a language in `TRANSCRIPTION_LANGUAGE` is not mandatory, it is recommended for better performance.
+- **Cost:** The local method is free but may be slower and less precise.
+- **Setup:** 1. Download a model of your choice from [here](https://huggingface.co/ggerganov/whisper.cpp/tree/main). Download any `.bin` file and place it in the `./whisper/models` folder. 2. Modify the `.env` file by changing `TRANSCRIPTION_ENABLED` to `"true"`, `TRANSCRIPTION_METHOD` to `"local"`, and `"TRANSCRIPTION_MODEL"` with the name of the model you downloaded. While setting a language in `TRANSCRIPTION_LANGUAGE` is not mandatory, it is recommended for better performance.
 </details>
 
 ### Group Chat
