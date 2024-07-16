@@ -13,6 +13,7 @@ Welcome to the WhatsApp AI Assistant repository, where you'll find a remarkable 
 | :-------------------------- | :-----------------------: | :----------------: |
 | Google/Bing Searching       |             ✅             |         ✅          |
 | Google Calendar             |             ❌             |         ✅          |
+| Google Routes               |             ❌             |         ✅          |
 | Gmail                       |             ❌             |         ❌          |
 | Communication Capability    |             ✅             |         ✅          |
 | Group Chat Compatibility    |             ✅             |         ✅          |
