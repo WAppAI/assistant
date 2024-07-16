@@ -8,23 +8,19 @@ Welcome to the WhatsApp AI Assistant repository, where you'll find a remarkable 
 
 ## Feature Comparison
 
-| Feature                     | Sydney (BingAI Jailbreak) | OpenRouter Models\* |
-| :-------------------------- | :-----------------------: | :-----------------: |
-| Google/Bing Searching       |            ✅             |         ✅          |
-| Google Calendar             |            ❌             |         ✅          |
-| Google Routes               |            ❌             |         ✅          |
-| Gmail                       |            ❌             |         ❌          |
-| Communication Capability    |            ✅             |         ✅          |
-| Group Chat Compatibility    |            ✅             |         ✅          |
-| Voice Message Capability    |            ✅             |         ✅          |
-| Create Basic Text Reminders |            ✅             |         ❌          |
-| Image Recognition           |            ✅             |         ❌          |
-| Image Generation            |            ❌             |         ✅          |
-| PDF Reading                 |            ❌             |         ❌          |
-
-**NOTE:** We do not test every LLM that OpenRouter provides. Typically, we only test OpenAI GPT-3.5 and Google Gemini Pro.
-
-**NOTE:** Currently, GPT has a significant better performance than others due to it's agent type.
+| Feature                     | Sydney (BingAI Jailbreak) | LangChain |
+| :-------------------------- | :-----------------------: | :-------: |
+| Google/Bing Searching       |            ✅             |    ✅     |
+| Google Calendar             |            ❌             |    ✅     |
+| Google Routes               |            ❌             |    ✅     |
+| Gmail                       |            ❌             |    ❌     |
+| Communication Capability    |            ✅             |    ✅     |
+| Group Chat Compatibility    |            ✅             |    ✅     |
+| Voice Message Capability    |            ✅             |    ✅     |
+| Create Basic Text Reminders |            ✅             |    ❌     |
+| Image Recognition           |            ✅             |    ❌     |
+| Image Generation            |            ❌             |    ✅     |
+| PDF Reading                 |            ❌             |    ❌     |
 
 ## Getting Started
 
