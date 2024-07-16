@@ -16,6 +16,7 @@ import {
   DALLE_MODEL,
   ENABLE_DALLE_TOOL,
   ENABLE_GOOGLE_CALENDAR,
+  ENABLE_GOOGLE_ROUTES,
   ENABLE_WEB_BROWSER_TOOL,
   GOOGLE_CALENDAR_CALENDAR_ID,
   GOOGLE_CALENDAR_CLIENT_EMAIL,
@@ -24,12 +25,14 @@ import {
   OPENROUTER_API_KEY,
   SEARCH_API,
 } from "../constants";
+import { GoogleRoutesAPI } from "@langchain/community/tools/google_routes";
 
 let googleCalendarCreateTool = null;
 let googleCalendarViewTool = null;
 let searchTool = null;
 let webBrowserTool = null;
 let dalleTool = null;
+let googleRoutesTool = null;
 
 if (ENABLE_DALLE_TOOL === "true") {
   dalleTool = new DallEAPIWrapper({
@@ -37,6 +40,10 @@ if (ENABLE_DALLE_TOOL === "true") {
     modelName: DALLE_MODEL, // Default
     openAIApiKey: OPENAI_API_KEY, // Default
   });
+}
+
+if (ENABLE_GOOGLE_ROUTES === "true") {
+  googleRoutesTool = new GoogleRoutesAPI();
 }
 
 if (ENABLE_WEB_BROWSER_TOOL === "true") {
@@ -96,6 +103,7 @@ export const tools = [
   ...(googleCalendarCreateTool ? [googleCalendarCreateTool] : []),
   ...(googleCalendarViewTool ? [googleCalendarViewTool] : []),
   ...(dalleTool ? [dalleTool] : []),
+  ...(googleRoutesTool ? [googleRoutesTool] : []),
   wikipediaTool,
   calculatorTool,
 ];
