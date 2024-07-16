@@ -57,63 +57,71 @@ export function checkEnv() {
         );
       }
     }
-    if (!process.env.MODEL_TEMPERATURE) {
-      throw new Error(
-        `Invalid MODEL_TEMPERATURE="${process.env.MODEL_TEMPERATURE}" provided. Please check the MODEL_TEMPERATURE variable in your .env file.`
-      );
-    }
-  }
-
-  if (!process.env.BING_COOKIES) {
-    console.warn(
-      "BING_COOKIES not provided. You will not be able to use the Bing model."
-    );
-  }
-
-  if (!process.env.BING_TONESTYLE) {
-    console.warn(
-      "Invalid BING_TONESTYLE provided. You must set a tonestyle. Please check your .env file."
-    );
-  }
-
-  if (!process.env.BING_SYSTEM_MESSAGE) {
-    console.warn(
-      "Invalid BING_SYSTEM_MESSAGE provided. Please check the BING_SYSTEM_MESSAGE variable in your .env file."
-    );
-  }
-
-  // Additional checks for optional variables related to audio transcription
-  // Check for audio transcription settings
-  if (process.env.TRANSCRIPTION_ENABLED === "true") {
-    if (
-      !process.env.TRANSCRIPTION_METHOD ||
-      !["whisper-api", "local"].includes(process.env.TRANSCRIPTION_METHOD)
-    ) {
-      throw new Error(
-        `Invalid TRANSCRIPTION_METHOD="${process.env.TRANSCRIPTION_METHOD}" provided. Please check the TRANSCRIPTION_METHOD variable in your .env file.`
-      );
-    }
-
-    if (
-      !process.env.REPLY_TRANSCRIPTION ||
-      !["true", "false"].includes(process.env.REPLY_TRANSCRIPTION)
-    ) {
-      throw new Error(
-        `Invalid REPLY_TRANSCRIPTION="${process.env.REPLY_TRANSCRIPTION}" provided. Please check the REPLY_TRANSCRIPTION variable in your .env file.`
-      );
-    }
-
-    if (process.env.TRANSCRIPTION_METHOD === "local") {
-      if (!process.env.TRANSCRIPTION_MODEL) {
-        throw new Error(
-          `Invalid TRANSCRIPTION_MODEL="${process.env.TRANSCRIPTION_MODEL}" provided. Please check the TRANSCRIPTION_MODEL variable in your .env file.`
-        );
-      }
-    } else if (process.env.TRANSCRIPTION_METHOD === "whisper-api") {
+    if (process.env.ENABLE_GOOGLE_ROUTES === "true") {
       if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === "") {
         throw new Error(
-          `Invalid OPENAI_API_KEY="${process.env.OPENAI_API_KEY}" provided. Please check the OPENAI_API_KEY variable in your .env file.`
+          `Invalid DALLE_MODEL="${process.env.DALLE_MODEL}" provided. Please check the DALLE_MODEL variable in your .env file.`
         );
+      }
+
+      if (!process.env.MODEL_TEMPERATURE) {
+        throw new Error(
+          `Invalid MODEL_TEMPERATURE="${process.env.MODEL_TEMPERATURE}" provided. Please check the MODEL_TEMPERATURE variable in your .env file.`
+        );
+      }
+    }
+
+    if (!process.env.BING_COOKIES) {
+      console.warn(
+        "BING_COOKIES not provided. You will not be able to use the Bing model."
+      );
+    }
+
+    if (!process.env.BING_TONESTYLE) {
+      console.warn(
+        "Invalid BING_TONESTYLE provided. You must set a tonestyle. Please check your .env file."
+      );
+    }
+
+    if (!process.env.BING_SYSTEM_MESSAGE) {
+      console.warn(
+        "Invalid BING_SYSTEM_MESSAGE provided. Please check the BING_SYSTEM_MESSAGE variable in your .env file."
+      );
+    }
+
+    // Additional checks for optional variables related to audio transcription
+    // Check for audio transcription settings
+    if (process.env.TRANSCRIPTION_ENABLED === "true") {
+      if (
+        !process.env.TRANSCRIPTION_METHOD ||
+        !["whisper-api", "local"].includes(process.env.TRANSCRIPTION_METHOD)
+      ) {
+        throw new Error(
+          `Invalid TRANSCRIPTION_METHOD="${process.env.TRANSCRIPTION_METHOD}" provided. Please check the TRANSCRIPTION_METHOD variable in your .env file.`
+        );
+      }
+
+      if (
+        !process.env.REPLY_TRANSCRIPTION ||
+        !["true", "false"].includes(process.env.REPLY_TRANSCRIPTION)
+      ) {
+        throw new Error(
+          `Invalid REPLY_TRANSCRIPTION="${process.env.REPLY_TRANSCRIPTION}" provided. Please check the REPLY_TRANSCRIPTION variable in your .env file.`
+        );
+      }
+
+      if (process.env.TRANSCRIPTION_METHOD === "local") {
+        if (!process.env.TRANSCRIPTION_MODEL) {
+          throw new Error(
+            `Invalid TRANSCRIPTION_MODEL="${process.env.TRANSCRIPTION_MODEL}" provided. Please check the TRANSCRIPTION_MODEL variable in your .env file.`
+          );
+        }
+      } else if (process.env.TRANSCRIPTION_METHOD === "whisper-api") {
+        if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === "") {
+          throw new Error(
+            `Invalid OPENAI_API_KEY="${process.env.OPENAI_API_KEY}" provided. Please check the OPENAI_API_KEY variable in your .env file.`
+          );
+        }
       }
     }
   }
