@@ -8,4 +8,5 @@ export const openAIToolCallingModels = [
   "openai/gpt-4-32k",
   "openai/gpt-4-vision-preview",
   "openai/gpt-3.5-turbo-instruct",
+  "openai/gpt-4o-mini",
 ];
