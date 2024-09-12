@@ -39,13 +39,8 @@ export async function handleJailbreak(message: Message, args: JailbreakArgs) {
   const conversation = await getConversationFor(chat.id._serialized);
 
   switch (args) {
+    // @ts-ignore
     case "on" || "enable":
-      /*if (conversation && !conversation.jailbreakId) {          **NO IDEA WHY THIS IS HERE @veigamann go fuck yourself**
-         await deleteConversation(chat.id._serialized);
-         await message.reply( stripIndents`${BOT_PREFIX}Deleted the ongoing conversation for this chat`);
-         await handleReset(message);
-      }*/
-
       if (conversation && conversation.jailbroken) {
         reply = await message.reply(
           `${BOT_PREFIX}Jailbreak already *_enabled_* for this chat`
@@ -58,6 +53,7 @@ export async function handleJailbreak(message: Message, args: JailbreakArgs) {
         `${BOT_PREFIX}Jailbreak *_enabled_* for this chat`
       );
       break;
+      // @ts-ignore
     case "off" || "disable":
       /*if (conversation && conversation.jailbreakId) {         **NO IDEA WHY THIS IS HERE @veigamann go fuck yourself**
         // await deleteConversation(chat.id._serialized);

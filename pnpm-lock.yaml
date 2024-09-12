@@ -36,8 +36,8 @@ importers:
         specifier: ^2.1.7
         version: 2.1.7
       '@waylaidwanderer/chatgpt-api':
-        specifier: github:Luisotee/node-chatgpt-api
-        version: https://codeload.github.com/Luisotee/node-chatgpt-api/tar.gz/fd9d6885e28ca6f6e11fa96e14c6d0115d5911a9
+        specifier: github:WAppAI/node-chatgpt-api
+        version: https://codeload.github.com/WAppAI/node-chatgpt-api/tar.gz/fd9d6885e28ca6f6e11fa96e14c6d0115d5911a9
       axios:
         specifier: ^1.6.8
         version: 1.6.8
@@ -667,8 +667,8 @@ packages:
   '@types/yauzl@2.10.3':
     resolution: {integrity: sha512-oJoftv0LSuaDZE3Le4DbKX+KS9G36NzOeSap90UIK0yMA/NhKJhqlSGtNDORNRaIbQfzjXDrQa0ytJ6mNRGz/Q==}
 
-  '@waylaidwanderer/chatgpt-api@https://codeload.github.com/Luisotee/node-chatgpt-api/tar.gz/fd9d6885e28ca6f6e11fa96e14c6d0115d5911a9':
-    resolution: {tarball: https://codeload.github.com/Luisotee/node-chatgpt-api/tar.gz/fd9d6885e28ca6f6e11fa96e14c6d0115d5911a9}
+  '@waylaidwanderer/chatgpt-api@https://codeload.github.com/WAppAI/node-chatgpt-api/tar.gz/fd9d6885e28ca6f6e11fa96e14c6d0115d5911a9':
+    resolution: {tarball: https://codeload.github.com/WAppAI/node-chatgpt-api/tar.gz/fd9d6885e28ca6f6e11fa96e14c6d0115d5911a9}
     version: 1.37.3
     hasBin: true
 
@@ -3288,7 +3288,7 @@ snapshots:
       '@types/node': 20.12.7
     optional: true
 
-  '@waylaidwanderer/chatgpt-api@https://codeload.github.com/Luisotee/node-chatgpt-api/tar.gz/fd9d6885e28ca6f6e11fa96e14c6d0115d5911a9':
+  '@waylaidwanderer/chatgpt-api@https://codeload.github.com/WAppAI/node-chatgpt-api/tar.gz/fd9d6885e28ca6f6e11fa96e14c6d0115d5911a9':
     dependencies:
       '@dqbd/tiktoken': 1.0.14
       '@fastify/cors': 8.5.0
