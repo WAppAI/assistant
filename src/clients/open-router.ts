@@ -25,8 +25,8 @@ import {
   getOpenRouterConversationFor,
   getOpenRouterMemoryFor,
 } from "../crud/conversation";
-import { openAIToolCallingModels } from "./tool-calling-models";
-import { tools } from "./tools-openrouter";
+import { openAIToolCallingModels } from "./tools/tool-calling-models";
+import { tools } from "./tools/tools-openrouter";
 
 function parseMessageHistory(
   rawHistory: { [key: string]: string }[]
