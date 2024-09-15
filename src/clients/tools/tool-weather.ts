@@ -96,10 +96,11 @@ export class WeatherTool extends Tool {
       `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=en&format=json`
     );
     const geocodeData = (await geocodeResponse.json()) as GeocodeResponse;
-    const { latitude, longitude } = geocodeData.results[0];
+    const { latitude, longitude, timezone, name, admin1, country } =
+      geocodeData.results[0];
 
     const weatherResponse = await fetch(
-      `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,sunrise,sunset,uv_index_max,precipitation_sum,precipitation_hours,precipitation_probability_max&timezone=America%2FSao_Paulo`
+      `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,sunrise,sunset,uv_index_max,precipitation_sum,precipitation_hours,precipitation_probability_max&timezone=${encodeURIComponent(timezone)}`
     );
     const weatherData = (await weatherResponse.json()) as WeatherApiResponse;
 
@@ -142,34 +143,32 @@ export class WeatherTool extends Tool {
     };
 
     const formattedWeather = `
+    Weather for ${name}, ${admin1}, ${country} 
+
     Current Weather:
     - Temperature: ${weather.current.temperature}°C
-    - Humidity: ${weather.current.humidity}%
     - Apparent Temperature: ${weather.current.apparentTemperature}°C
-    - Precipitation: ${weather.current.precipitation}mm
-
-    Today's Weather:
     - Max Temperature: ${weather.today.temperatureMax}°C
     - Min Temperature: ${weather.today.temperatureMin}°C
-    - Max UV Index: ${weather.today.uvIndexMax}
-    - Precipitation Sum: ${weather.today.precipitationSum}mm
-    - Precipitation Hours: ${weather.today.precipitationHours}h
-    - Max Precipitation Probability: ${weather.today.precipitationProbabilityMax}%
+    - Humidity: ${weather.current.humidity}%
+    - Max Precipitation Probability for Today: ${weather.today.precipitationProbabilityMax}%
+    - Precipitation for Today: ${weather.today.precipitationSum}mm
+    - Max UV Index for Today: ${weather.today.uvIndexMax}
 
-    Tomorrow Forecast:
+    Forecast for Tomorrow:
     ${weather.forecast
       .slice(0, 1)
       .map(
         (day) => `
-      Date: ${day.date}
-      Max Temperature: ${day.temperatureMax}°C
-      Min Temperature: ${day.temperatureMin}°C
-      Sunrise: ${day.sunrise}
-      Sunset: ${day.sunset}
-      UV Index: ${day.uvIndexMax}
-      Precipitation Sum: ${day.precipitationSum}mm
-      Precipitation Hours: ${day.precipitationHours}h
-      Max Precipitation Probability: ${day.precipitationProbabilityMax}%
+    - Date: ${day.date}
+    - Max Temperature: ${day.temperatureMax}°C
+    - Min Temperature: ${day.temperatureMin}°C
+    - Sunrise: ${day.sunrise}
+    - Sunset: ${day.sunset}
+    - UV Index: ${day.uvIndexMax}
+    - Precipitation Sum: ${day.precipitationSum}mm
+    - Precipitation Hours: ${day.precipitationHours}h
+    - Max Precipitation Probability: ${day.precipitationProbabilityMax}%
     `
       )
       .join("\n")}
