@@ -39,7 +39,6 @@
     "@types/common-tags": "^1.8.4",
     "@types/node-schedule": "^2.1.7",
     "@waylaidwanderer/chatgpt-api": "github:WAppAI/node-chatgpt-api",
-    "axios": "^1.6.8",
     "cheerio": "1.0.0-rc.12",
     "common-tags": "^1.8.2",
     "dayjs": "^1.11.11",

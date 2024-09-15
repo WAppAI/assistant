@@ -24,8 +24,9 @@ import {
   OPENAI_API_KEY,
   OPENROUTER_API_KEY,
   SEARCH_API,
-} from "../constants";
+} from "../../constants";
 import { GoogleRoutesAPI } from "@langchain/community/tools/google_routes";
+import { WeatherTool } from "./tool-weather";
 
 let googleCalendarCreateTool = null;
 let googleCalendarViewTool = null;
@@ -97,6 +98,8 @@ const wikipediaTool = new WikipediaQueryRun({
   maxDocContentLength: 4000,
 });
 
+const weatherTool = new WeatherTool();
+
 export const tools = [
   ...(searchTool ? [searchTool] : []),
   ...(webBrowserTool ? [webBrowserTool] : []),
@@ -104,6 +107,7 @@ export const tools = [
   ...(googleCalendarViewTool ? [googleCalendarViewTool] : []),
   ...(dalleTool ? [dalleTool] : []),
   ...(googleRoutesTool ? [googleRoutesTool] : []),
+  weatherTool,
   wikipediaTool,
   calculatorTool,
 ];
