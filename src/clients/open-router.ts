@@ -1,5 +1,6 @@
 import { AIMessage, BaseMessage, HumanMessage } from "@langchain/core/messages";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
+import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { ChatOpenAI } from "@langchain/openai";
 import {
   AgentExecutor,
@@ -14,7 +15,9 @@ import {
 } from "langchain/memory";
 import {
   DEFAULT_MODEL,
+  GOOGLE_API_KEY,
   MODEL_TEMPERATURE,
+  OPENAI_API_KEY,
   OPENROUTER_API_KEY,
   OPENROUTER_MEMORY_TYPE,
   OPENROUTER_MSG_MEMORY_LIMIT,
@@ -25,7 +28,10 @@ import {
   getOpenRouterConversationFor,
   getOpenRouterMemoryFor,
 } from "../crud/conversation";
-import { openAIToolCallingModels } from "./tools/tool-calling-models";
+import {
+  googleToolCallingModels,
+  openAIToolCallingModels,
+} from "./tools/tool-calling-models";
 import { tools } from "./tools/tools-openrouter";
 
 function parseMessageHistory(
@@ -111,28 +117,52 @@ export async function createExecutorForOpenRouter(
   let llm;
   let prompt;
 
-  if (openAIToolCallingModels.includes(llmModel)) {
+  // OpenAI LLM with Tool Calling Agent
+  if (openAIToolCallingModels.includes(llmModel) && OPENAI_API_KEY !== "") {
+    console.log("Using OpenAI LLM");
     prompt = await pull<ChatPromptTemplate>(
       "luisotee/wa-assistant-tool-calling"
     );
 
-    llm = new ChatOpenAI(
-      {
-        modelName: llmModel,
-        streaming: true,
-        temperature: MODEL_TEMPERATURE,
-        openAIApiKey: OPENROUTER_API_KEY,
-      },
-      {
-        basePath: "https://openrouter.ai/api/v1",
-      }
-    );
+    llm = new ChatOpenAI({
+      modelName: llmModel,
+      streaming: true,
+      temperature: MODEL_TEMPERATURE,
+      apiKey: OPENAI_API_KEY,
+    });
+
     agent = await createToolCallingAgent({
       llm,
       tools,
       prompt,
     });
-  } else {
+  }
+  // Google LLM with Tool Calling Agent
+  else if (
+    googleToolCallingModels.includes(llmModel) &&
+    GOOGLE_API_KEY !== ""
+  ) {
+    console.log("Using Google Generative AI");
+    prompt = await pull<ChatPromptTemplate>(
+      "luisotee/wa-assistant-tool-calling"
+    );
+
+    llm = new ChatGoogleGenerativeAI({
+      modelName: llmModel,
+      streaming: true,
+      temperature: MODEL_TEMPERATURE,
+      apiKey: GOOGLE_API_KEY,
+    });
+
+    agent = await createToolCallingAgent({
+      llm,
+      tools,
+      prompt,
+    });
+  }
+  // OpenRouter LLMs without Tool Calling Agent, with Structured Agent
+  else {
+    console.log("Using OpenRouter LLM");
     prompt = await pull<ChatPromptTemplate>("luisotee/wa-assistant");
 
     llm = new ChatOpenAI(
@@ -140,12 +170,13 @@ export async function createExecutorForOpenRouter(
         modelName: llmModel,
         streaming: true,
         temperature: MODEL_TEMPERATURE,
-        openAIApiKey: OPENROUTER_API_KEY,
+        apiKey: OPENROUTER_API_KEY,
       },
       {
         basePath: "https://openrouter.ai/api/v1",
       }
     );
+
     agent = await createStructuredChatAgent({
       llm,
       tools,
@@ -154,6 +185,7 @@ export async function createExecutorForOpenRouter(
   }
 
   const executor = new AgentExecutor({
+    // @ts-ignore
     agent,
     tools,
     memory,
