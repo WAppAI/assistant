@@ -12,7 +12,9 @@ const LLM_OPTIONS = {
   "5": "o1-mini",
   "6": "gemini-1.5-pro",
   "7": "gemini-1.5-flash",
-  "8": "anthropic/claude-3.5-sonnet",
+  "8": "claude-3-5-sonnet-20240620",
+  "9": "claude-3-opus-20240229",
+  "10": "claude-3-haiku-20240307",
 };
 
 export async function handleChangeLLM(message: Message, args: string) {
@@ -38,13 +40,15 @@ export async function handleChangeLLM(message: Message, args: string) {
   *${CMD_PREFIX}change 3* for _gpt-4o_ (OpenAI API)
   *${CMD_PREFIX}change 4* for _o1-preview_ (OpenAI API)
   *${CMD_PREFIX}change 5* for _o1-mini_ (OpenAI API)
-  *${CMD_PREFIX}change 6* for _gemini-pro-1.5_ (Google API)
+  *${CMD_PREFIX}change 6* for _gemini-1.5-pro_ (Google API)
   *${CMD_PREFIX}change 7* for _gemini-1.5-flash_ (Google API)
-  *${CMD_PREFIX}change 8* for _anthropic/claude-3.5-sonnet_ (OpenRouter API)
+  *${CMD_PREFIX}change 8* for _claude-3-5-sonnet_ (Anthropic API)
+  *${CMD_PREFIX}change 9* for _claude-3-opus_ (Anthropic API)
+  *${CMD_PREFIX}change 10* for _claude-3-haiku_ (Anthropic API)
 
-  You can also type the name of your desired model, like *${CMD_PREFIX}change mistralai/mixtral-8x7b-instruct*
+  You can also type the name of your desired model supported by OpenRouter, like *${CMD_PREFIX}change mistralai/mixtral-8x7b-instruct*
 
-  See the list of available models at OpenRouter docs in https://openrouter.ai/docs#models.
+  See the list of available models of OpenRouter docs in https://openrouter.ai/docs#models.
 `,
       chat.id._serialized,
       { linkPreview: false }
