@@ -17,6 +17,7 @@ import {
   ANTHROPIC_API_KEY,
   DEFAULT_MODEL,
   GOOGLE_API_KEY,
+  GROQ_API_KEY,
   MODEL_TEMPERATURE,
   OPENAI_API_KEY,
   OPENROUTER_API_KEY,
@@ -32,10 +33,12 @@ import {
 import {
   anthropicToolCallingModels,
   googleToolCallingModels,
+  groqToolCallingModels,
   openAIToolCallingModels,
 } from "./tools/tool-calling-models";
 import { tools } from "./tools/tools-openrouter";
 import { ChatAnthropic } from "@langchain/anthropic";
+import { ChatGroq } from "@langchain/groq";
 
 function parseMessageHistory(
   rawHistory: { [key: string]: string }[]
@@ -178,6 +181,26 @@ export async function createExecutorForOpenRouter(
       streaming: true,
       temperature: MODEL_TEMPERATURE,
       apiKey: ANTHROPIC_API_KEY,
+    });
+
+    agent = await createToolCallingAgent({
+      llm,
+      tools,
+      prompt,
+    });
+  }
+  // Groq LLM with Tool Calling Agent
+  else if (groqToolCallingModels.includes(llmModel) && GROQ_API_KEY !== "") {
+    console.log("Using Groq LLM");
+    prompt = await pull<ChatPromptTemplate>(
+      "luisotee/wa-assistant-tool-calling"
+    );
+
+    llm = new ChatGroq({
+      modelName: llmModel,
+      streaming: true,
+      temperature: MODEL_TEMPERATURE,
+      apiKey: GROQ_API_KEY,
     });
 
     agent = await createToolCallingAgent({
