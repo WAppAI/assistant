@@ -13,3 +13,8 @@ export const anthropicToolCallingModels = [
   "claude-3-sonnet-20240229",
   "claude-3-haiku-20240307",
 ];
+
+export const groqToolCallingModels = [
+  "llama3-groq-70b-8192-tool-use-preview",
+  "llava-v1.5-7b-4096-preview",
+];

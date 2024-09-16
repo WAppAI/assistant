@@ -35,6 +35,7 @@
     "@langchain/core": "0.2.32",
     "@langchain/google-genai": "^0.1.0",
     "@langchain/google-vertexai-web": "0.0.19",
+    "@langchain/groq": "^0.1.1",
     "@langchain/openai": "0.2.1",
     "@prisma/client": "5.3.1",
     "@types/common-tags": "^1.8.4",

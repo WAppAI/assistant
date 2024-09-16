@@ -15,6 +15,8 @@ const LLM_OPTIONS = {
   "8": "claude-3-5-sonnet-20240620",
   "9": "claude-3-opus-20240229",
   "10": "claude-3-haiku-20240307",
+  "11": "llama3-groq-70b-8192-tool-use-preview",
+  "12": "llava-v1.5-7b-4096-preview",
 };
 
 export async function handleChangeLLM(message: Message, args: string) {
@@ -45,6 +47,8 @@ export async function handleChangeLLM(message: Message, args: string) {
   *${CMD_PREFIX}change 8* for _claude-3-5-sonnet_ (Anthropic API)
   *${CMD_PREFIX}change 9* for _claude-3-opus_ (Anthropic API)
   *${CMD_PREFIX}change 10* for _claude-3-haiku_ (Anthropic API)
+  *${CMD_PREFIX}change 11* for _llama3-groq-70b_ (Groq API)
+  *${CMD_PREFIX}change 12* for _llava-v1.5-7b_ (Groq API)
 
   You can also type the name of your desired model supported by OpenRouter, like *${CMD_PREFIX}change mistralai/mixtral-8x7b-instruct*
 

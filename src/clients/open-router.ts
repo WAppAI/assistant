@@ -17,6 +17,7 @@ import {
   ANTHROPIC_API_KEY,
   DEFAULT_MODEL,
   GOOGLE_API_KEY,
+  GROQ_API_KEY,
   MODEL_TEMPERATURE,
   OPENAI_API_KEY,
   OPENROUTER_API_KEY,
@@ -32,10 +33,12 @@ import {
 import {
   anthropicToolCallingModels,
   googleToolCallingModels,
+  groqToolCallingModels,
   openAIToolCallingModels,
 } from "./tools/tool-calling-models";
 import { tools } from "./tools/tools-openrouter";
 import { ChatAnthropic } from "@langchain/anthropic";
+import { ChatGroq } from "@langchain/groq";
 
 function parseMessageHistory(
   rawHistory: { [key: string]: string }[]
@@ -122,7 +125,6 @@ export async function createExecutorForOpenRouter(
 
   // OpenAI LLM with Tool Calling Agent
   if (openAIToolCallingModels.includes(llmModel) && OPENAI_API_KEY !== "") {
-    console.log("Using OpenAI LLM");
     prompt = await pull<ChatPromptTemplate>(
       "luisotee/wa-assistant-tool-calling"
     );
@@ -145,7 +147,6 @@ export async function createExecutorForOpenRouter(
     googleToolCallingModels.includes(llmModel) &&
     GOOGLE_API_KEY !== ""
   ) {
-    console.log("Using Google Generative AI");
     prompt = await pull<ChatPromptTemplate>(
       "luisotee/wa-assistant-tool-calling"
     );
@@ -168,7 +169,6 @@ export async function createExecutorForOpenRouter(
     anthropicToolCallingModels.includes(llmModel) &&
     ANTHROPIC_API_KEY !== ""
   ) {
-    console.log("Using Anthropics LLM");
     prompt = await pull<ChatPromptTemplate>(
       "luisotee/wa-assistant-tool-calling"
     );
@@ -186,9 +186,27 @@ export async function createExecutorForOpenRouter(
       prompt,
     });
   }
+  // Groq LLM with Tool Calling Agent
+  else if (groqToolCallingModels.includes(llmModel) && GROQ_API_KEY !== "") {
+    prompt = await pull<ChatPromptTemplate>(
+      "luisotee/wa-assistant-tool-calling"
+    );
+
+    llm = new ChatGroq({
+      modelName: llmModel,
+      streaming: true,
+      temperature: MODEL_TEMPERATURE,
+      apiKey: GROQ_API_KEY,
+    });
+
+    agent = await createToolCallingAgent({
+      llm,
+      tools,
+      prompt,
+    });
+  }
   // OpenRouter LLMs without Tool Calling Agent, with Structured Agent
   else {
-    console.log("Using OpenRouter LLM");
     prompt = await pull<ChatPromptTemplate>("luisotee/wa-assistant");
 
     llm = new ChatOpenAI(
@@ -211,7 +229,6 @@ export async function createExecutorForOpenRouter(
   }
 
   const executor = new AgentExecutor({
-    // @ts-ignore
     agent,
     tools,
     memory,
