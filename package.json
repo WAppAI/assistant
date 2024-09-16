@@ -1,6 +1,6 @@
 {
   "name": "whatsapp-ai-assistant",
-  "version": "2.10.0",
+  "version": "2.11.0",
   "description": "WhatsApp chatbot",
   "module": "src/index.ts",
   "type": "module",
@@ -17,7 +17,7 @@
     "build": "npm run generate && npm run migrate"
   },
   "repository": "https://github.com/WAppAI/assistant.git",
-  "author": "Matheus Veiga <veigamann@gmail.com>",
+  "author": "Luis Otavio <luisotaviomgrcont@gmail.com> and Matheus Veiga <veigamann@gmail.com>",
   "devDependencies": {
     "@types/fluent-ffmpeg": "^2.1.24",
     "@types/node": "^20.12.7",
