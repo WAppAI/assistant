@@ -11,6 +11,7 @@ import {
 import { convertOggToWav } from "./audio-helper";
 import { handleAudioMessageWithWhisperApi } from "./whisper-api";
 import { handleAudioMessageWithWhisperLocal } from "./whisper-local";
+import { handleAudioMessageWithGroqApi } from "./whisper-groq";
 
 export async function handleAudioMessage(
   media: MessageMedia,
@@ -44,6 +45,18 @@ export async function handleAudioMessage(
       console.error(error);
       throw new Error("Error transcribing audio");
     }
+  } else if (TRANSCRIPTION_METHOD === "whisper-groq") {
+    try {
+      transcribedAudio = await handleAudioMessageWithGroqApi(wavPath);
+    } catch (error) {
+      console.error(error);
+      throw new Error("Error transcribing audio");
+    }
+  } else {
+    throw new Error(
+      "Invalid transcription method, TRANSCRIPTION_METHOD: " +
+        TRANSCRIPTION_METHOD
+    );
   }
 
   if (REPLY_TRANSCRIPTION === "true") {

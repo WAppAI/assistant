@@ -15,7 +15,9 @@ export function checkEnv() {
   if (process.env.TRANSCRIPTION_ENABLED === "true") {
     if (
       !process.env.TRANSCRIPTION_METHOD ||
-      !["whisper-api", "local"].includes(process.env.TRANSCRIPTION_METHOD)
+      !["whisper-api", "local", "whisper-groq"].includes(
+        process.env.TRANSCRIPTION_METHOD
+      )
     ) {
       throw new Error(
         `Invalid TRANSCRIPTION_METHOD="${process.env.TRANSCRIPTION_METHOD}" provided. Please check the TRANSCRIPTION_METHOD variable in your .env file.`
@@ -34,13 +36,19 @@ export function checkEnv() {
     if (process.env.TRANSCRIPTION_METHOD === "local") {
       if (!process.env.TRANSCRIPTION_MODEL) {
         throw new Error(
-          `Invalid TRANSCRIPTION_MODEL="${process.env.TRANSCRIPTION_MODEL}" provided. Please check the TRANSCRIPTION_MODEL variable in your .env file.`
+          `Invalid TRANSCRIPTION_MODEL="${process.env.TRANSCRIPTION_MODEL}" provided. Please check the TRANSCRIPTION_MODEL variable in your .env file. Or disable audio transcription by setting TRANSCRIPTION_ENABLED to "false".`
         );
       }
     } else if (process.env.TRANSCRIPTION_METHOD === "whisper-api") {
       if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === "") {
         throw new Error(
-          `Invalid OPENAI_API_KEY="${process.env.OPENAI_API_KEY}" provided. Please check the OPENAI_API_KEY variable in your .env file.`
+          `Invalid OPENAI_API_KEY="${process.env.OPENAI_API_KEY}" provided. Please check the OPENAI_API_KEY variable in your .env file. Or disable audio transcription by setting TRANSCRIPTION_ENABLED to "false".`
+        );
+      }
+    } else if (process.env.TRANSCRIPTION_METHOD === "whisper-groq") {
+      if (!process.env.GROQ_API_KEY || process.env.GROQ_API_KEY === "") {
+        throw new Error(
+          `Invalid GROQ_API_KEY="${process.env.GROQ_API_KEY}" provided. Please check the GROQ_API_KEY variable in your .env file. Or disable audio transcription by setting TRANSCRIPTION_ENABLED to "false".`
         );
       }
     }
