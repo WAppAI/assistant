@@ -161,7 +161,9 @@ Your contributions to Sydney are welcome in any form. Whether you'd like to:
 
 - Submit Pull Requests (PRs): Feel free to contribute directly by opening pull requests. Your contributions are greatly appreciated and help improve Sydney.
 
-- If you want us to add a tool from the js langchain open an issue asking for it.
+- If you want us to add a feature open an issue asking for it.
+
+- In the Projects tab, you'll find a Kanban board that outlines our current objectives and progress.
 
 Your involvement is valued, and you're encouraged to contribute in the way that suits you best.
 
