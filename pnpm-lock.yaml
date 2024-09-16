@@ -65,6 +65,9 @@ importers:
       googleapis:
         specifier: ^126.0.1
         version: 126.0.1(encoding@0.1.13)
+      groq-sdk:
+        specifier: ^0.7.0
+        version: 0.7.0(encoding@0.1.13)
       keyv:
         specifier: ^4.5.4
         version: 4.5.4
@@ -1418,6 +1421,9 @@ packages:
 
   groq-sdk@0.5.0:
     resolution: {integrity: sha512-RVmhW7qZ+XZoy5fIuSdx/LGQJONpL8MHgZEW7dFwTdgkzStub2XQx6OKv28CHogijdwH41J+Npj/z2jBPu3vmw==}
+
+  groq-sdk@0.7.0:
+    resolution: {integrity: sha512-OgPqrRtti5MjEVclR8sgBHrhSkTLdFCmi47yrEF29uJZaiCkX3s7bXpnMhq8Lwoe1f4AwgC0qGOeHXpeSgu5lg==}
 
   gtoken@7.1.0:
     resolution: {integrity: sha512-pCcEwRi+TKpMlxAQObHDQ56KawURgyAf6jtIY046fJ5tIv3zDe/LEIubckAO8fj6JnAxLdmWkUfNyulQ2iKdEw==}
@@ -4229,6 +4235,18 @@ snapshots:
       formdata-node: 4.4.1
       node-fetch: 2.7.0(encoding@0.1.13)
       web-streams-polyfill: 3.3.3
+    transitivePeerDependencies:
+      - encoding
+
+  groq-sdk@0.7.0(encoding@0.1.13):
+    dependencies:
+      '@types/node': 18.19.31
+      '@types/node-fetch': 2.6.11
+      abort-controller: 3.0.0
+      agentkeepalive: 4.5.0
+      form-data-encoder: 1.7.2
+      formdata-node: 4.4.1
+      node-fetch: 2.7.0(encoding@0.1.13)
     transitivePeerDependencies:
       - encoding
 
