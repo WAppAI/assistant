@@ -14,6 +14,7 @@ import {
   ConversationSummaryMemory,
 } from "langchain/memory";
 import {
+  ANTHROPIC_API_KEY,
   DEFAULT_MODEL,
   GOOGLE_API_KEY,
   MODEL_TEMPERATURE,
@@ -29,10 +30,12 @@ import {
   getOpenRouterMemoryFor,
 } from "../crud/conversation";
 import {
+  anthropicToolCallingModels,
   googleToolCallingModels,
   openAIToolCallingModels,
 } from "./tools/tool-calling-models";
 import { tools } from "./tools/tools-openrouter";
+import { ChatAnthropic } from "@langchain/anthropic";
 
 function parseMessageHistory(
   rawHistory: { [key: string]: string }[]
@@ -152,6 +155,29 @@ export async function createExecutorForOpenRouter(
       streaming: true,
       temperature: MODEL_TEMPERATURE,
       apiKey: GOOGLE_API_KEY,
+    });
+
+    agent = await createToolCallingAgent({
+      llm,
+      tools,
+      prompt,
+    });
+  }
+  // Anthropics LLM with Tool Calling Agent
+  else if (
+    anthropicToolCallingModels.includes(llmModel) &&
+    ANTHROPIC_API_KEY !== ""
+  ) {
+    console.log("Using Anthropics LLM");
+    prompt = await pull<ChatPromptTemplate>(
+      "luisotee/wa-assistant-tool-calling"
+    );
+
+    llm = new ChatAnthropic({
+      modelName: llmModel,
+      streaming: true,
+      temperature: MODEL_TEMPERATURE,
+      apiKey: ANTHROPIC_API_KEY,
     });
 
     agent = await createToolCallingAgent({
