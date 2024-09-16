@@ -135,9 +135,8 @@ When dealing with voice messages, you have 3 options for transcription: using gr
 
 - **Setup:**
   1. Obtain a Groq API key from [Groq Console](https://console.groq.com/keys).
-  2. Update the `.env` file with the API key accordingly.
-
-</details>
+  2. In the `.env` file, set `TRANSCRIPTION_ENABLED` to `"true"` and `TRANSCRIPTION_METHOD` to `"whisper-groq"`.
+  </details>
 
 <details>
 <summary><strong>Whisper API:</strong></summary>
@@ -145,7 +144,7 @@ When dealing with voice messages, you have 3 options for transcription: using gr
 - **Cost:** Utilizing the Whisper API incurs a cost of US$0.06 per 10 minutes of audio.
 - **Setup:**
   1. Obtain an OpenAI API key and place it in the `.env` file under the `OPENAI_API_KEY` variable.
-  2. Set `TRANSCRIPTION_ENABLED` to `"true"` and `TRANSCRIPTION_METHOD` to `"whisper-api"`. While setting a language in `TRANSCRIPTION_LANGUAGE` is not mandatory, it is recommended for better performance.
+  2. In the `.env` file, set `TRANSCRIPTION_ENABLED` to `"true"` and `TRANSCRIPTION_METHOD` to `"whisper-api"`.
 
 </details>
 
