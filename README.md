@@ -128,10 +128,15 @@ The AI's are designed to respond to natural language queries from users. You can
 
 ### Voice Messages
 
-When dealing with voice messages, you have two options for transcription: utilizing the Whisper API or the local method. Each option has its own considerations, including cost and performance.
+When dealing with voice messages, you have 3 options for transcription: using groq's Whisper API for free (recommended), utilizing the Whisper API or the local method. Each option has its own considerations, including cost and performance.
 
 <details>
-<summary><strong>Whisper API:</strong></summary>
+<summary><strong>Groq API:</strong></summary>
+
+- **Setup:** 1. Obtain a Groq API key from [Groq Console](https://console.groq.com/keys). 2. Update the `.env` file with the API key accordingly. </details>
+  </details>
+  <details>
+  <summary><strong>Whisper API:</strong></summary>
 
 - **Cost:** Utilizing the Whisper API incurs a cost of US$0.06 per 10 minutes of audio.
 - **Setup:** 1. Obtain an OpenAI API key and place it in the `.env` file under the `OPENAI_API_KEY` variable. 2. Set `TRANSCRIPTION_ENABLED` to `"true"` and `TRANSCRIPTION_METHOD` to `"whisper-api"`. While setting a language in `TRANSCRIPTION_LANGUAGE` is not mandatory, it is recommended for better performance.
