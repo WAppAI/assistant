@@ -63,3 +63,4 @@ export const MODEL_TEMPERATURE = parseFloat(
   process.env.MODEL_TEMPERATURE as string
 );
 export const ENABLE_GOOGLE_ROUTES = process.env.ENABLE_GOOGLE_ROUTES as string;
+export const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY as string;

@@ -1,12 +1,8 @@
 export const openAIToolCallingModels = [
-  "openai/gpt-3.5-turbo",
-  "openai/gpt-3.5-turbo-0125",
-  "openai/gpt-3.5-turbo-16k",
-  "openai/gpt-4-turbo",
-  "openai/gpt-4-turbo-preview",
-  "openai/gpt-4",
-  "openai/gpt-4-32k",
-  "openai/gpt-4-vision-preview",
-  "openai/gpt-3.5-turbo-instruct",
-  "openai/gpt-4o-mini",
+  "gpt-4o",
+  "gpt-4o-mini",
+  "o1-preview",
+  "o1-mini",
 ];
+
+export const googleToolCallingModels = ["gemini-1.5-pro", "gemini-1.5-flash"];
