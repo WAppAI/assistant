@@ -133,19 +133,30 @@ When dealing with voice messages, you have 3 options for transcription: using gr
 <details>
 <summary><strong>Groq API:</strong></summary>
 
-- **Setup:** 1. Obtain a Groq API key from [Groq Console](https://console.groq.com/keys). 2. Update the `.env` file with the API key accordingly. </details>
-  </details>
-  <details>
-  <summary><strong>Whisper API:</strong></summary>
+- **Setup:**
+  1. Obtain a Groq API key from [Groq Console](https://console.groq.com/keys).
+  2. Update the `.env` file with the API key accordingly.
+
+</details>
+
+<details>
+<summary><strong>Whisper API:</strong></summary>
 
 - **Cost:** Utilizing the Whisper API incurs a cost of US$0.06 per 10 minutes of audio.
-- **Setup:** 1. Obtain an OpenAI API key and place it in the `.env` file under the `OPENAI_API_KEY` variable. 2. Set `TRANSCRIPTION_ENABLED` to `"true"` and `TRANSCRIPTION_METHOD` to `"whisper-api"`. While setting a language in `TRANSCRIPTION_LANGUAGE` is not mandatory, it is recommended for better performance.
+- **Setup:**
+  1. Obtain an OpenAI API key and place it in the `.env` file under the `OPENAI_API_KEY` variable.
+  2. Set `TRANSCRIPTION_ENABLED` to `"true"` and `TRANSCRIPTION_METHOD` to `"whisper-api"`. While setting a language in `TRANSCRIPTION_LANGUAGE` is not mandatory, it is recommended for better performance.
+
 </details>
+
 <details>
 <summary><strong>Local Mode:</strong></summary>
 
 - **Cost:** The local method is free but may be slower and less precise.
-- **Setup:** 1. Download a model of your choice from [here](https://huggingface.co/ggerganov/whisper.cpp/tree/main). Download any `.bin` file and place it in the `./whisper/models` folder. 2. Modify the `.env` file by changing `TRANSCRIPTION_ENABLED` to `"true"`, `TRANSCRIPTION_METHOD` to `"local"`, and `"TRANSCRIPTION_MODEL"` with the name of the model you downloaded. While setting a language in `TRANSCRIPTION_LANGUAGE` is not mandatory, it is recommended for better performance.
+- **Setup:**
+  1. Download a model of your choice from [here](https://huggingface.co/ggerganov/whisper.cpp/tree/main). Download any `.bin` file and place it in the `./whisper/models` folder.
+  2. Modify the `.env` file by changing `TRANSCRIPTION_ENABLED` to `"true"`, `TRANSCRIPTION_METHOD` to `"local"`, and `"TRANSCRIPTION_MODEL"` with the name of the model you downloaded. While setting a language in `TRANSCRIPTION_LANGUAGE` is not mandatory, it is recommended for better performance.
+
 </details>
 
 ### Group Chat
