@@ -1,6 +1,8 @@
+import { ChatAnthropic } from "@langchain/anthropic";
 import { AIMessage, BaseMessage, HumanMessage } from "@langchain/core/messages";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
+import { ChatGroq } from "@langchain/groq";
 import { ChatOpenAI } from "@langchain/openai";
 import {
   AgentExecutor,
@@ -16,6 +18,7 @@ import {
 import {
   ANTHROPIC_API_KEY,
   DEFAULT_MODEL,
+  GITHUB_OPENAI_API_KEY,
   GOOGLE_API_KEY,
   GROQ_API_KEY,
   MODEL_TEMPERATURE,
@@ -32,13 +35,12 @@ import {
 } from "../crud/conversation";
 import {
   anthropicToolCallingModels,
+  githubToolCallingModels,
   googleToolCallingModels,
   groqToolCallingModels,
   openAIToolCallingModels,
 } from "./tools/tool-calling-models";
 import { tools } from "./tools/tools-openrouter";
-import { ChatAnthropic } from "@langchain/anthropic";
-import { ChatGroq } from "@langchain/groq";
 
 function parseMessageHistory(
   rawHistory: { [key: string]: string }[]
@@ -119,113 +121,129 @@ export async function createExecutorForOpenRouter(
 
   const memory = await createMemoryForOpenRouter(chat);
 
+  const toolCallingPrompt = await pull<ChatPromptTemplate>(
+    "luisotee/wa-assistant-tool-calling"
+  );
+  const defaultPrompt = await pull<ChatPromptTemplate>("luisotee/wa-assistant");
+
   let agent;
   let llm;
   let prompt;
 
-  // OpenAI LLM with Tool Calling Agent
-  if (openAIToolCallingModels.includes(llmModel) && OPENAI_API_KEY !== "") {
-    prompt = await pull<ChatPromptTemplate>(
-      "luisotee/wa-assistant-tool-calling"
-    );
+  switch (true) {
+    case openAIToolCallingModels.includes(llmModel) && OPENAI_API_KEY !== "":
+      prompt = toolCallingPrompt;
 
-    llm = new ChatOpenAI({
-      modelName: llmModel,
-      streaming: true,
-      temperature: MODEL_TEMPERATURE,
-      apiKey: OPENAI_API_KEY,
-    });
-
-    agent = await createToolCallingAgent({
-      llm,
-      tools,
-      prompt,
-    });
-  }
-  // Google LLM with Tool Calling Agent
-  else if (
-    googleToolCallingModels.includes(llmModel) &&
-    GOOGLE_API_KEY !== ""
-  ) {
-    prompt = await pull<ChatPromptTemplate>(
-      "luisotee/wa-assistant-tool-calling"
-    );
-
-    llm = new ChatGoogleGenerativeAI({
-      modelName: llmModel,
-      streaming: true,
-      temperature: MODEL_TEMPERATURE,
-      apiKey: GOOGLE_API_KEY,
-    });
-
-    agent = await createToolCallingAgent({
-      llm,
-      tools,
-      prompt,
-    });
-  }
-  // Anthropics LLM with Tool Calling Agent
-  else if (
-    anthropicToolCallingModels.includes(llmModel) &&
-    ANTHROPIC_API_KEY !== ""
-  ) {
-    prompt = await pull<ChatPromptTemplate>(
-      "luisotee/wa-assistant-tool-calling"
-    );
-
-    llm = new ChatAnthropic({
-      modelName: llmModel,
-      streaming: true,
-      temperature: MODEL_TEMPERATURE,
-      apiKey: ANTHROPIC_API_KEY,
-    });
-
-    agent = await createToolCallingAgent({
-      llm,
-      tools,
-      prompt,
-    });
-  }
-  // Groq LLM with Tool Calling Agent
-  else if (groqToolCallingModels.includes(llmModel) && GROQ_API_KEY !== "") {
-    prompt = await pull<ChatPromptTemplate>(
-      "luisotee/wa-assistant-tool-calling"
-    );
-
-    llm = new ChatGroq({
-      modelName: llmModel,
-      streaming: true,
-      temperature: MODEL_TEMPERATURE,
-      apiKey: GROQ_API_KEY,
-    });
-
-    agent = await createToolCallingAgent({
-      llm,
-      tools,
-      prompt,
-    });
-  }
-  // OpenRouter LLMs without Tool Calling Agent, with Structured Agent
-  else {
-    prompt = await pull<ChatPromptTemplate>("luisotee/wa-assistant");
-
-    llm = new ChatOpenAI(
-      {
+      llm = new ChatOpenAI({
         modelName: llmModel,
         streaming: true,
         temperature: MODEL_TEMPERATURE,
-        apiKey: OPENROUTER_API_KEY,
-      },
-      {
-        basePath: "https://openrouter.ai/api/v1",
-      }
-    );
+        apiKey: OPENAI_API_KEY,
+      });
 
-    agent = await createStructuredChatAgent({
-      llm,
-      tools,
-      prompt,
-    });
+      agent = await createToolCallingAgent({
+        llm,
+        tools,
+        prompt,
+      });
+      break;
+
+    case githubToolCallingModels.includes(llmModel) &&
+      GITHUB_OPENAI_API_KEY !== "":
+      prompt = toolCallingPrompt;
+      const azureModelName = llmModel.replace("-github", ""); // Remove the -azure flag
+
+      llm = new ChatOpenAI(
+        {
+          modelName: azureModelName,
+          streaming: true,
+          temperature: MODEL_TEMPERATURE,
+          apiKey: GITHUB_OPENAI_API_KEY,
+        },
+        {
+          basePath: "https://models.inference.ai.azure.com",
+        }
+      );
+      agent = await createToolCallingAgent({
+        llm,
+        tools,
+        prompt,
+      });
+      break;
+
+    case googleToolCallingModels.includes(llmModel) && GOOGLE_API_KEY !== "":
+      prompt = toolCallingPrompt;
+
+      llm = new ChatGoogleGenerativeAI({
+        modelName: llmModel,
+        streaming: true,
+        temperature: MODEL_TEMPERATURE,
+        apiKey: GOOGLE_API_KEY,
+      });
+
+      agent = await createToolCallingAgent({
+        llm,
+        tools,
+        prompt,
+      });
+      break;
+
+    case anthropicToolCallingModels.includes(llmModel) &&
+      ANTHROPIC_API_KEY !== "":
+      prompt = toolCallingPrompt;
+
+      llm = new ChatAnthropic({
+        modelName: llmModel,
+        streaming: true,
+        temperature: MODEL_TEMPERATURE,
+        apiKey: ANTHROPIC_API_KEY,
+      });
+
+      agent = await createToolCallingAgent({
+        llm,
+        tools,
+        prompt,
+      });
+      break;
+
+    case groqToolCallingModels.includes(llmModel) && GROQ_API_KEY !== "":
+      prompt = toolCallingPrompt;
+
+      llm = new ChatGroq({
+        modelName: llmModel,
+        streaming: true,
+        temperature: MODEL_TEMPERATURE,
+        apiKey: GROQ_API_KEY,
+      });
+
+      agent = await createToolCallingAgent({
+        llm,
+        tools,
+        prompt,
+      });
+      break;
+
+    default:
+      prompt = defaultPrompt;
+
+      llm = new ChatOpenAI(
+        {
+          modelName: llmModel,
+          streaming: true,
+          temperature: MODEL_TEMPERATURE,
+          apiKey: OPENROUTER_API_KEY,
+        },
+        {
+          basePath: "https://openrouter.ai/api/v1",
+        }
+      );
+
+      agent = await createStructuredChatAgent({
+        llm,
+        tools,
+        prompt,
+      });
+      break;
   }
 
   const executor = new AgentExecutor({

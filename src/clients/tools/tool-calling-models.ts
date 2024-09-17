@@ -5,6 +5,13 @@ export const openAIToolCallingModels = [
   "o1-mini",
 ];
 
+export const githubToolCallingModels = [
+  "gpt-4o-github",
+  "gpt-4o-mini-github",
+  "o1-preview-github",
+  "o1-mini-github",
+];
+
 export const googleToolCallingModels = ["gemini-1.5-pro", "gemini-1.5-flash"];
 
 export const anthropicToolCallingModels = [
