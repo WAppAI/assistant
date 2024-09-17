@@ -76,7 +76,7 @@ export async function handleReset(message: Message, args: string) {
 
     default:
       reply = await message.reply(
-        `${BOT_PREFIX}Invalid reset command. Use \`reset bing\` or \`reset OpenRouter\` to reset the conversation for this chat.`
+        `${BOT_PREFIX}Invalid reset command. Use \`reset bing\` or \`reset openrouter\` to reset the conversation for this chat.`
       );
       return reply;
   }

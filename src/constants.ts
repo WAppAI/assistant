@@ -66,3 +66,5 @@ export const ENABLE_GOOGLE_ROUTES = process.env.ENABLE_GOOGLE_ROUTES as string;
 export const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY as string;
 export const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY as string;
 export const GROQ_API_KEY = process.env.GROQ_API_KEY as string;
+export const GITHUB_OPENAI_API_KEY = process.env
+  .GITHUB_OPENAI_API_KEY as string;
