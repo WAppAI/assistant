@@ -137,7 +137,7 @@ export async function createExecutorForOpenRouter(
   const memory = await createMemoryForOpenRouter(chat);
 
   const toolCallingPrompt = await pull<ChatPromptTemplate>(
-    "luisotee/wa-assistant-tool-calling-dev"
+    "luisotee/wa-assistant-tool-calling-core-memory"
   );
   const defaultPrompt = await pull<ChatPromptTemplate>("luisotee/wa-assistant");
 
