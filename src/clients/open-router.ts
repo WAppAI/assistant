@@ -32,6 +32,7 @@ import {
   getLLMModel,
   getOpenRouterConversationFor,
   getOpenRouterMemoryFor,
+  getCoreMemoryFor,
 } from "../crud/conversation";
 import {
   anthropicToolCallingModels,
@@ -43,9 +44,10 @@ import {
 import { tools } from "./tools/tools-openrouter";
 
 function parseMessageHistory(
-  rawHistory: { [key: string]: string }[]
+  rawHistory: { [key: string]: string }[],
+  coreMemory: string
 ): (HumanMessage | AIMessage)[] {
-  return rawHistory.map((messageObj) => {
+  const parsedMessages = rawHistory.map((messageObj) => {
     const messageType = Object.keys(messageObj)[0];
     const messageContent = messageObj[messageType];
 
@@ -55,6 +57,14 @@ function parseMessageHistory(
       return new AIMessage(messageContent);
     }
   });
+
+  // Prepend the core memory as an AIMessage
+  const coreMemoryMessage = new AIMessage(`Your current core memory: 
+
+<core_memory>
+  ${coreMemory}
+</core_memory>`);
+  return [coreMemoryMessage, ...parsedMessages];
 }
 
 async function createMemoryForOpenRouter(chat: string) {
@@ -91,6 +101,7 @@ async function createMemoryForOpenRouter(chat: string) {
   }
 
   if (conversation) {
+    const coreMemory = (await getCoreMemoryFor(chat)) || "";
     if (memory instanceof ConversationSummaryMemory) {
       let memoryString = await getOpenRouterMemoryFor(chat);
       if (memoryString === undefined) return;
@@ -99,11 +110,15 @@ async function createMemoryForOpenRouter(chat: string) {
       let memoryString = await getOpenRouterMemoryFor(chat);
       if (memoryString === undefined) return;
 
-      const pastMessages = parseMessageHistory(JSON.parse(memoryString));
+      const pastMessages = parseMessageHistory(
+        JSON.parse(memoryString),
+        coreMemory
+      );
       memory.chatHistory = new ChatMessageHistory(pastMessages);
     }
   } else {
-    let memoryString: BaseMessage[] = [];
+    const coreMemory = (await getCoreMemoryFor(chat)) || "";
+    let memoryString: BaseMessage[] = [new AIMessage(coreMemory)];
     memory.chatHistory = new ChatMessageHistory(memoryString);
   }
 
@@ -122,7 +137,7 @@ export async function createExecutorForOpenRouter(
   const memory = await createMemoryForOpenRouter(chat);
 
   const toolCallingPrompt = await pull<ChatPromptTemplate>(
-    "luisotee/wa-assistant-tool-calling"
+    "luisotee/wa-assistant-tool-calling-dev"
   );
   const defaultPrompt = await pull<ChatPromptTemplate>("luisotee/wa-assistant");
 
@@ -250,7 +265,7 @@ export async function createExecutorForOpenRouter(
     agent,
     tools,
     memory,
-    //verbose: true,
+    // other properties
   });
 
   return executor;
