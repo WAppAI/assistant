@@ -20,6 +20,7 @@ export async function createContextFromMessage(message: Message) {
   const chatContext = await getChatContext(message);
 
   const context = stripIndents`[system](#context)
+  - The chat ID is '${chat.id._serialized}'
   ${chatContext}
   - The user's timezone is '${timezone}'
   - The user's local date and time is: ${timestampLocal}

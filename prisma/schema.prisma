@@ -34,6 +34,7 @@ model BingConversation {
 model OpenRouterConversation {
   waChatId String @id
   memory   String
+  coreMemory String @default("")
   waChat   WAChat @relation(fields: [waChatId], references: [id])
 }
 

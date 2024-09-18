@@ -118,3 +118,20 @@ export async function updateOpenRouterConversation(
     },
   });
 }
+
+export async function getCoreMemoryFor(chatId: string): Promise<string | null> {
+  const conversation = await prisma.openRouterConversation.findFirst({
+    where: { waChatId: chatId },
+  });
+  return conversation?.coreMemory || null;
+}
+
+export async function updateCoreMemory(
+  chatId: string,
+  coreMemory: string
+): Promise<void> {
+  await prisma.openRouterConversation.update({
+    data: { coreMemory },
+    where: { waChatId: chatId },
+  });
+}

@@ -7,14 +7,12 @@
   "scripts": {
     "start": "ts-node src/index.ts",
     "dev": "nodemon src/index.ts",
-    "generate": "prisma generate",
-    "migrate": "prisma migrate reset",
     "studio": "prisma studio",
     "docker:build": "docker build -t sydney-whatsapp-chatbot .",
     "docker:run": "docker run -it -d --name sydney-whatsapp-chatbot sydney-whatsapp-chatbot",
     "docker:build:run": "pnpm docker:build && pnpm docker:run",
     "docker:stop": "docker stop sydney-whatsapp-chatbot",
-    "build": "npm run generate && npm run migrate"
+    "build": "prisma generate && prisma migrate"
   },
   "repository": "https://github.com/WAppAI/assistant.git",
   "author": "Luis Otavio <luisotaviomgrcont@gmail.com> and Matheus Veiga <veigamann@gmail.com>",

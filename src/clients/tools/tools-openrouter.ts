@@ -27,6 +27,11 @@ import {
 } from "../../constants";
 import { GoogleRoutesAPI } from "@langchain/community/tools/google_routes";
 import { WeatherTool } from "./tool-weather";
+import {
+  AddToCoreMemoryTool,
+  DeleteFromCoreMemoryTool,
+  ReplaceInCoreMemoryTool,
+} from "./tool-core-memory";
 
 let googleCalendarCreateTool = null;
 let googleCalendarViewTool = null;
@@ -107,6 +112,9 @@ export const tools = [
   ...(googleCalendarViewTool ? [googleCalendarViewTool] : []),
   ...(dalleTool ? [dalleTool] : []),
   ...(googleRoutesTool ? [googleRoutesTool] : []),
+  new AddToCoreMemoryTool(),
+  new DeleteFromCoreMemoryTool(),
+  new ReplaceInCoreMemoryTool(),
   weatherTool,
   wikipediaTool,
   calculatorTool,
