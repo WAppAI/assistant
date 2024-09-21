@@ -12,7 +12,8 @@
     "docker:run": "docker run -it -d --name sydney-whatsapp-chatbot sydney-whatsapp-chatbot",
     "docker:build:run": "pnpm docker:build && pnpm docker:run",
     "docker:stop": "docker stop sydney-whatsapp-chatbot",
-    "build": "prisma generate && prisma migrate"
+    "build": "prisma generate && prisma migrate deploy",
+    "reset-db": "prisma migrate reset --force --skip-seed"
   },
   "repository": "https://github.com/WAppAI/assistant.git",
   "author": "Luis Otavio <luisotaviomgrcont@gmail.com> and Matheus Veiga <veigamann@gmail.com>",
