@@ -48,7 +48,7 @@ git clone https://github.com/WAppAI/assistant.git
 pnpm install
 ```
 
-3. Rename [.env.example](../master/.env.example) to `.env`
+3. Rename `.env.example` to `.env`
 
 ```
 cp .env.example .env
@@ -94,7 +94,7 @@ git clone https://github.com/WAppAI/assistant.git
 pnpm install
 ```
 
-3. Rename [.env.example](../master/.env.example) to `.env`
+3. Rename `.env.example` to `.env`
 
 ```
 cp .env.example .env
@@ -117,6 +117,44 @@ pnpm start
 ```
 
 7. Connect your WhatsApp account to the bot by scanning the generated QR Code in the CLI.
+
+8. Send a message to your WhatsApp account to start a conversation with the bot!
+
+</details>
+
+<details> 
+<summary><b>Deploying with Docker</b></summary> 
+<br>
+
+1. Clone this repository
+
+```
+git clone https://github.com/WAppAI/assistant.git
+```
+
+2. Rename `.env.example` to `.env`
+
+```
+cp .env.example .env
+```
+
+3. Read and fill in the remaining information in the `.env` file.
+
+4. Instructions on how to use langchain tools like Google Calendar and search will be in the `.env`
+
+5. Build and start the Docker container
+
+```
+pnpm docker:build:start
+```
+
+6. Access the container logs to read the QR code.
+
+```
+docker logs whatsapp-assistant
+```
+
+7. Scan the QR code with your WhatsApp account to connect the bot.
 
 8. Send a message to your WhatsApp account to start a conversation with the bot!
 
