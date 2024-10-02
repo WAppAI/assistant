@@ -9,7 +9,7 @@
     "dev": "nodemon src/index.ts",
     "studio": "prisma studio",
     "docker:build": "docker build -t sydney-whatsapp-chatbot .",
-    "docker:run": "docker run -it -d --name sydney-whatsapp-chatbot sydney-whatsapp-chatbot",
+    "docker:start": "docker run -it -d --name sydney-whatsapp-chatbot sydney-whatsapp-chatbot",
     "docker:build:run": "pnpm docker:build && pnpm docker:run",
     "docker:stop": "docker stop sydney-whatsapp-chatbot",
     "build": "prisma generate && prisma migrate deploy",
