@@ -27,6 +27,8 @@ export async function pulse(chatId: string, messageBody: string) {
     PULSE_FREQUENCY: `${pulseFrequencyInMinutes} minutes`,
   });
 
+  console.log("Pulse response: ", response.output);
+
   if (response.output.includes("false")) return;
 
   const conversation = await getOpenRouterConversationFor(chatId);

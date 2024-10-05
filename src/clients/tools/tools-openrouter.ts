@@ -32,6 +32,7 @@ import {
   DeleteFromCoreMemoryTool,
   ReplaceInCoreMemoryTool,
 } from "./tool-core-memory";
+import { ScheduleHeartbeatTool } from "./tool-pulse-schedule";
 
 let googleCalendarCreateTool = null;
 let googleCalendarViewTool = null;
@@ -115,6 +116,7 @@ export const tools = [
   new AddToCoreMemoryTool(),
   new DeleteFromCoreMemoryTool(),
   new ReplaceInCoreMemoryTool(),
+  new ScheduleHeartbeatTool(),
   weatherTool,
   wikipediaTool,
   calculatorTool,

@@ -8,11 +8,10 @@ async function main() {
   checkEnv();
   whatsapp.initialize();
 
-  // Run pulseForAllOpenRouterConversations every 1 minute
   setInterval(async () => {
     try {
       await pulseForAllConversations(
-        "SYSTEM: This is a pulse, remember to return 'false' if there is nothing important to say "
+        `SYSTEM: This is a pulse, remember to return 'false' if there is nothing important to say. Server time (and presumably the user's time) is ${new Date().toLocaleString()}`
       );
     } catch (error) {
       console.error("Error running pulseForAllOpenRouterConversations:", error);
