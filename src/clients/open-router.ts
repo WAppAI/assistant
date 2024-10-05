@@ -26,6 +26,7 @@ import {
   OPENROUTER_API_KEY,
   OPENROUTER_MEMORY_TYPE,
   OPENROUTER_MSG_MEMORY_LIMIT,
+  PROMPT_LANGCHAIN,
   SUMMARY_LLM_MODEL,
 } from "../constants";
 import {
@@ -102,19 +103,16 @@ async function createMemoryForOpenRouter(chat: string) {
 
   if (conversation) {
     const coreMemory = (await getCoreMemoryFor(chat)) || "";
-    if (memory instanceof ConversationSummaryMemory) {
-      let memoryString = await getOpenRouterMemoryFor(chat);
-      if (memoryString === undefined) return;
-      memory.buffer = memoryString;
-    } else {
-      let memoryString = await getOpenRouterMemoryFor(chat);
-      if (memoryString === undefined) return;
+    let memoryString = await getOpenRouterMemoryFor(chat);
+    if (memoryString === undefined) return;
 
-      const pastMessages = parseMessageHistory(
-        JSON.parse(memoryString),
-        coreMemory
-      );
+    try {
+      const parsedMemory = JSON.parse(memoryString);
+      const pastMessages = parseMessageHistory(parsedMemory, coreMemory);
       memory.chatHistory = new ChatMessageHistory(pastMessages);
+    } catch (error) {
+      //console.error("Failed to parse memoryString:", error);
+      memory.chatHistory = new ChatMessageHistory([]);
     }
   } else {
     const coreMemory = (await getCoreMemoryFor(chat)) || "";
@@ -136,18 +134,13 @@ export async function createExecutorForOpenRouter(
 
   const memory = await createMemoryForOpenRouter(chat);
 
-  const toolCallingPrompt = await pull<ChatPromptTemplate>(
-    "luisotee/wa-assistant-tool-calling-core-memory"
-  );
-  const defaultPrompt = await pull<ChatPromptTemplate>("luisotee/wa-assistant");
-
   let agent;
   let llm;
   let prompt;
 
   switch (true) {
     case openAIToolCallingModels.includes(llmModel) && OPENAI_API_KEY !== "":
-      prompt = toolCallingPrompt;
+      prompt = await pull<ChatPromptTemplate>(PROMPT_LANGCHAIN);
 
       llm = new ChatOpenAI({
         modelName: llmModel,
@@ -165,7 +158,7 @@ export async function createExecutorForOpenRouter(
 
     case githubToolCallingModels.includes(llmModel) &&
       GITHUB_OPENAI_API_KEY !== "":
-      prompt = toolCallingPrompt;
+      prompt = await pull<ChatPromptTemplate>(PROMPT_LANGCHAIN);
       const azureModelName = llmModel.replace("-github", ""); // Remove the -azure flag
 
       llm = new ChatOpenAI(
@@ -187,7 +180,7 @@ export async function createExecutorForOpenRouter(
       break;
 
     case googleToolCallingModels.includes(llmModel) && GOOGLE_API_KEY !== "":
-      prompt = toolCallingPrompt;
+      prompt = await pull<ChatPromptTemplate>(PROMPT_LANGCHAIN);
 
       llm = new ChatGoogleGenerativeAI({
         modelName: llmModel,
@@ -205,7 +198,7 @@ export async function createExecutorForOpenRouter(
 
     case anthropicToolCallingModels.includes(llmModel) &&
       ANTHROPIC_API_KEY !== "":
-      prompt = toolCallingPrompt;
+      prompt = await pull<ChatPromptTemplate>(PROMPT_LANGCHAIN);
 
       llm = new ChatAnthropic({
         modelName: llmModel,
@@ -222,7 +215,7 @@ export async function createExecutorForOpenRouter(
       break;
 
     case groqToolCallingModels.includes(llmModel) && GROQ_API_KEY !== "":
-      prompt = toolCallingPrompt;
+      prompt = await pull<ChatPromptTemplate>(PROMPT_LANGCHAIN);
 
       llm = new ChatGroq({
         modelName: llmModel,
@@ -239,7 +232,7 @@ export async function createExecutorForOpenRouter(
       break;
 
     default:
-      prompt = defaultPrompt;
+      prompt = await pull<ChatPromptTemplate>("luisotee/wa-assistant");
 
       llm = new ChatOpenAI(
         {

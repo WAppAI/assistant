@@ -47,8 +47,9 @@ Displays the available commands, their functionalities and how to use them.
 🗑️ *${CMD_PREFIX}reset*
 Clears the conversation history for _this_ chat.
 - Run *${CMD_PREFIX}reset bing* to clear the Bing conversation for this chat.
-- Run *${CMD_PREFIX}reset openrouter* to clear the OpenRouter conversation for this chat.
-- Run *${CMD_PREFIX}reset all* to clear the Bing and OpenRouter conversations for this chat, along with all the reminders.
+- Run *${CMD_PREFIX}reset openrouter* to clear non the memory and core memory of non Bing conversations
+- Run *${CMD_PREFIX}reset all* to clear Bing and OpenRouter conversations for this chat, along with all the reminders.
+- Run *${CMD_PREFIX}reset lc_mem* to clear message history for non Bing conversations. *(Won't clear core memory)*
 - Run *${CMD_PREFIX}help reset* for more information.
 
 🔄 *${CMD_PREFIX}change*
