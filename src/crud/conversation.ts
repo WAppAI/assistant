@@ -60,6 +60,13 @@ export async function deleteOpenRouterConversation(chatId: string) {
   });
 }
 
+export async function resetOpenRouterMemory(chatId: string) {
+  return await prisma.openRouterConversation.update({
+    where: { waChatId: chatId },
+    data: { memory: "" },
+  });
+}
+
 export async function getConversationFor(chatId: string) {
   return prisma.bingConversation.findFirst({
     where: { waChatId: chatId },

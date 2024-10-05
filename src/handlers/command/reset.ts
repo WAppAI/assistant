@@ -8,6 +8,7 @@ import {
   getConversationFor,
   getOpenRouterConversationFor,
   getWAChat,
+  resetOpenRouterMemory,
 } from "../../crud/conversation";
 import { deleteAllReminder } from "../reminder/utils";
 
@@ -71,6 +72,21 @@ export async function handleReset(message: Message, args: string) {
       await deleteChat(chat.id._serialized);
 
       reply = await message.reply("All data for this chat has been deleted.");
+      return reply;
+      break;
+
+    case "lc_mem":
+      conversation = await getOpenRouterConversationFor(chat.id._serialized);
+      if (conversation) {
+        await resetOpenRouterMemory(chat.id._serialized);
+        reply = await message.reply(
+          `${BOT_PREFIX}Memory for this chat has been reset`
+        );
+        return reply;
+      }
+      reply = await message.reply(
+        "No OpenRouter conversation found for this chat"
+      );
       return reply;
       break;
 
