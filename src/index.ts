@@ -2,21 +2,32 @@ import { prisma } from "./clients/prisma";
 import { whatsapp } from "./clients/whatsapp";
 import { checkEnv } from "./helpers/utils";
 import { pulseForAllConversations } from "./handlers/pulse";
-import { PULSE_FREQUENCY } from "./constants";
+import schedule from "node-schedule";
 
 async function main() {
   checkEnv();
   whatsapp.initialize();
 
-  setInterval(async () => {
-    try {
-      await pulseForAllConversations(
-        `SYSTEM: This is a pulse, remember to return 'false' if there is nothing important to say. Server time (and presumably the user's time) is ${new Date().toLocaleString()}`
-      );
-    } catch (error) {
-      console.error("Error running pulseForAllOpenRouterConversations:", error);
+  const pulseTimes = process.env.PULSE_FREQUENCY?.split(",") || [];
+  pulseTimes.forEach((time) => {
+    const [hour, minute] = time.split(":").map(Number);
+    if (!isNaN(hour) && !isNaN(minute)) {
+      schedule.scheduleJob({ hour, minute }, async () => {
+        try {
+          await pulseForAllConversations(
+            `SYSTEM: This is a pulse, remember to return 'false' if there is nothing important to say. Server time (and presumably the user's time) is ${new Date().toLocaleString()}`
+          );
+        } catch (error) {
+          console.error(
+            `Error running pulseForAllConversations at ${time}:`,
+            error
+          );
+        }
+      });
+    } else {
+      console.error(`Invalid time format in PULSE_FREQUENCY: ${time}`);
     }
-  }, PULSE_FREQUENCY);
+  });
 }
 
 process.on("SIGINT", async () => {

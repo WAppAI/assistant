@@ -70,3 +70,4 @@ export const GITHUB_OPENAI_API_KEY = process.env
   .GITHUB_OPENAI_API_KEY as string;
 export const PROMPT_LANGCHAIN = process.env.PROMPT_LANGCHAIN as string;
 export const PULSE_FREQUENCY = parseInt(process.env.PULSE_FREQUENCY as string);
+export const PULSE_LLM_MODEL = process.env.PULSE_LLM_MODEL as string;

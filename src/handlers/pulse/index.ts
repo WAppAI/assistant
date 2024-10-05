@@ -4,6 +4,7 @@ import {
   DEBUG_SUMMARY,
   OPENROUTER_MEMORY_TYPE,
   PULSE_FREQUENCY,
+  PULSE_LLM_MODEL,
 } from "../../constants";
 import { prisma } from "../../clients/prisma";
 import { whatsapp } from "../../clients/whatsapp";
@@ -18,7 +19,8 @@ export async function pulse(chatId: string, messageBody: string) {
   const executor = await createExecutorForOpenRouter(
     "",
     chatId,
-    "luisotee/wa-assistant-tool-calling-pulse"
+    "luisotee/wa-assistant-tool-calling-pulse",
+    PULSE_LLM_MODEL
   );
   const response = await executor.invoke({
     input: messageBody,

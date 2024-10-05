@@ -126,9 +126,10 @@ async function createMemoryForOpenRouter(chat: string) {
 export async function createExecutorForOpenRouter(
   context: string,
   chat: string,
-  customPrompt?: string
+  customPrompt?: string,
+  customLLM?: string // customLLM is now a string
 ) {
-  let llmModel = await getLLMModel(chat);
+  let llmModel = customLLM || (await getLLMModel(chat));
   if (!llmModel) {
     llmModel = DEFAULT_MODEL;
   }
@@ -142,6 +143,8 @@ export async function createExecutorForOpenRouter(
   const promptToUse = customPrompt || PROMPT_LANGCHAIN;
 
   console.log("Prompt to use:", promptToUse);
+
+  console.log("LLM model:", llmModel);
 
   switch (true) {
     case openAIToolCallingModels.includes(llmModel) && OPENAI_API_KEY !== "":
