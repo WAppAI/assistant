@@ -24,6 +24,12 @@ async function doneWith(message: Message, reaction: Reaction = "done") {
   await chat.clearState();
 }
 
+async function queuedMessage(message: Message, reaction: Reaction = "queued") {
+  const chat = await message.getChat();
+  await react(message, reaction);
+  await chat.clearState();
+}
+
 type Status = Reaction;
 
 export async function setStatusFor(message: Message, status: Status) {
@@ -36,6 +42,9 @@ export async function setStatusFor(message: Message, status: Status) {
       break;
     case "error":
       await doneWith(message, "error");
+      break;
+    case "queued":
+      await queuedMessage(message);
       break;
     default:
       break;
