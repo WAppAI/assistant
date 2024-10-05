@@ -5,6 +5,7 @@ import {
   BOT_PREFIX,
   DEBUG_SUMMARY,
   OPENROUTER_MEMORY_TYPE,
+  PULSE_FREQUENCY,
   STREAM_RESPONSES,
   TRANSCRIPTION_ENABLED,
 } from "../../constants";
@@ -27,6 +28,7 @@ export async function getCompletionWithOpenRouter(
   const waChat = await getChatFor(chat.id._serialized);
   let imageBase64: string | undefined;
   const conversation = await getOpenRouterConversationFor(chat.id._serialized);
+  const pulseFrequencyInMinutes = PULSE_FREQUENCY / 60000;
   const executor = await createExecutorForOpenRouter(
     context,
     chat.id._serialized
@@ -56,6 +58,7 @@ export async function getCompletionWithOpenRouter(
       input: message.body,
       ASSISTANT_NAME: ASSISTANT_NAME,
       context: context,
+      PULSE_FREQUENCY: `${pulseFrequencyInMinutes} minutes`,
     },
     {
       callbacks: [

@@ -1,10 +1,23 @@
 import { prisma } from "./clients/prisma";
 import { whatsapp } from "./clients/whatsapp";
 import { checkEnv } from "./helpers/utils";
+import { pulseForAllConversations } from "./handlers/pulse";
+import { PULSE_FREQUENCY } from "./constants";
 
 async function main() {
   checkEnv();
   whatsapp.initialize();
+
+  // Run pulseForAllOpenRouterConversations every 1 minute
+  setInterval(async () => {
+    try {
+      await pulseForAllConversations(
+        "SYSTEM: This is a pulse, remember to return 'false' if there is nothing important to say "
+      );
+    } catch (error) {
+      console.error("Error running pulseForAllOpenRouterConversations:", error);
+    }
+  }, PULSE_FREQUENCY);
 }
 
 process.on("SIGINT", async () => {
