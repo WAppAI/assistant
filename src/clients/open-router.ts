@@ -125,9 +125,11 @@ async function createMemoryForOpenRouter(chat: string) {
 
 export async function createExecutorForOpenRouter(
   context: string,
-  chat: string
+  chat: string,
+  customPrompt?: string,
+  customLLM?: string // customLLM is now a string
 ) {
-  let llmModel = await getLLMModel(chat);
+  let llmModel = customLLM || (await getLLMModel(chat));
   if (!llmModel) {
     llmModel = DEFAULT_MODEL;
   }
@@ -138,9 +140,11 @@ export async function createExecutorForOpenRouter(
   let llm;
   let prompt;
 
+  const promptToUse = customPrompt || PROMPT_LANGCHAIN;
+
   switch (true) {
     case openAIToolCallingModels.includes(llmModel) && OPENAI_API_KEY !== "":
-      prompt = await pull<ChatPromptTemplate>(PROMPT_LANGCHAIN);
+      prompt = await pull<ChatPromptTemplate>(promptToUse);
 
       llm = new ChatOpenAI({
         modelName: llmModel,
@@ -158,7 +162,7 @@ export async function createExecutorForOpenRouter(
 
     case githubToolCallingModels.includes(llmModel) &&
       GITHUB_OPENAI_API_KEY !== "":
-      prompt = await pull<ChatPromptTemplate>(PROMPT_LANGCHAIN);
+      prompt = await pull<ChatPromptTemplate>(promptToUse);
       const azureModelName = llmModel.replace("-github", ""); // Remove the -azure flag
 
       llm = new ChatOpenAI(
@@ -180,7 +184,7 @@ export async function createExecutorForOpenRouter(
       break;
 
     case googleToolCallingModels.includes(llmModel) && GOOGLE_API_KEY !== "":
-      prompt = await pull<ChatPromptTemplate>(PROMPT_LANGCHAIN);
+      prompt = await pull<ChatPromptTemplate>(promptToUse);
 
       llm = new ChatGoogleGenerativeAI({
         modelName: llmModel,
@@ -198,7 +202,7 @@ export async function createExecutorForOpenRouter(
 
     case anthropicToolCallingModels.includes(llmModel) &&
       ANTHROPIC_API_KEY !== "":
-      prompt = await pull<ChatPromptTemplate>(PROMPT_LANGCHAIN);
+      prompt = await pull<ChatPromptTemplate>(promptToUse);
 
       llm = new ChatAnthropic({
         modelName: llmModel,
@@ -215,7 +219,7 @@ export async function createExecutorForOpenRouter(
       break;
 
     case groqToolCallingModels.includes(llmModel) && GROQ_API_KEY !== "":
-      prompt = await pull<ChatPromptTemplate>(PROMPT_LANGCHAIN);
+      prompt = await pull<ChatPromptTemplate>(promptToUse);
 
       llm = new ChatGroq({
         modelName: llmModel,
@@ -232,7 +236,7 @@ export async function createExecutorForOpenRouter(
       break;
 
     default:
-      prompt = await pull<ChatPromptTemplate>("luisotee/wa-assistant");
+      prompt = await pull<ChatPromptTemplate>(promptToUse);
 
       llm = new ChatOpenAI(
         {
