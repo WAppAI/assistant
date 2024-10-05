@@ -142,10 +142,6 @@ export async function createExecutorForOpenRouter(
 
   const promptToUse = customPrompt || PROMPT_LANGCHAIN;
 
-  console.log("Prompt to use:", promptToUse);
-
-  console.log("LLM model:", llmModel);
-
   switch (true) {
     case openAIToolCallingModels.includes(llmModel) && OPENAI_API_KEY !== "":
       prompt = await pull<ChatPromptTemplate>(promptToUse);
