@@ -1,4 +1,5 @@
 import qrcode from "qrcode";
+// @ts-ignore
 import WAWebJS, { Message } from "whatsapp-web.js";
 import { CMD_PREFIX } from "../constants";
 import { handleCommand } from "../handlers/command";
@@ -14,14 +15,8 @@ import {
 // Doing this for now because ts-node complains about commonjs modules, will fix later (later = never)
 const { Client, LocalAuth } = WAWebJS;
 
-const wwebVersion = "2.2407.3";
-
 export const whatsapp = new Client({
   authStrategy: new LocalAuth(),
-  webVersionCache: {
-    type: "remote",
-    remotePath: `https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/${wwebVersion}.html`,
-  },
   puppeteer: {
     headless: true,
     handleSIGTERM: false,
@@ -40,11 +35,13 @@ export const whatsapp = new Client({
   },
 });
 
+// @ts-ignore
 whatsapp.on("qr", async (qr) => {
   const code = await qrcode.toString(qr, { type: "terminal", small: true });
   console.log(code);
 });
 
+// @ts-ignore
 whatsapp.on("loading_screen", (percent) => {
   console.log(`Loading WhatsApp Web... ${percent}%`);
 });
@@ -53,6 +50,7 @@ whatsapp.on("authenticated", () => {
   console.log("Authenticated");
 });
 
+// @ts-ignore
 whatsapp.on("auth_failure", (message) => {
   console.log("Authentication failure. Message:", message);
 });
@@ -68,7 +66,7 @@ const messageQueue: { [key: string]: Message[] } = {};
 let isProcessingMessage = false;
 
 // order matters here, do not mess with it
-whatsapp.on("message", async (message) => {
+whatsapp.on("message", async (message: Message) => {
   const chat = await message.getChat();
   const chatId = chat.id._serialized;
 

@@ -35,7 +35,14 @@ export class AddToCoreMemoryTool extends StructuredTool {
 
 const DeleteFromCoreMemorySchema = z.object({
   chat: z.string().describe("The chat ID from which the part will be deleted."),
-  part: z.string().describe("The specific part of the core memory to delete."),
+  part: z.string().describe(
+    `The exact text of the part you want to delete.
+      You will need to input the exact text that you want to delete.
+      An example of a part is: "The user is dating a girl named Alice. The user is from Brazil"
+      If you want to delete the part about him dating a girl named Alice, you would need to input that exact part, for example: 
+      "The user is dating a girl named Alice" (without the quotes).
+      If the part is not found, nothing will be deleted.`
+  ),
 });
 
 export class DeleteFromCoreMemoryTool extends StructuredTool {
@@ -66,9 +73,14 @@ const ReplaceInCoreMemorySchema = z.object({
   chat: z
     .string()
     .describe("The chat ID for which the core memory will be replaced."),
-  oldPart: z
-    .string()
-    .describe("The specific part of the core memory to replace."),
+  oldPart: z.string().describe(
+    `The exact text of the specific part of the core memory to replace.
+      You will need to input the exact text that you want to replace.
+      An example of a part is: "The user is dating a girl named Alice. The user is from Brazil"
+      If you want to replace the part about him dating a girl named Alice, you would need to input that exact part, for example: 
+      "The user is dating a girl named Alice" (without the quotes).
+      If the part is not found, nothing will be replaced.`
+  ),
   newPart: z.string().describe("The new part to replace the old part with."),
 });
 

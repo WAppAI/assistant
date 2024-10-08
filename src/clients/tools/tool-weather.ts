@@ -88,10 +88,11 @@ interface WeatherData {
 
 export class WeatherTool extends Tool {
   name = "WeatherTool";
-  description =
-    "Fetches current weather and forecast data from Open Meteo API, use this tool to get weather data.";
+  description = `Fetches current weather and forecast data from Open Meteo API, use this tool to get weather data.
+    Input should be the just city name, without any country, state, province, etc. names.`;
 
   async _call(city: string): Promise<string> {
+    console.log("Fetching weather data for city: ", city);
     const geocodeResponse = await fetch(
       `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=en&format=json`
     );
