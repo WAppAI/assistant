@@ -8,3 +8,4 @@ prisma/*.db*
 Dockerfile.*
 
 /whisper/models/
+/wa_auth

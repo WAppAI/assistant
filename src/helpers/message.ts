@@ -1,5 +1,6 @@
-import { Chat, GroupChat, Message } from "whatsapp-web.js";
-import { Reaction, react } from "../handlers/reactions";
+import { proto, WASocket } from "@whiskeysockets/baileys";
+import { Chat, Message } from "whatsapp-web.js";
+import { prisma } from "../clients/prisma";
 import {
   ALLOWED_USERS,
   BLOCKED_USERS,
@@ -7,119 +8,118 @@ import {
   CMD_PREFIX,
   IGNORE_MESSAGES_WARNING,
 } from "../constants";
-import { prisma } from "../clients/prisma";
+import { string } from "zod";
 
-async function workingOn(message: Message) {
-  const chat = await message.getChat();
-  await chat.clearState();
-  await chat.sendSeen();
-
-  await react(message, "working");
-  chat.sendStateTyping();
+export function isGroupMessage(message: proto.IWebMessageInfo) {
+  return message.key.remoteJid?.endsWith("@g.us") ?? false;
 }
 
-async function doneWith(message: Message, reaction: Reaction = "done") {
-  const chat = await message.getChat();
-  await react(message, reaction);
-  await chat.clearState();
+export function getPhoneNumber(message: proto.IWebMessageInfo) {
+  return message.key.remoteJid?.split("@")[0] ?? "";
 }
 
-async function queuedMessage(message: Message, reaction: Reaction = "queued") {
-  const chat = await message.getChat();
-  await react(message, reaction);
-  await chat.clearState();
-}
-
-type Status = Reaction;
-
-export async function setStatusFor(message: Message, status: Status) {
-  switch (status) {
-    case "working":
-      await workingOn(message);
-      break;
-    case "done":
-      await doneWith(message);
-      break;
-    case "error":
-      await doneWith(message, "error");
-      break;
-    case "queued":
-      await queuedMessage(message);
-      break;
-    default:
-      break;
-  }
-}
-
-export async function shouldIgnore(message: Message) {
+export async function shouldIgnore(
+  message: proto.IWebMessageInfo,
+  sock: WASocket
+) {
   if (ALLOWED_USERS.length === 0 && BLOCKED_USERS.length === 0) {
     return false;
   }
 
-  const contact = await message.getContact();
-  const chat = await message.getChat();
+  const senderNumber = getPhoneNumber(message);
 
-  if (chat.isGroup) {
-    const groupChat = chat as GroupChat;
-
+  if (isGroupMessage(message)) {
     // Check if this message came from a blocked user
-    if (BLOCKED_USERS.includes(contact.number)) {
+    if (BLOCKED_USERS.includes(senderNumber)) {
       console.warn(
-        `Ignoring message from blocked user "${contact.pushname}" <${contact.number}>`
+        `Ignoring message from blocked user "${message.pushName}" <${senderNumber}>`
       );
       return true;
     }
 
-    // Check if any allowed users are in the group
-    const allowedInGroup = groupChat.participants.some((p) => {
-      return ALLOWED_USERS.includes(p.id.user);
-    });
+    // Fetch group metadata
+    const groupJid = message.key.remoteJid!;
+    try {
+      const groupMetadata = await sock.groupMetadata(groupJid);
 
-    if (!allowedInGroup) {
-      console.warn(
-        `Ignoring message from group "${groupChat.name}" because no allowed users are in it`
-      );
-      return true;
+      // Check if any allowed users are in the group
+      const allowedInGroup = groupMetadata.participants.some((participant) => {
+        const participantNumber = participant.id.split("@")[0];
+        return ALLOWED_USERS.includes(participantNumber);
+      });
+
+      if (!allowedInGroup) {
+        console.warn(
+          `Ignoring message from group "${groupMetadata.subject}" because no allowed users are in it`
+        );
+        return true;
+      }
+    } catch (error) {
+      console.error("Error fetching group metadata:", error);
+      return true; // Ignore the message if we can't fetch group data
     }
-  } else if (
-    BLOCKED_USERS.includes(contact.number) ||
-    !ALLOWED_USERS.includes(contact.number)
-  ) {
+  } else {
     // It's a private message, so just check if the user is blocked or isn't in the allowed list
-    console.warn(
-      `Ignoring message from blocked/not allowed user "${contact.pushname}" <${contact.number}>`
-    );
-    return true;
+    if (
+      BLOCKED_USERS.includes(senderNumber) ||
+      !ALLOWED_USERS.includes(senderNumber)
+    ) {
+      console.warn(
+        `Ignoring message from blocked/not allowed user "${message.pushName}" <${senderNumber}>`
+      );
+      return true;
+    }
   }
 
   return false;
 }
 
-export async function shouldReply(message: Message) {
-  const isCommand = message.body.startsWith(CMD_PREFIX);
-  const chat = await message.getChat();
+export async function shouldReply(
+  message: proto.IWebMessageInfo,
+  sock: WASocket
+) {
+  const messageBody = message.message?.extendedTextMessage?.text;
 
-  if (chat.isGroup && !isCommand) {
-    const mentions = await message.getMentions();
-    const isMentioned = mentions.some(
-      (mention) => mention.id._serialized === message.to
-    );
+  if (typeof messageBody !== "string")
+    throw new Error("Message body is not a string");
 
-    const quotedMessage = await message.getQuotedMessage();
+  const isCommand = messageBody.startsWith(CMD_PREFIX);
+
+  if (isGroupMessage(message) && !isCommand) {
+    const mentions =
+      message.message?.extendedTextMessage?.contextInfo?.mentionedJid || [];
+    const isMentioned = mentions.includes(sock.user?.id || "");
+
+    const quotedMessage =
+      message.message?.extendedTextMessage?.contextInfo?.quotedMessage;
+    const quotedMessageId =
+      message.message?.extendedTextMessage?.contextInfo?.stanzaId;
+
     const lastWaReply = await prisma.bingConversation.findFirst({
-      where: { waChatId: chat.id._serialized },
+      where: { waChatId: message.key.remoteJid || "" },
       select: { waMessageId: true },
     });
+
     const isInThread =
-      quotedMessage && quotedMessage.id._serialized == lastWaReply?.waMessageId;
+      quotedMessageId && quotedMessageId === lastWaReply?.waMessageId;
 
     if (isMentioned || isInThread) {
+      // Replace mentions with names
+      let updatedMessageBody = messageBody;
       for (const mention of mentions) {
-        message.body = message.body.replace(
-          `@${mention.id.user}`,
-          mention.pushname
+        const contactName = await getContactName(sock, mention);
+        updatedMessageBody = updatedMessageBody.replace(
+          `@${mention.split("@")[0]}`,
+          contactName
         );
-        console.log(`Replaced "${mention.id.user}" with "${mention.pushname}"`);
+        console.log(`Replaced "${mention}" with "${contactName}"`);
+      }
+
+      // Update the message body
+      if (message.message?.extendedTextMessage) {
+        message.message.extendedTextMessage.text = updatedMessageBody;
+      } else if (message.message?.conversation) {
+        message.message.conversation = updatedMessageBody;
       }
     } else {
       console.warn(

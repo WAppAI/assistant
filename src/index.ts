@@ -1,14 +1,13 @@
+import { connectToWhatsApp } from "./clients/new-whatsapp";
 import { prisma } from "./clients/prisma";
-import { whatsapp } from "./clients/whatsapp";
 import { checkEnv } from "./helpers/utils";
-import { pulseForAllConversations } from "./handlers/pulse";
-import schedule from "node-schedule";
 
 async function main() {
   checkEnv();
-  whatsapp.initialize();
+  //whatsapp.initialize();
+  await connectToWhatsApp();
 
-  const pulseTimes = process.env.PULSE_FREQUENCY?.split(",") || [];
+  /* const pulseTimes = process.env.PULSE_FREQUENCY?.split(",") || [];
   pulseTimes.forEach((time) => {
     const [hour, minute] = time.split(":").map(Number);
     if (!isNaN(hour) && !isNaN(minute)) {
@@ -27,10 +26,10 @@ async function main() {
     } else {
       console.error(`Invalid time format in PULSE_FREQUENCY: ${time}`);
     }
-  });
+  }); */
 }
 
-process.on("SIGINT", async () => {
+/* process.on("SIGINT", async () => {
   console.warn("[SIGINT] Shutting down...");
   // should react to every pending message and warn the user that the bot is shutting down
   await whatsapp.destroy();
@@ -43,7 +42,7 @@ process.on("SIGTERM", async () => {
   await whatsapp.destroy();
   process.exit(0);
 });
-
+ */
 main()
   .then(async () => {
     await prisma.$disconnect();

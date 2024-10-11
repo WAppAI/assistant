@@ -9,6 +9,7 @@ import { helpStatement, unauthorizedCommandFor } from "../../helpers/command";
 import { handleHelp } from "./help";
 import { handleReminderCommand } from "./reminder";
 import { handleChangeLLM } from "./change-llm";
+import { react } from "../reactions";
 
 const adminCommands = ["jailbreak", "reset", "change"];
 
@@ -18,7 +19,7 @@ export async function handleCommand(message: Message) {
   let reply: Message;
 
   await log(message);
-  await setStatusFor(message, "working");
+  await react(message, "working");
 
   const chat = await message.getChat();
   let isAdmin = true; // default to true for private chats

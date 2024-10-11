@@ -1,5 +1,7 @@
 import { Message } from "whatsapp-web.js";
 import { ENABLE_REACTIONS } from "../constants";
+import { proto, updateMessageWithReaction } from "@whiskeysockets/baileys";
+import { isGroupMessage } from "../helpers/message";
 
 export const REACTIONS = {
   queued: process.env.QUEUED_REACTION || "🔁",
@@ -10,20 +12,44 @@ export const REACTIONS = {
 
 export type Reaction = keyof typeof REACTIONS;
 
-export async function react(message: Message, reaction: keyof typeof REACTIONS) {
-  const chat = await message.getChat();
-
+export async function react(
+  message: proto.IWebMessageInfo,
+  reaction: keyof typeof REACTIONS
+) {
   switch (ENABLE_REACTIONS) {
     case "false":
       break;
     case "true":
-      await message.react(REACTIONS[reaction]);
+      updateMessageWithReaction(message, {
+        text: REACTIONS[reaction],
+        key: {
+          remoteJid: message.key.remoteJid,
+          fromMe: false,
+          id: message.key.id,
+        },
+      });
       break;
     case "dms_only":
-      if (!chat.isGroup) await message.react(REACTIONS[reaction]);
+      if (isGroupMessage(message)) return;
+      updateMessageWithReaction(message, {
+        text: REACTIONS[reaction],
+        key: {
+          remoteJid: message.key.remoteJid,
+          fromMe: false,
+          id: message.key.id,
+        },
+      });
       break;
     case "groups_only":
-      if (chat.isGroup) await message.react(REACTIONS[reaction]);
+      if (!isGroupMessage(message)) return;
+      updateMessageWithReaction(message, {
+        text: REACTIONS[reaction],
+        key: {
+          remoteJid: message.key.remoteJid,
+          fromMe: false,
+          id: message.key.id,
+        },
+      });
       break;
     default:
       break;
