@@ -1,8 +1,8 @@
 // see src/types/bing-ai-client.d.ts
 // @ts-ignore
+import { BingConversation } from "@prisma/client";
 import { BingAIClientResponse } from "@waylaidwanderer/chatgpt-api";
 import { prisma } from "../clients/prisma";
-import { BingConversation, OpenRouterConversation } from "@prisma/client";
 
 export async function createConversation(
   completion: BingAIClientResponse,
