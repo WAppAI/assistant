@@ -2,7 +2,6 @@ import { randomUUID } from "crypto";
 import fs from "fs";
 import os from "os";
 import path from "path";
-import { Message, MessageMedia } from "whatsapp-web.js";
 import {
   BOT_PREFIX,
   REPLY_TRANSCRIPTION,
@@ -10,20 +9,34 @@ import {
 } from "../../constants";
 import { convertOggToWav } from "./audio-helper";
 import { handleAudioMessageWithWhisperApi } from "./whisper-api";
-import { handleAudioMessageWithWhisperLocal } from "./whisper-local";
 import { handleAudioMessageWithGroqApi } from "./whisper-groq";
+import { handleAudioMessageWithWhisperLocal } from "./whisper-local";
+import {
+  makeWASocket,
+  downloadMediaMessage,
+  DisconnectReason,
+  useMultiFileAuthState,
+  type proto,
+  WASocket,
+} from "@whiskeysockets/baileys";
 
+// Function to handle audio messages
 export async function handleAudioMessage(
-  media: MessageMedia,
-  message: Message
+  message: proto.IWebMessageInfo,
+  sock: WASocket
 ) {
-  const { data } = media;
+  const messageContent = message.message?.audioMessage;
+  if (!messageContent) {
+    throw new Error("No audio message found in the provided message");
+  }
+
+  const mediaData = await downloadMediaMessage(message, "buffer", {});
   const tempdir = os.tmpdir();
   const filename = randomUUID();
   const oggPath = path.join(tempdir, `${filename}.ogg`);
   const wavPath = path.join(tempdir, `${filename}.wav`);
 
-  fs.writeFileSync(oggPath, Buffer.from(data, "base64"));
+  fs.writeFileSync(oggPath, new Uint8Array(mediaData));
   await convertOggToWav(oggPath, wavPath);
 
   const newMessageBody = `[system](#additional_instructions)\n
@@ -31,36 +44,32 @@ export async function handleAudioMessage(
 
   let transcribedAudio;
 
-  if (TRANSCRIPTION_METHOD === "local") {
-    try {
+  try {
+    if (TRANSCRIPTION_METHOD === "local") {
       transcribedAudio = await handleAudioMessageWithWhisperLocal(wavPath);
-    } catch (error) {
-      console.error(error);
-      throw new Error("Error transcribing audio");
-    }
-  } else if (TRANSCRIPTION_METHOD === "whisper-api") {
-    try {
+    } else if (TRANSCRIPTION_METHOD === "whisper-api") {
       transcribedAudio = await handleAudioMessageWithWhisperApi(wavPath);
-    } catch (error) {
-      console.error(error);
-      throw new Error("Error transcribing audio");
-    }
-  } else if (TRANSCRIPTION_METHOD === "whisper-groq") {
-    try {
+    } else if (TRANSCRIPTION_METHOD === "whisper-groq") {
       transcribedAudio = await handleAudioMessageWithGroqApi(wavPath);
-    } catch (error) {
-      console.error(error);
-      throw new Error("Error transcribing audio");
+    } else {
+      throw new Error(
+        "Invalid transcription method, TRANSCRIPTION_METHOD: " +
+          TRANSCRIPTION_METHOD
+      );
     }
-  } else {
-    throw new Error(
-      "Invalid transcription method, TRANSCRIPTION_METHOD: " +
-        TRANSCRIPTION_METHOD
-    );
+  } catch (error) {
+    console.error(error);
+    return "Error transcribing audio";
   }
 
   if (REPLY_TRANSCRIPTION === "true") {
-    message.reply(`${BOT_PREFIX} Transcription:\n ${transcribedAudio}`);
+    if (message.key.remoteJid) {
+      await sock.sendMessage(message.key.remoteJid, {
+        text: `${BOT_PREFIX} Transcription:\n ${transcribedAudio}`,
+      });
+    } else {
+      console.warn("remoteJid is undefined");
+    }
   }
 
   return `${newMessageBody} ${transcribedAudio}`;

@@ -1,6 +1,4 @@
 import { proto, WASocket } from "@whiskeysockets/baileys";
-import { Chat, Message } from "whatsapp-web.js";
-import { prisma } from "../clients/prisma";
 import {
   ALLOWED_USERS,
   BLOCKED_USERS,
@@ -8,7 +6,6 @@ import {
   CMD_PREFIX,
   IGNORE_MESSAGES_WARNING,
 } from "../constants";
-import { string } from "zod";
 
 export function isGroupMessage(message: proto.IWebMessageInfo) {
   return message.key.remoteJid?.endsWith("@g.us") ?? false;

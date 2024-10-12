@@ -1,13 +1,15 @@
 import { connectToWhatsApp } from "./clients/new-whatsapp";
 import { prisma } from "./clients/prisma";
+import { pulseForAllConversations } from "./handlers/pulse";
 import { checkEnv } from "./helpers/utils";
+import schedule from "node-schedule";
 
 async function main() {
   checkEnv();
   //whatsapp.initialize();
   await connectToWhatsApp();
 
-  /* const pulseTimes = process.env.PULSE_FREQUENCY?.split(",") || [];
+  const pulseTimes = process.env.PULSE_FREQUENCY?.split(",") || [];
   pulseTimes.forEach((time) => {
     const [hour, minute] = time.split(":").map(Number);
     if (!isNaN(hour) && !isNaN(minute)) {
@@ -26,7 +28,7 @@ async function main() {
     } else {
       console.error(`Invalid time format in PULSE_FREQUENCY: ${time}`);
     }
-  }); */
+  });
 }
 
 /* process.on("SIGINT", async () => {
