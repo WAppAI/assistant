@@ -18,6 +18,16 @@ export function getPhoneNumber(message: proto.IWebMessageInfo) {
   return message.key.remoteJid?.split("@")[0] ?? "";
 }
 
+async function getGroupName(sock: WASocket, groupJid: string): Promise<string> {
+  try {
+    const groupMetadata = await sock.groupMetadata(groupJid);
+    return groupMetadata.subject || groupJid;
+  } catch (error) {
+    console.error(`Error fetching group name for ${groupJid}:`, error);
+    return groupJid;
+  }
+}
+
 export async function shouldIgnore(
   message: proto.IWebMessageInfo,
   sock: WASocket
@@ -78,50 +88,27 @@ export async function shouldReply(
   message: proto.IWebMessageInfo,
   sock: WASocket
 ) {
+  // Extract the message body from either conversation or extendedTextMessage
   const messageBody = message.message?.extendedTextMessage?.text;
 
   if (typeof messageBody !== "string")
     throw new Error("Message body is not a string");
 
+  // Check if the message is a command
   const isCommand = messageBody.startsWith(CMD_PREFIX);
 
   if (isGroupMessage(message) && !isCommand) {
+    // Get mentions and check if the bot is mentioned
     const mentions =
       message.message?.extendedTextMessage?.contextInfo?.mentionedJid || [];
     const isMentioned = mentions.includes(sock.user?.id || "");
 
-    const quotedMessage =
-      message.message?.extendedTextMessage?.contextInfo?.quotedMessage;
+    // Check if the message is quoting another message
     const quotedMessageId =
       message.message?.extendedTextMessage?.contextInfo?.stanzaId;
 
-    const lastWaReply = await prisma.bingConversation.findFirst({
-      where: { waChatId: message.key.remoteJid || "" },
-      select: { waMessageId: true },
-    });
-
-    const isInThread =
-      quotedMessageId && quotedMessageId === lastWaReply?.waMessageId;
-
-    if (isMentioned || isInThread) {
-      // Replace mentions with names
-      let updatedMessageBody = messageBody;
-      for (const mention of mentions) {
-        const contactName = await getContactName(sock, mention);
-        updatedMessageBody = updatedMessageBody.replace(
-          `@${mention.split("@")[0]}`,
-          contactName
-        );
-        console.log(`Replaced "${mention}" with "${contactName}"`);
-      }
-
-      // Update the message body
-      if (message.message?.extendedTextMessage) {
-        message.message.extendedTextMessage.text = updatedMessageBody;
-      } else if (message.message?.conversation) {
-        message.message.conversation = updatedMessageBody;
-      }
-    } else {
+    if (!isMentioned) {
+      // Ignore if not mentioned or in thread
       console.warn(
         "Group message received, but the bot was not mentioned neither its last completion was quoted in a thread. Ignoring."
       );
@@ -132,32 +119,39 @@ export async function shouldReply(
   return true;
 }
 
-export async function shouldIgnoreUnread(chat: Chat) {
-  if (chat.unreadCount > 1) {
-    await chat.sendSeen();
-    if (chat.isGroup) {
+export async function shouldIgnoreUnread(
+  message: proto.IWebMessageInfo,
+  sock: WASocket,
+  unreadCount: number
+) {
+  if (unreadCount > 1) {
+    const chatJid = message.key.remoteJid!;
+
+    // Mark messages as read
+    await sock.readMessages([message.key]);
+
+    const isGroup = chatJid.endsWith("@g.us");
+    let warningMessage = "";
+
+    if (isGroup) {
+      const groupName = await getGroupName(sock, chatJid);
       console.warn(
-        `Too many unread messages (${chat.unreadCount}) for group chat "${chat.name}". Ignoring...`
+        `Too many unread messages (${unreadCount}) for group chat "${groupName}". Ignoring...`
       );
-      if (IGNORE_MESSAGES_WARNING === "true") {
-        await chat.sendMessage(
-          BOT_PREFIX +
-            `Too many unread messages (${chat.unreadCount}) since I've last seen this chat. I'm ignoring them. If you need me to respond, please @mention me or quote my last completion in this chat.`
-        );
-      }
+      warningMessage = `Too many unread messages (${unreadCount}) since I've last seen this chat. I'm ignoring them. If you need me to respond, please @mention me or quote my last completion in this chat.`;
     } else {
-      const contact = await chat.getContact();
       console.warn(
-        `Too many unread messages (${chat.unreadCount}) for chat with user "${contact.pushname}" <${contact.number}>. Ignoring...`
+        `Too many unread messages (${unreadCount}) for chat with user "${getPhoneNumber(message)}". Ignoring...`
       );
-      if (IGNORE_MESSAGES_WARNING === "true") {
-        await chat.sendMessage(
-          BOT_PREFIX +
-            `Too many unread messages (${chat.unreadCount}) since I've last seen this chat. I'm ignoring them. If you need me to respond, please message me again.`
-        );
-      }
+      warningMessage = `Too many unread messages (${unreadCount}) since I've last seen this chat. I'm ignoring them. If you need me to respond, please message me again.`;
+    }
+
+    if (IGNORE_MESSAGES_WARNING === "true") {
+      await sock.sendMessage(chatJid, { text: BOT_PREFIX + warningMessage });
     }
 
     return true;
   }
+
+  return false;
 }
