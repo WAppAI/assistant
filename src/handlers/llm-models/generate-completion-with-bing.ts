@@ -2,7 +2,12 @@ import {
   BingAIClientResponse,
   // @ts-ignore
 } from "@waylaidwanderer/chatgpt-api";
-import { Message } from "whatsapp-web.js";
+import {
+  proto,
+  WASocket,
+  WAMessage,
+  downloadMediaMessage,
+} from "@whiskeysockets/baileys";
 import {
   createConversation,
   getConversationFor,
@@ -18,31 +23,43 @@ import { handleAudioMessage } from "../audio-message";
 import { bing } from "../../clients/bing";
 
 export async function generateCompletionWithBing(
-  message: Message,
+  message: proto.IWebMessageInfo,
   context: string,
-  onProgress: (progress: string) => void
+  onProgress: (progress: string) => void,
+  sock: WASocket
 ) {
   let completion: BingAIClientResponse;
 
-  const chat = await message.getChat();
-  const conversation = await getConversationFor(chat.id._serialized);
-  const waChat = await getChatFor(chat.id._serialized);
+  const chatId = message.key.remoteJid!;
+  const conversation = await getConversationFor(chatId);
+  const waChat = await getChatFor(chatId);
   let imageBase64: string | undefined;
 
-  if (message.hasMedia) {
-    const media = await message.downloadMedia();
-    const mimetype = media.mimetype;
+  if (message.message?.imageMessage || message.message?.audioMessage) {
+    const media = await downloadMediaMessage(message, "buffer", {});
+    const mimetype =
+      message.message?.imageMessage?.mimetype ||
+      message.message?.audioMessage?.mimetype;
 
     const isImage = mimetype?.includes("image");
     const isAudio = mimetype?.includes("audio");
 
-    if (isImage) imageBase64 = media.data;
+    if (isImage) {
+      imageBase64 = media.toString("base64"); // Ensure proper encoding
+    }
+
     if (isAudio) {
       if (TRANSCRIPTION_ENABLED === "true") {
-        message.body = await handleAudioMessage(media, message);
+        message.message.conversation = await handleAudioMessage(
+          message,
+          sock,
+          media
+        );
       } else {
         // Handle the case when transcription is not enabled
-        message.reply(BOT_PREFIX + "Transcription not enabled");
+        await sock.sendMessage(chatId, {
+          text: BOT_PREFIX + "Transcription not enabled",
+        });
         throw new Error("Transcription not enabled");
       }
     }
@@ -52,7 +69,7 @@ export async function generateCompletionWithBing(
     // If the conversation already exists
     if (conversation?.jailbroken) {
       // If the conversation is jailbroken
-      completion = await bing.sendMessage(message.body, {
+      completion = await bing.sendMessage(message.message?.conversation || "", {
         jailbreakConversationId: conversation.jailbreakId as string,
         parentMessageId: conversation.parentMessageId as string,
         imageBase64,
@@ -60,10 +77,9 @@ export async function generateCompletionWithBing(
         context,
         onProgress,
       });
-    }
-    // If the conversation is not jailbroken
-    else
-      completion = await bing.sendMessage(message.body, {
+    } else {
+      // If the conversation is not jailbroken
+      completion = await bing.sendMessage(message.message?.conversation || "", {
         encryptedConversationSignature: conversation.encryptedSignature,
         conversationId: conversation.waChatId,
         clientId: conversation.clientId,
@@ -74,9 +90,10 @@ export async function generateCompletionWithBing(
         // apparently we can't give context to existing conversations when not jailbroken
         // context,
       });
+    }
   } else {
     // If the conversation doesn't exist yet
-    completion = await bing.sendMessage(message.body, {
+    completion = await bing.sendMessage(message.message?.conversation || "", {
       jailbreakConversationId: true,
       systemMessage: BING_SYSTEM_MESSAGE,
       imageBase64,
@@ -85,9 +102,9 @@ export async function generateCompletionWithBing(
       onProgress,
     });
 
-    if (!waChat) await createChat(chat.id._serialized); // Creates the chat if it doesn't exist yet
+    if (!waChat) await createChat(chatId); // Creates the chat if it doesn't exist yet
 
-    await createConversation(completion, message.id.id, chat.id._serialized); // Creates the conversation
+    await createConversation(completion, message.key.id!, chatId); // Creates the conversation
   }
 
   return completion;

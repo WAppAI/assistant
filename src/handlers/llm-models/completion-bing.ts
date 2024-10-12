@@ -1,23 +1,22 @@
-// see src/types/bing-ai-client.d.ts
 import type {
   BingAIClientResponse,
-  SuggestedResponse,
   SourceAttribution,
-  // @ts-ignore
+  SuggestedResponse,
 } from "@waylaidwanderer/chatgpt-api";
-import { Message } from "whatsapp-web.js";
+import { proto, WASocket } from "@whiskeysockets/baileys";
 import { STREAM_REMINDERS, STREAM_RESPONSES } from "../../constants";
 import { generateCompletionWithBing } from "./generate-completion-with-bing";
 
 export async function getCompletionWithBing(
-  message: Message,
+  sock: WASocket,
+  message: proto.IWebMessageInfo,
   context: string,
-  streamingReply: Message
+  streamingReply: proto.IWebMessageInfo
 ) {
-  let streamingReplyBody = streamingReply.body;
+  let streamingReplyBody = streamingReply.message?.conversation || "";
   let tokenQueue: string[] = [];
   let isProcessingQueue = false;
-  let isEditingReply: Promise<Message | null>;
+  let isEditingReply: Promise<proto.WebMessageInfo | null>;
   let isReminder = false;
 
   async function onTokenStream(token: string) {
@@ -42,7 +41,17 @@ export async function getCompletionWithBing(
     if (tokenQueue.length !== 0) {
       const token = tokenQueue[0];
       const newReplyContent = streamingReplyBody + token;
-      isEditingReply = streamingReply.edit(newReplyContent);
+      isEditingReply = sock
+        .sendMessage(
+          message.key.remoteJid!,
+          {
+            text: newReplyContent,
+          },
+          {
+            quoted: message,
+          }
+        )
+        .then((response) => response || null);
       streamingReplyBody = newReplyContent;
 
       tokenQueue.shift(); // Removes the processed token from the queue
@@ -56,7 +65,8 @@ export async function getCompletionWithBing(
   const completion = await generateCompletionWithBing(
     message,
     context,
-    onTokenStream
+    onTokenStream,
+    sock
   );
   completion.response = removeFootnotes(completion.response);
 

@@ -23,20 +23,20 @@ import {
 // Function to handle audio messages
 export async function handleAudioMessage(
   message: proto.IWebMessageInfo,
-  sock: WASocket
+  sock: WASocket,
+  media: Buffer
 ) {
   const messageContent = message.message?.audioMessage;
   if (!messageContent) {
     throw new Error("No audio message found in the provided message");
   }
 
-  const mediaData = await downloadMediaMessage(message, "buffer", {});
   const tempdir = os.tmpdir();
   const filename = randomUUID();
   const oggPath = path.join(tempdir, `${filename}.ogg`);
   const wavPath = path.join(tempdir, `${filename}.wav`);
 
-  fs.writeFileSync(oggPath, new Uint8Array(mediaData));
+  fs.writeFileSync(oggPath, new Uint8Array(media));
   await convertOggToWav(oggPath, wavPath);
 
   const newMessageBody = `[system](#additional_instructions)\n

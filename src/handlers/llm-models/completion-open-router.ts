@@ -1,4 +1,4 @@
-import { Message } from "whatsapp-web.js";
+import { proto, WASocket, downloadMediaMessage } from "@whiskeysockets/baileys";
 import { createExecutorForOpenRouter } from "../../clients/open-router";
 import {
   ASSISTANT_NAME,
@@ -18,36 +18,45 @@ import {
 import { handleAudioMessage } from "../audio-message";
 
 export async function getCompletionWithOpenRouter(
-  message: Message,
+  sock: WASocket,
+  message: proto.IWebMessageInfo,
   context: string,
-  streamingReply: Message
+  streamingReply: proto.IWebMessageInfo
 ) {
   let tokenBuffer: string[] = ["..."];
 
-  const chat = await message.getChat();
-  const waChat = await getChatFor(chat.id._serialized);
+  const chatId = message.key.remoteJid!;
+  const chat = await sock.groupMetadata(chatId);
+  const waChat = await getChatFor(chat.id);
   let imageBase64: string | undefined;
-  const conversation = await getOpenRouterConversationFor(chat.id._serialized);
+  const conversation = await getOpenRouterConversationFor(chat.id);
   const pulseFrequencyInMinutes = PULSE_FREQUENCY / 60000;
-  const executor = await createExecutorForOpenRouter(
-    context,
-    chat.id._serialized
-  );
+  const executor = await createExecutorForOpenRouter(context, chat.id);
 
-  if (message.hasMedia) {
-    const media = await message.downloadMedia();
-    const mimetype = media.mimetype;
+  if (message.message?.imageMessage || message.message?.audioMessage) {
+    const media = await downloadMediaMessage(message, "buffer", {});
+    const mimetype =
+      message.message?.imageMessage?.mimetype ||
+      message.message?.audioMessage?.mimetype;
 
     const isImage = mimetype?.includes("image");
     const isAudio = mimetype?.includes("audio");
 
-    if (isImage) imageBase64 = media.data;
+    if (isImage) {
+      imageBase64 = media.toString("base64"); // Ensure proper encoding
+    }
+
     if (isAudio) {
       if (TRANSCRIPTION_ENABLED === "true") {
-        message.body = await handleAudioMessage(media, message);
+        message.message.conversation = await handleAudioMessage(
+          message,
+          sock,
+          media
+        );
       } else {
-        // Handle the case when transcription is not enabled
-        message.reply(BOT_PREFIX + "Transcription not enabled");
+        await sock.sendMessage(chatId, {
+          text: BOT_PREFIX + "Transcription not enabled",
+        });
         throw new Error("Transcription not enabled");
       }
     }
@@ -55,7 +64,7 @@ export async function getCompletionWithOpenRouter(
 
   const response = await executor.invoke(
     {
-      input: message.body,
+      input: message.message?.conversation || "",
       ASSISTANT_NAME: ASSISTANT_NAME,
       context: context,
       PULSE_FREQUENCY: `${pulseFrequencyInMinutes} minutes`,
@@ -66,31 +75,27 @@ export async function getCompletionWithOpenRouter(
           async handleLLMNewToken(token: string) {
             if (STREAM_RESPONSES !== "true") return;
 
-            // Buffer the token
             tokenBuffer.push(token);
-
-            // Update streamingReply with buffered tokens
             const updatedMessage = tokenBuffer.join("");
 
-            // Edit the streamingReply with the updated message
-            await streamingReply.edit(updatedMessage);
+            await sock.sendMessage(chatId, {
+              text: updatedMessage,
+            });
           },
         },
       ],
     }
   );
 
-  if (!waChat) await createChat(chat.id._serialized); // Creates the chat if it doesn't exist yet
+  if (!waChat) await createChat(chat.id);
 
   if (OPENROUTER_MEMORY_TYPE === "summary") {
     let currentSummaryRaw = await executor.memory?.loadMemoryVariables({});
-    let currentSummary = currentSummaryRaw?.chat_history;
+    let currentSummary = currentSummaryRaw?.chat_history || [];
 
-    let currentSummaryArray = currentSummary.map((message: any) => {
-      return {
-        [message.constructor.name]: message.content,
-      };
-    });
+    let currentSummaryArray = currentSummary.map((msg: any) => ({
+      [msg.constructor.name]: msg.content,
+    }));
 
     if (DEBUG_SUMMARY === "true") {
       console.log("Current summary: ", currentSummaryArray);
@@ -98,35 +103,33 @@ export async function getCompletionWithOpenRouter(
 
     if (conversation) {
       await updateOpenRouterConversation(
-        chat.id._serialized,
+        chat.id,
         JSON.stringify(currentSummaryArray)
-      ); // Updates the conversation
+      );
     } else {
       await createOpenRouterConversation(
-        chat.id._serialized,
+        chat.id,
         JSON.stringify(currentSummaryArray)
-      ); // Creates the conversation
+      );
     }
   } else {
     let chatHistoryRaw = await executor.memory?.loadMemoryVariables({});
-    let chatHistory: any[] = chatHistoryRaw?.chat_history;
+    let chatHistory = chatHistoryRaw?.chat_history || [];
 
-    let chatHistoryArray = chatHistory.map((message) => {
-      return {
-        [message.constructor.name]: message.content,
-      };
-    });
+    let chatHistoryArray = chatHistory.map((msg: any) => ({
+      [msg.constructor.name]: msg.content,
+    }));
 
     if (conversation) {
       await updateOpenRouterConversation(
-        chat.id._serialized,
+        chat.id,
         JSON.stringify(chatHistoryArray)
-      ); // Updates the conversation
+      );
     } else {
       await createOpenRouterConversation(
-        chat.id._serialized,
+        chat.id,
         JSON.stringify(chatHistoryArray)
-      ); // Creates the conversation
+      );
     }
   }
 
