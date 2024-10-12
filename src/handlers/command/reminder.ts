@@ -1,37 +1,32 @@
-import { Message } from "whatsapp-web.js";
+import { proto, WASocket } from "@whiskeysockets/baileys";
 import {
   deleteAllReminder,
   deleteReminderByIndex,
   listAllReminders,
 } from "../reminder/utils";
 
-export async function handleReminderCommand(message: Message, args: string) {
-  let reply: Message;
-
+export async function handleReminderCommand(
+  message: proto.IWebMessageInfo,
+  args: string,
+  sock: WASocket
+): Promise<string> {
   const userCommand = args.split(" ");
   const command = userCommand[0];
+  const chatId = message.key.remoteJid!;
 
   switch (command) {
     case "delete":
       const reminderIndex = parseInt(userCommand[1]);
       if (!isNaN(reminderIndex)) {
-        return (reply = await message.reply(
-          await deleteReminderByIndex(message.from, reminderIndex)
-        ));
+        return await deleteReminderByIndex(chatId, reminderIndex);
       } else if (userCommand[1] === "all") {
-        return (reply = await message.reply(
-          await deleteAllReminder(message.from)
-        ));
+        return await deleteAllReminder(chatId);
       } else {
-        return (reply = await message.reply("Invalid reminder index"));
+        return "Invalid reminder index";
       }
     case "list":
-      return (reply = await message.reply(
-        await listAllReminders(message.from)
-      ));
+      return await listAllReminders(chatId);
     default:
-      return (reply = await message.reply(
-        "Invalid reminder command. Use `list` to list reminders or `delete <index>` to delete a specific reminder."
-      ));
+      return "Invalid reminder command. Use `list` to list reminders or `delete <index>` to delete a specific reminder.";
   }
 }

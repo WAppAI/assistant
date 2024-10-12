@@ -1,37 +1,35 @@
 import { oneLine, stripIndents } from "common-tags";
-import { Message } from "whatsapp-web.js";
+import { proto } from "@whiskeysockets/baileys";
 import { ASSISTANT_NAME, BOT_PREFIX, CMD_PREFIX } from "../../constants";
 import { invalidArgumentMessage } from "../../helpers/command";
 
-export async function handleHelp(message: Message, args: string) {
-  let reply: Message;
+export async function handleHelp(message: proto.IWebMessageInfo, args: string) {
+  let reply: string;
 
   switch (args) {
     case "help":
-      reply = await message.reply(helpHelpMessage);
+      reply = helpHelpMessage;
       break;
     case "ping":
-      reply = await message.reply(pingHelpMessage);
+      reply = pingHelpMessage;
       break;
     case "reset":
-      reply = await message.reply(resetHelpMessage);
+      reply = resetHelpMessage;
       break;
     case "jailbreak":
-      reply = await message.reply(jailbreakHelpMessage);
+      reply = jailbreakHelpMessage;
       break;
     case "reminder":
-      reply = await message.reply(reminderHelpMessage);
+      reply = reminderHelpMessage;
       break;
     case "change":
-      reply = await message.reply(changeHelpMessage);
+      reply = changeHelpMessage;
       break;
     case "":
-      reply = await message.reply(helpMessage);
+      reply = helpMessage;
       break;
     default:
-      reply = await message.reply(
-        invalidArgumentMessage(args, "help <command>")
-      );
+      reply = invalidArgumentMessage(args, "help <command>");
       break;
   }
 

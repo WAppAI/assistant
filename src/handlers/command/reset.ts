@@ -1,4 +1,4 @@
-import { Message } from "whatsapp-web.js";
+import { proto, WASocket } from "@whiskeysockets/baileys";
 import { prisma } from "../../clients/prisma";
 import { BOT_PREFIX } from "../../constants";
 import { deleteChat } from "../../crud/chat";
@@ -12,88 +12,67 @@ import {
 } from "../../crud/conversation";
 import { deleteAllReminder } from "../reminder/utils";
 
-export async function handleReset(message: Message, args: string) {
-  let reply: Message;
+export async function handleReset(
+  message: proto.IWebMessageInfo,
+  args: string,
+  sock: WASocket
+): Promise<string> {
+  const chatId = message.key.remoteJid!;
 
-  const chat = await message.getChat();
-  const waChat = await getWAChat(chat.id._serialized);
-  let conversation; //Later we will use this to check if the conversation exists
+  const waChat = await getWAChat(chatId);
+  let conversation; // Later we will use this to check if the conversation exists
 
-  if (!waChat) return message.reply(`${BOT_PREFIX}No chat found`);
+  if (!waChat) {
+    return `${BOT_PREFIX}No chat found`;
+  }
 
   switch (args) {
     case "bing":
-      conversation = await getConversationFor(chat.id._serialized);
+      conversation = await getConversationFor(chatId);
       if (conversation) {
-        await deleteBingConversation(chat.id._serialized, conversation);
-        reply = await message.reply(
-          `${BOT_PREFIX}Deleted conversation for this chat`
-        );
-
-        return reply;
+        await deleteBingConversation(chatId, conversation);
+        return `${BOT_PREFIX}Deleted conversation for this chat`;
       }
-      return message.reply(
-        `${BOT_PREFIX}No Bing conversation found for this chat`
-      );
-      break;
+      return `${BOT_PREFIX}No Bing conversation found for this chat`;
 
     case "openrouter":
-      conversation = await getOpenRouterConversationFor(chat.id._serialized);
+      conversation = await getOpenRouterConversationFor(chatId);
       if (conversation) {
-        await deleteOpenRouterConversation(chat.id._serialized);
-        reply = await message.reply(
-          `${BOT_PREFIX}Deleted conversation for this chat`
-        );
-        return reply;
+        await deleteOpenRouterConversation(chatId);
+        return `${BOT_PREFIX}Deleted conversation for this chat`;
       }
-      reply = await message.reply(
-        "No OpenRouter conversation found for this chat"
-      );
-      return reply;
-      break;
+      return "No OpenRouter conversation found for this chat";
 
     case "all":
       // Delete all reminders
-      await deleteAllReminder(message.from);
+      await deleteAllReminder(chatId);
 
       // Delete Bing conversation
-      conversation = await getConversationFor(chat.id._serialized);
+      conversation = await getConversationFor(chatId);
       if (conversation) {
-        await deleteBingConversation(chat.id._serialized, conversation);
+        await deleteBingConversation(chatId, conversation);
       }
 
       // Delete OpenRouter conversation
-      conversation = await getOpenRouterConversationFor(chat.id._serialized);
+      conversation = await getOpenRouterConversationFor(chatId);
       if (conversation) {
-        await deleteOpenRouterConversation(chat.id._serialized);
+        await deleteOpenRouterConversation(chatId);
       }
 
       // Delete chat
-      await deleteChat(chat.id._serialized);
+      await deleteChat(chatId);
 
-      reply = await message.reply("All data for this chat has been deleted.");
-      return reply;
-      break;
+      return "All data for this chat has been deleted.";
 
     case "lc_mem":
-      conversation = await getOpenRouterConversationFor(chat.id._serialized);
+      conversation = await getOpenRouterConversationFor(chatId);
       if (conversation) {
-        await resetOpenRouterMemory(chat.id._serialized);
-        reply = await message.reply(
-          `${BOT_PREFIX}Memory for this chat has been reset`
-        );
-        return reply;
+        await resetOpenRouterMemory(chatId);
+        return `${BOT_PREFIX}Memory for this chat has been reset`;
       }
-      reply = await message.reply(
-        "No OpenRouter conversation found for this chat"
-      );
-      return reply;
-      break;
+      return "No OpenRouter conversation found for this chat";
 
     default:
-      reply = await message.reply(
-        `${BOT_PREFIX}Invalid reset command. Use \`reset bing\` or \`reset openrouter\` to reset the conversation for this chat.`
-      );
-      return reply;
+      return `${BOT_PREFIX}Invalid reset command. Use \`reset bing\` or \`reset openrouter\` to reset the conversation for this chat.`;
   }
 }

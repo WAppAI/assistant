@@ -1,6 +1,5 @@
-import { Message } from "whatsapp-web.js";
-import { ENABLE_REACTIONS } from "../constants";
 import { proto, updateMessageWithReaction } from "@whiskeysockets/baileys";
+import { ENABLE_REACTIONS } from "../constants";
 import { isGroupMessage } from "../helpers/message";
 
 export const REACTIONS = {
