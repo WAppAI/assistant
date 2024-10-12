@@ -1,33 +1,37 @@
-import { GroupChat, Message } from "whatsapp-web.js";
+import { WAProto, WASocket } from "@whiskeysockets/baileys";
 import { stripIndents } from "common-tags";
-import { whatsapp } from "../../clients/whatsapp";
 
-export async function getChatContext(message: Message) {
-  let chat = await message.getChat();
+export async function getChatContext(
+  message: WAProto.IWebMessageInfo,
+  sock: WASocket
+) {
   let chatContext = "";
-  let publicUserName: string;
+  let publicUserName = "";
 
-  if (chat.isGroup) {
-    const groupChat = chat as GroupChat;
-    const contact = await whatsapp.getContactById(message.author as string);
-    publicUserName = contact.pushname;
-    const groupContacts = await Promise.all(
-      groupChat.participants.map((participant) =>
-        whatsapp.getContactById(participant.id._serialized)
-      )
-    );
-    const groupContactNames = groupContacts
-      .map((contact) => contact.pushname)
+  const chatId = message.key.remoteJid;
+  if (!chatId) {
+    return "";
+  }
+  const isGroup = chatId.endsWith("@g.us");
+
+  if (isGroup) {
+    const groupMetadata = await sock.groupMetadata(chatId);
+    const senderId = message.key.participant || message.key.remoteJid;
+    publicUserName = message.pushName || "Unknown";
+
+    const groupContactNames = groupMetadata.participants
+      .map((participant) => participant.id.split("@")[0])
       .join(", ");
 
     chatContext = stripIndents`- You are in a group chat
-    - There are ${groupChat.participants.length} participants in the group
-    - The group's name is '${groupChat.name}'
+    - There are ${groupMetadata.participants.length} participants in the group
+    - The group's name is '${groupMetadata.subject}'
     - The group's participants are: ${groupContactNames}
     - '${publicUserName}' is who sent this message
-  `;
+    `;
   } else {
-    publicUserName = (await message.getContact()).pushname;
+    publicUserName = message.pushName || "Unknown";
+
     chatContext = stripIndents`- You are in a private chat
     - The user's name is '${publicUserName}'
     `;
