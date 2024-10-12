@@ -7,14 +7,18 @@ import {
   PULSE_LLM_MODEL,
 } from "../../constants";
 import { prisma } from "../../clients/prisma";
-import { whatsapp } from "../../clients/whatsapp";
 import {
   createOpenRouterConversation,
   getOpenRouterConversationFor,
   updateOpenRouterConversation,
 } from "../../crud/conversation";
+import { WASocket } from "@whiskeysockets/baileys";
 
-export async function pulse(chatId: string, messageBody: string) {
+export async function pulse(
+  chatId: string,
+  messageBody: string,
+  sock: WASocket
+) {
   const pulseFrequencyInMinutes = PULSE_FREQUENCY / 60000;
   const executor = await createExecutorForOpenRouter(
     "",
@@ -83,12 +87,15 @@ export async function pulse(chatId: string, messageBody: string) {
     }
   }
 
-  whatsapp.sendMessage(chatId, response.output);
+  await sock.sendMessage(chatId, response.output);
 }
 
-export async function pulseForAllConversations(messageBody: string) {
+export async function pulseForAllConversations(
+  messageBody: string,
+  sock: WASocket
+) {
   const conversations = await prisma.openRouterConversation.findMany();
   for (const conversation of conversations) {
-    await pulse(conversation.waChatId, messageBody);
+    await pulse(conversation.waChatId, messageBody, sock);
   }
 }
