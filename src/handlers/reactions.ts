@@ -16,7 +16,6 @@ export async function react(
   message: proto.IWebMessageInfo,
   reaction: keyof typeof REACTIONS
 ) {
-  console.log(`Reacting to message with ${REACTIONS[reaction]}`);
   switch (ENABLE_REACTIONS) {
     case "false":
       break;

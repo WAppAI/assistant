@@ -83,21 +83,14 @@ export async function shouldReply(message: proto.IWebMessageInfo) {
   // Extract the message body from either conversation or extendedTextMessage
   const messageBody = message.message?.extendedTextMessage?.text;
 
-  if (typeof messageBody !== "string")
-    throw new Error("Message body is not a string");
-
   // Check if the message is a command
-  const isCommand = messageBody.startsWith(CMD_PREFIX);
+  const isCommand = (messageBody ?? "").startsWith(CMD_PREFIX);
 
   if (isGroupMessage(message) && !isCommand) {
     // Get mentions and check if the bot is mentioned
     const mentions =
       message.message?.extendedTextMessage?.contextInfo?.mentionedJid || [];
     const isMentioned = mentions.includes(sock.user?.id || "");
-
-    // Check if the message is quoting another message
-    const quotedMessageId =
-      message.message?.extendedTextMessage?.contextInfo?.stanzaId;
 
     if (!isMentioned) {
       // Ignore if not mentioned or in thread

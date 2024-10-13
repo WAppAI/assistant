@@ -25,6 +25,7 @@ export async function getCompletionWithOpenRouter(
 ) {
   let tokenBuffer: string[] = ["..."];
   let newTokenCount = 0;
+  let messageBody = message.message?.extendedTextMessage?.text || "";
 
   const chatId = message.key.remoteJid!;
   const waChat = await getChatFor(chatId);
@@ -48,7 +49,7 @@ export async function getCompletionWithOpenRouter(
 
     if (isAudio) {
       if (TRANSCRIPTION_ENABLED === "true") {
-        message.message.conversation = await handleAudioMessage(message, media);
+        messageBody = await handleAudioMessage(message, media);
       } else {
         await sock.sendMessage(chatId, {
           text: BOT_PREFIX + "Transcription not enabled",
@@ -60,7 +61,7 @@ export async function getCompletionWithOpenRouter(
 
   const response = await executor.invoke(
     {
-      input: message.message?.extendedTextMessage?.text || "",
+      input: messageBody,
       ASSISTANT_NAME: ASSISTANT_NAME,
       context: context,
       PULSE_FREQUENCY: `${pulseFrequencyInMinutes} minutes`,
