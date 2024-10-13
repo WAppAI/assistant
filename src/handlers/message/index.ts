@@ -34,6 +34,8 @@ export async function handleMessage(message: WAMessage) {
   );
   let llmModel = await getLLMModel(chatId);
 
+  if (!streamingReply) throw new Error("No streaming reply");
+
   if (!llmModel) {
     llmModel = DEFAULT_MODEL;
   }
@@ -71,16 +73,14 @@ export async function handleMessage(message: WAMessage) {
 
     if (!response) throw new Error("No response from LLM");
 
-    try {
-      console.log("Editing message:", response);
-      await sock.sendMessage(
-        chatId,
-        { text: response, edit: streamingReply?.key },
-        { quoted: message }
-      );
-    } catch (error) {
-      console.error("Failed to edit message:", error);
-    }
+    console.log("Response:", response);
+    await sock.sendMessage(
+      chatId,
+      { text: response, edit: streamingReply.key },
+      { quoted: message }
+    );
+
+    console.log("Sent message");
 
     await react(message, "done");
   } catch (error) {

@@ -1,4 +1,5 @@
-import { proto, updateMessageWithReaction } from "@whiskeysockets/baileys";
+import { proto } from "@whiskeysockets/baileys";
+import { sock } from "../clients/new-whatsapp";
 import { ENABLE_REACTIONS } from "../constants";
 import { isGroupMessage } from "../helpers/message";
 
@@ -15,38 +16,33 @@ export async function react(
   message: proto.IWebMessageInfo,
   reaction: keyof typeof REACTIONS
 ) {
+  console.log(`Reacting to message with ${REACTIONS[reaction]}`);
   switch (ENABLE_REACTIONS) {
     case "false":
       break;
     case "true":
-      updateMessageWithReaction(message, {
-        text: REACTIONS[reaction],
-        key: {
-          remoteJid: message.key.remoteJid,
-          fromMe: false,
-          id: message.key.id,
+      await sock.sendMessage(message.key.remoteJid!, {
+        react: {
+          text: REACTIONS[reaction],
+          key: message.key,
         },
       });
       break;
     case "dms_only":
       if (isGroupMessage(message)) return;
-      updateMessageWithReaction(message, {
-        text: REACTIONS[reaction],
-        key: {
-          remoteJid: message.key.remoteJid,
-          fromMe: false,
-          id: message.key.id,
+      await sock.sendMessage(message.key.remoteJid!, {
+        react: {
+          text: REACTIONS[reaction],
+          key: message.key,
         },
       });
       break;
     case "groups_only":
       if (!isGroupMessage(message)) return;
-      updateMessageWithReaction(message, {
-        text: REACTIONS[reaction],
-        key: {
-          remoteJid: message.key.remoteJid,
-          fromMe: false,
-          id: message.key.id,
+      await sock.sendMessage(message.key.remoteJid!, {
+        react: {
+          text: REACTIONS[reaction],
+          key: message.key,
         },
       });
       break;

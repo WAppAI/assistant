@@ -1,4 +1,4 @@
-import { downloadMediaMessage, proto } from "@whiskeysockets/baileys";
+import { delay, downloadMediaMessage, proto } from "@whiskeysockets/baileys";
 import { sock } from "../../clients/new-whatsapp";
 import { createExecutorForOpenRouter } from "../../clients/open-router";
 import {
@@ -24,6 +24,7 @@ export async function getCompletionWithOpenRouter(
   streamingReply: proto.IWebMessageInfo
 ) {
   let tokenBuffer: string[] = ["..."];
+  let newTokenCount = 0;
 
   const chatId = message.key.remoteJid!;
   const waChat = await getChatFor(chatId);
@@ -69,10 +70,11 @@ export async function getCompletionWithOpenRouter(
         {
           async handleLLMNewToken(token: string) {
             if (STREAM_RESPONSES !== "true") return;
-
+            /* 
             tokenBuffer.push(token);
-            const updatedMessage = tokenBuffer.join("");
+            newTokenCount++;
 
+            const updatedMessage = tokenBuffer.join("");
             await sock.sendMessage(
               chatId,
               {
@@ -80,11 +82,20 @@ export async function getCompletionWithOpenRouter(
                 edit: streamingReply.key,
               },
               { quoted: message }
-            );
+            ); */
           },
         },
       ],
     }
+  );
+
+  await sock.sendMessage(
+    chatId,
+    {
+      text: response.output,
+      edit: streamingReply.key,
+    },
+    { quoted: message }
   );
 
   if (!waChat) await createChat(chatId);
