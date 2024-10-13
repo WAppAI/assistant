@@ -1,22 +1,12 @@
 import dayjs from "dayjs";
 import schedule, { Job } from "node-schedule";
-import { Message } from "whatsapp-web.js";
+import { proto, WASocket } from "@whiskeysockets/baileys";
 import { z } from "zod";
-import { whatsapp } from "../../clients/whatsapp";
-import { ReminderI } from "../../types/reminder";
 import { prisma } from "../../clients/prisma";
 import { Reminder } from "@prisma/client";
+import { ReminderI } from "../../types/reminder";
 
 const scheduledJobsMap = new Map<number, Job[]>(); // Map of reminder IDs to arrays of scheduled jobs
-
-// Custom function to simulate message.reply()
-export const replyMessage = async (replyText: string, senderId: string) => {
-  try {
-    await whatsapp.sendMessage(senderId, replyText);
-  } catch (error) {
-    console.error("Error when sending reply from the reminder:", error);
-  }
-};
 
 export function addOffset(recurrence: Date, rruleStr: string): Date {
   const offset = dayjs().tz(dayjs.tz.guess()).utcOffset();
@@ -40,8 +30,9 @@ export function parseReminderString(inputString: string) {
 
 export async function scheduleReminderJob(
   savedReminder: Reminder,
-  message: Message,
-  recurrences: Date[]
+  message: proto.IWebMessageInfo,
+  recurrences: Date[],
+  sock: WASocket
 ) {
   const { answer, text }: ReminderI = JSON.parse(savedReminder.reminder);
   const reminderId = savedReminder.id;
@@ -49,7 +40,7 @@ export async function scheduleReminderJob(
 
   for (const recurrence of recurrences) {
     const job = schedule.scheduleJob(recurrence, async () => {
-      const contact = message.from;
+      const contact = message.key.remoteJid!;
       const recurrencesLeft =
         recurrences.length - recurrences.indexOf(recurrence);
       const totalRecurrences = recurrences.length;
@@ -59,7 +50,7 @@ export async function scheduleReminderJob(
         `Reminding ${contact} about ${text} (${recurrencesLeft}/${totalRecurrences})`
       );
       console.log(`Next recurrence: ${nextRecurrence}`);
-      await replyMessage(answer, contact);
+      await sock.sendMessage(contact, { text: answer });
     });
     jobArray.push(job);
   }

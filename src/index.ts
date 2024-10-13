@@ -1,4 +1,4 @@
-import { connectToWhatsApp } from "./clients/new-whatsapp";
+import { sock } from "./clients/new-whatsapp";
 import { prisma } from "./clients/prisma";
 import { pulseForAllConversations } from "./handlers/pulse";
 import { checkEnv } from "./helpers/utils";
@@ -6,8 +6,6 @@ import schedule from "node-schedule";
 
 async function main() {
   checkEnv();
-  //whatsapp.initialize();
-  await connectToWhatsApp();
 
   const pulseTimes = process.env.PULSE_FREQUENCY?.split(",") || [];
   pulseTimes.forEach((time) => {
@@ -16,7 +14,8 @@ async function main() {
       schedule.scheduleJob({ hour, minute }, async () => {
         try {
           await pulseForAllConversations(
-            `SYSTEM: This is a pulse, remember to return 'false' if there is nothing important to say. Server time (and presumably the user's time) is ${new Date().toLocaleString()}`
+            `SYSTEM: This is a pulse, remember to return 'false' if there is nothing important to say. Server time (and presumably the user's time) is ${new Date().toLocaleString()}`,
+            sock
           );
         } catch (error) {
           console.error(
@@ -31,20 +30,6 @@ async function main() {
   });
 }
 
-/* process.on("SIGINT", async () => {
-  console.warn("[SIGINT] Shutting down...");
-  // should react to every pending message and warn the user that the bot is shutting down
-  await whatsapp.destroy();
-  process.exit(0);
-});
-
-process.on("SIGTERM", async () => {
-  console.warn("[SIGTERM] Shutting down...");
-  // should react to every pending message and warn the user that the bot is shutting down
-  await whatsapp.destroy();
-  process.exit(0);
-});
- */
 main()
   .then(async () => {
     await prisma.$disconnect();

@@ -1,7 +1,5 @@
-import {
-  BingAIClientResponse,
-  // @ts-ignore
-} from "@waylaidwanderer/chatgpt-api";
+// @ts-ignore
+import { BingAIClientResponse } from "@waylaidwanderer/chatgpt-api";
 import {
   proto,
   WASocket,
@@ -69,38 +67,47 @@ export async function generateCompletionWithBing(
     // If the conversation already exists
     if (conversation?.jailbroken) {
       // If the conversation is jailbroken
-      completion = await bing.sendMessage(message.message?.conversation || "", {
-        jailbreakConversationId: conversation.jailbreakId as string,
-        parentMessageId: conversation.parentMessageId as string,
+      completion = await bing.sendMessage(
+        message.message?.extendedTextMessage?.text || "",
+        {
+          jailbreakConversationId: conversation.jailbreakId as string,
+          parentMessageId: conversation.parentMessageId as string,
+          imageBase64,
+          toneStyle: BING_TONESTYLE,
+          context,
+          onProgress,
+        }
+      );
+    } else {
+      // If the conversation is not jailbroken
+      completion = await bing.sendMessage(
+        message.message?.extendedTextMessage?.text || "",
+        {
+          encryptedConversationSignature: conversation.encryptedSignature,
+          conversationId: conversation.waChatId,
+          clientId: conversation.clientId,
+          invocationId: conversation.invocationId,
+          imageBase64,
+          toneStyle: BING_TONESTYLE,
+          onProgress,
+          // apparently we can't give context to existing conversations when not jailbroken
+          // context,
+        }
+      );
+    }
+  } else {
+    // If the conversation doesn't exist yet
+    completion = await bing.sendMessage(
+      message.message?.extendedTextMessage?.text || "",
+      {
+        jailbreakConversationId: true,
+        systemMessage: BING_SYSTEM_MESSAGE,
         imageBase64,
         toneStyle: BING_TONESTYLE,
         context,
         onProgress,
-      });
-    } else {
-      // If the conversation is not jailbroken
-      completion = await bing.sendMessage(message.message?.conversation || "", {
-        encryptedConversationSignature: conversation.encryptedSignature,
-        conversationId: conversation.waChatId,
-        clientId: conversation.clientId,
-        invocationId: conversation.invocationId,
-        imageBase64,
-        toneStyle: BING_TONESTYLE,
-        onProgress,
-        // apparently we can't give context to existing conversations when not jailbroken
-        // context,
-      });
-    }
-  } else {
-    // If the conversation doesn't exist yet
-    completion = await bing.sendMessage(message.message?.conversation || "", {
-      jailbreakConversationId: true,
-      systemMessage: BING_SYSTEM_MESSAGE,
-      imageBase64,
-      toneStyle: BING_TONESTYLE,
-      context,
-      onProgress,
-    });
+      }
+    );
 
     if (!waChat) await createChat(chatId); // Creates the chat if it doesn't exist yet
 

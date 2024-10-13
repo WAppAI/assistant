@@ -1,145 +1,127 @@
 import { Boom } from "@hapi/boom";
-import readline from "readline";
 import {
-  makeWASocket,
-  downloadMediaMessage,
   DisconnectReason,
-  useMultiFileAuthState,
-  type proto,
   fetchLatestBaileysVersion,
-  AnyMessageContent,
-  delay,
-  getAggregateVotesInPollMessage,
-  WAMessageKey,
-  WAMessageContent,
+  makeWASocket,
+  useMultiFileAuthState,
+  WASocket,
+  type proto,
 } from "@whiskeysockets/baileys";
+import { CMD_PREFIX } from "../constants";
+import { handleCommand } from "../handlers/command";
+import { handleMessage } from "../handlers/message";
+import {
+  shouldIgnore,
+  shouldIgnoreUnread,
+  shouldReply,
+} from "../helpers/message";
 
-// start a connection
-import { WASocket } from "@whiskeysockets/baileys";
+const messageQueue: { [key: string]: proto.IWebMessageInfo[] } = {};
+let isProcessingMessage = false;
 
-export const connectToWhatsApp = async (): Promise<WASocket> => {
-  const { state, saveCreds } = await useMultiFileAuthState("wa_auth");
-  const { version, isLatest } = await fetchLatestBaileysVersion();
-  console.log(`using WA v${version.join(".")}, isLatest: ${isLatest}`);
+async function processMessageQueue(chatId: string, sock: WASocket) {
+  isProcessingMessage = true;
 
-  const sock = makeWASocket({
-    version,
-    printQRInTerminal: true,
-    auth: state,
-    generateHighQualityLinkPreview: true,
-    // ignore all broadcast messages -- to receive the same
-    // comment the line below out
-    // shouldIgnoreJid: jid => isJidBroadcast(jid),
-    // implement to handle retries & poll updates
-  });
-
-  // the process function lets you process all events that just occurred
-  // efficiently in a batch
-  sock.ev.process(
-    // events is a map for event name => event data
-    async (events) => {
-      // something about the connection changed
-      // maybe it closed, or we received all offline message or connection opened
-      if (events["connection.update"]) {
-        const update = events["connection.update"];
-        const { connection, lastDisconnect } = update;
-        if (connection === "close") {
-          // reconnect if not logged out
-          if (
-            (lastDisconnect?.error as Boom)?.output?.statusCode !==
-            DisconnectReason.loggedOut
-          ) {
-            connectToWhatsApp();
-          } else {
-            console.log("Connection closed. You are logged out.");
-          }
-        }
-
-        console.log("connection update", update);
-      }
-
-      // received a new message
-      if (events["messages.upsert"]) {
-        const upsert = events["messages.upsert"];
-        console.log("recv messages ", JSON.stringify(upsert, undefined, 2));
-
-        if (upsert.type === "notify") {
-          for (const msg of upsert.messages) {
-            console.log("replying to", msg.key.remoteJid);
-            await sock!.readMessages([msg.key]);
-            await sock.sendMessage(msg.key.remoteJid!, {
-              text: "Hello there!",
-            });
-          }
-        }
-      }
-
-      /* // messages updated like status delivered, message deleted etc.
-      if (events["messages.update"]) {
-        console.log(JSON.stringify(events["messages.update"], undefined, 2));
-      }
-
-      if (events["message-receipt.update"]) {
-        console.log(events["message-receipt.update"]);
-      }
-
-      if (events["messages.reaction"]) {
-        console.log(events["messages.reaction"]);
-      }
-
-      if (events["presence.update"]) {
-        console.log(events["presence.update"]);
-      }
-
-      if (events["chats.update"]) {
-        console.log(events["chats.update"]);
-      } */
-
-      /* if (events["contacts.update"]) {
-        for (const contact of events["contacts.update"]) {
-          if (typeof contact.imgUrl !== "undefined") {
-            const newUrl =
-              contact.imgUrl === null
-                ? null
-                : await sock!.profilePictureUrl(contact.id!).catch(() => null);
-            console.log(
-              `contact ${contact.id} has a new profile pic: ${newUrl}`
-            );
-          }
-        }
-      }
-
-      if (events["chats.delete"]) {
-        console.log("chats deleted ", events["chats.delete"]);
-      } */
-
-      /* // credentials updated -- save them
-      if (events["creds.update"]) {
-        await saveCreds();
-      }
-
-      if (events["labels.association"]) {
-        console.log(events["labels.association"]);
-      }
-
-      if (events["labels.edit"]) {
-        console.log(events["labels.edit"]);
-      }
-
-      if (events.call) {
-        console.log("recv call event", events.call);
-      }
-
-      // history received
-      if (events["messaging-history.set"]) {
-        const { chats, contacts, messages, isLatest } =
-          events["messaging-history.set"];
-        console.log(
-          `recv ${chats.length} chats, ${contacts.length} contacts, ${messages.length} msgs (is latest: ${isLatest})`
-        );
-      } */
+  while (messageQueue[chatId] && messageQueue[chatId].length > 0) {
+    const message = messageQueue[chatId].shift();
+    if (message) {
+      await handleMessageWithQueue(message, sock);
     }
-  );
+  }
 
-  return sock;
-};
+  isProcessingMessage = false;
+}
+
+async function handleMessageWithQueue(
+  message: proto.IWebMessageInfo,
+  sock: WASocket
+) {
+  const chatId = message.key.remoteJid!;
+  console.log(
+    "Handling message, content:",
+    message.message?.extendedTextMessage?.text
+  );
+  const isCommand =
+    message.message?.extendedTextMessage?.text?.startsWith(CMD_PREFIX);
+  if (isCommand) {
+    await handleCommand(sock, message);
+  } else {
+    await handleMessage(sock, message);
+  }
+}
+
+const { state, saveCreds } = await useMultiFileAuthState("wa_auth");
+const { version, isLatest } = await fetchLatestBaileysVersion();
+console.log(`using WA v${version.join(".")}, isLatest: ${isLatest}`);
+
+export const sock: WASocket = makeWASocket({
+  version,
+  printQRInTerminal: true,
+  auth: state,
+  generateHighQualityLinkPreview: true,
+});
+
+const unreadCounts: { [key: string]: number } = {};
+
+sock.ev.process(async (events) => {
+  if (events["connection.update"]) {
+    const update = events["connection.update"];
+    const { connection, lastDisconnect } = update;
+    if (connection === "close") {
+      if (
+        (lastDisconnect?.error as Boom)?.output?.statusCode !==
+        DisconnectReason.loggedOut
+      ) {
+        // You might want to handle reconnection here
+        console.log("Connection closed. Attempting to reconnect...");
+      } else {
+        console.log("Connection closed. You are logged out.");
+      }
+    }
+
+    console.log("connection update", update);
+  }
+
+  if (events["chats.update"]) {
+    for (const chat of events["chats.update"]) {
+      if (chat.id && chat.unreadCount !== undefined) {
+        if (chat.unreadCount !== null) {
+          unreadCounts[chat.id] = chat.unreadCount;
+        }
+      }
+    }
+  }
+
+  if (events["messages.upsert"]) {
+    const upsert = events["messages.upsert"];
+    //console.log("recv messages ", JSON.stringify(upsert, undefined, 2));
+
+    if (upsert.type === "notify") {
+      for (const message of upsert.messages) {
+        console.log("notify message", message);
+        const chatId = message.key.remoteJid!;
+        const unreadCount = unreadCounts[chatId] || 0;
+
+        if (await shouldIgnore(message, sock)) continue;
+        if (!(await shouldReply(message, sock))) continue;
+        if (await shouldIgnoreUnread(message, sock, unreadCount)) continue;
+
+        // Add the message to the queue
+        if (!messageQueue[chatId]) {
+          messageQueue[chatId] = [];
+        }
+        messageQueue[chatId].push(message);
+
+        // Process the queue if not already processing
+        if (!isProcessingMessage) {
+          await processMessageQueue(chatId, sock);
+        }
+      }
+    }
+  }
+
+  // Don't forget to save credentials whenever they are updated
+  if (events["creds.update"]) {
+    await saveCreds();
+  }
+});

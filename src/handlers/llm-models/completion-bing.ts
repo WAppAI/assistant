@@ -1,7 +1,9 @@
+// @ts-ignore
 import type {
   BingAIClientResponse,
   SourceAttribution,
   SuggestedResponse,
+  // @ts-ignore
 } from "@waylaidwanderer/chatgpt-api";
 import { proto, WASocket } from "@whiskeysockets/baileys";
 import { STREAM_REMINDERS, STREAM_RESPONSES } from "../../constants";

@@ -26,12 +26,13 @@ export async function getCompletionWithOpenRouter(
   let tokenBuffer: string[] = ["..."];
 
   const chatId = message.key.remoteJid!;
-  const chat = await sock.groupMetadata(chatId);
-  const waChat = await getChatFor(chat.id);
+  const waChat = await getChatFor(chatId);
   let imageBase64: string | undefined;
-  const conversation = await getOpenRouterConversationFor(chat.id);
+  const conversation = await getOpenRouterConversationFor(chatId);
   const pulseFrequencyInMinutes = PULSE_FREQUENCY / 60000;
-  const executor = await createExecutorForOpenRouter(context, chat.id);
+  const executor = await createExecutorForOpenRouter(context, chatId);
+
+  console.log("Chegou aqui");
 
   if (message.message?.imageMessage || message.message?.audioMessage) {
     const media = await downloadMediaMessage(message, "buffer", {});
@@ -64,7 +65,7 @@ export async function getCompletionWithOpenRouter(
 
   const response = await executor.invoke(
     {
-      input: message.message?.conversation || "",
+      input: message.message?.extendedTextMessage?.text || "",
       ASSISTANT_NAME: ASSISTANT_NAME,
       context: context,
       PULSE_FREQUENCY: `${pulseFrequencyInMinutes} minutes`,
@@ -87,7 +88,7 @@ export async function getCompletionWithOpenRouter(
     }
   );
 
-  if (!waChat) await createChat(chat.id);
+  if (!waChat) await createChat(chatId);
 
   if (OPENROUTER_MEMORY_TYPE === "summary") {
     let currentSummaryRaw = await executor.memory?.loadMemoryVariables({});
@@ -103,12 +104,12 @@ export async function getCompletionWithOpenRouter(
 
     if (conversation) {
       await updateOpenRouterConversation(
-        chat.id,
+        chatId,
         JSON.stringify(currentSummaryArray)
       );
     } else {
       await createOpenRouterConversation(
-        chat.id,
+        chatId,
         JSON.stringify(currentSummaryArray)
       );
     }
@@ -122,12 +123,12 @@ export async function getCompletionWithOpenRouter(
 
     if (conversation) {
       await updateOpenRouterConversation(
-        chat.id,
+        chatId,
         JSON.stringify(chatHistoryArray)
       );
     } else {
       await createOpenRouterConversation(
-        chat.id,
+        chatId,
         JSON.stringify(chatHistoryArray)
       );
     }

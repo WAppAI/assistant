@@ -1,6 +1,7 @@
 // see src/types/bing-ai-client.d.ts
 // @ts-ignore
 import { BingConversation } from "@prisma/client";
+// @ts-ignore
 import { BingAIClientResponse } from "@waylaidwanderer/chatgpt-api";
 import { prisma } from "../clients/prisma";
 

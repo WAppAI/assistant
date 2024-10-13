@@ -27,6 +27,7 @@ export async function handleMessage(sock: WASocket, message: WAMessage) {
   }
 
   const isGroup = chatId.endsWith("@g.us");
+  console.log("Is group:", isGroup);
   const streamingReply = await sock.sendMessage(chatId, { text: "..." });
   let llmModel = await getLLMModel(chatId);
 
@@ -40,6 +41,7 @@ export async function handleMessage(sock: WASocket, message: WAMessage) {
     const context = await createContextFromMessage(message, sock);
 
     if (llmModel !== "bing" && OPENROUTER_API_KEY !== "") {
+      console.log("Using OpenAI API");
       response = await getCompletionWithOpenRouter(
         sock,
         message,
@@ -56,7 +58,7 @@ export async function handleMessage(sock: WASocket, message: WAMessage) {
       response = completion.response;
 
       if (ENABLE_REMINDERS === "true") {
-        response = await handleReminderFor(message, completion.response);
+        response = await handleReminderFor(message, completion.response, sock);
       }
 
       if (ENABLE_SUGGESTIONS === "true") {
