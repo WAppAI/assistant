@@ -8,13 +8,11 @@ import { handleHelp } from "./help";
 import { handleReminderCommand } from "./reminder";
 import { handleChangeLLM, LLM_OPTIONS } from "./change-llm";
 import { react } from "../reactions";
+import { sock } from "../../clients/new-whatsapp";
 
 const adminCommands = ["jailbreak", "reset", "change"];
 
-export async function handleCommand(
-  sock: WASocket,
-  message: proto.IWebMessageInfo
-) {
+export async function handleCommand(message: proto.IWebMessageInfo) {
   const messageBody = message.message?.extendedTextMessage?.text || "";
   const [command, ..._args] = messageBody.split(CMD_PREFIX)[1].split(" ");
 
@@ -49,13 +47,13 @@ export async function handleCommand(
       reply = BOT_PREFIX + "*_pong!_*";
       break;
     case "reset":
-      reply = await handleReset(message, args, sock);
+      reply = await handleReset(message, args);
       break;
     case "jailbreak":
-      reply = await handleJailbreak(message, args, sock);
+      reply = await handleJailbreak(message, args);
       break;
     case "reminder":
-      reply = await handleReminderCommand(message, args, sock);
+      reply = await handleReminderCommand(message, args);
       break;
     case "change":
       reply = await handleChangeLLM(message, args as keyof typeof LLM_OPTIONS);

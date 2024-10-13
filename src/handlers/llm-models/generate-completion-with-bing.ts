@@ -1,30 +1,25 @@
 // @ts-ignore
 import { BingAIClientResponse } from "@waylaidwanderer/chatgpt-api";
+import { downloadMediaMessage, proto } from "@whiskeysockets/baileys";
+import { bing } from "../../clients/bing";
 import {
-  proto,
-  WASocket,
-  WAMessage,
-  downloadMediaMessage,
-} from "@whiskeysockets/baileys";
+  BING_SYSTEM_MESSAGE,
+  BING_TONESTYLE,
+  BOT_PREFIX,
+  TRANSCRIPTION_ENABLED,
+} from "../../constants";
+import { createChat, getChatFor } from "../../crud/chat";
 import {
   createConversation,
   getConversationFor,
 } from "../../crud/conversation";
-import { createChat, getChatFor } from "../../crud/chat";
-import {
-  BING_TONESTYLE,
-  BOT_PREFIX,
-  BING_SYSTEM_MESSAGE,
-  TRANSCRIPTION_ENABLED,
-} from "../../constants";
 import { handleAudioMessage } from "../audio-message";
-import { bing } from "../../clients/bing";
+import { sock } from "../../clients/new-whatsapp";
 
 export async function generateCompletionWithBing(
   message: proto.IWebMessageInfo,
   context: string,
-  onProgress: (progress: string) => void,
-  sock: WASocket
+  onProgress: (progress: string) => void
 ) {
   let completion: BingAIClientResponse;
 
@@ -48,11 +43,7 @@ export async function generateCompletionWithBing(
 
     if (isAudio) {
       if (TRANSCRIPTION_ENABLED === "true") {
-        message.message.conversation = await handleAudioMessage(
-          message,
-          sock,
-          media
-        );
+        message.message.conversation = await handleAudioMessage(message, media);
       } else {
         // Handle the case when transcription is not enabled
         await sock.sendMessage(chatId, {

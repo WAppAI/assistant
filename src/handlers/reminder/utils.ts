@@ -1,9 +1,10 @@
+import { Reminder } from "@prisma/client";
+import { proto } from "@whiskeysockets/baileys";
 import dayjs from "dayjs";
 import schedule, { Job } from "node-schedule";
-import { proto, WASocket } from "@whiskeysockets/baileys";
 import { z } from "zod";
+import { sock } from "../../clients/new-whatsapp";
 import { prisma } from "../../clients/prisma";
-import { Reminder } from "@prisma/client";
 import { ReminderI } from "../../types/reminder";
 
 const scheduledJobsMap = new Map<number, Job[]>(); // Map of reminder IDs to arrays of scheduled jobs
@@ -31,8 +32,7 @@ export function parseReminderString(inputString: string) {
 export async function scheduleReminderJob(
   savedReminder: Reminder,
   message: proto.IWebMessageInfo,
-  recurrences: Date[],
-  sock: WASocket
+  recurrences: Date[]
 ) {
   const { answer, text }: ReminderI = JSON.parse(savedReminder.reminder);
   const reminderId = savedReminder.id;

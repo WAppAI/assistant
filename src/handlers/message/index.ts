@@ -1,11 +1,11 @@
-import { proto, WAMessage, WASocket } from "@whiskeysockets/baileys";
+import { proto, WAMessage } from "@whiskeysockets/baileys";
+import { sock } from "../../clients/new-whatsapp.ts";
 import {
   BOT_PREFIX,
   DEFAULT_MODEL,
   ENABLE_REMINDERS,
   ENABLE_SOURCES,
   ENABLE_SUGGESTIONS,
-  OPENROUTER_API_KEY,
 } from "../../constants";
 import { getLLMModel, updateWaMessageId } from "../../crud/conversation";
 import { createContextFromMessage } from "../context";
@@ -15,10 +15,10 @@ import {
   getSuggestions,
 } from "../llm-models/completion-bing.ts";
 import { getCompletionWithOpenRouter } from "../llm-models/completion-open-router.ts";
-import { handleReminderFor } from "../reminder/reminder.ts";
 import { react } from "../reactions.ts";
+import { handleReminderFor } from "../reminder/reminder.ts";
 
-export async function handleMessage(sock: WASocket, message: WAMessage) {
+export async function handleMessage(message: WAMessage) {
   await react(message, "working");
 
   const chatId = message.key.remoteJid;
@@ -27,8 +27,11 @@ export async function handleMessage(sock: WASocket, message: WAMessage) {
   }
 
   const isGroup = chatId.endsWith("@g.us");
-  console.log("Is group:", isGroup);
-  const streamingReply = await sock.sendMessage(chatId, { text: "..." });
+  const streamingReply = await sock.sendMessage(
+    chatId,
+    { text: "..." },
+    { quoted: message }
+  );
   let llmModel = await getLLMModel(chatId);
 
   if (!llmModel) {
@@ -38,19 +41,10 @@ export async function handleMessage(sock: WASocket, message: WAMessage) {
   let response: string | null;
 
   try {
-    const context = await createContextFromMessage(message, sock);
+    const context = await createContextFromMessage(message);
 
-    if (llmModel !== "bing" && OPENROUTER_API_KEY !== "") {
-      console.log("Using OpenAI API");
-      response = await getCompletionWithOpenRouter(
-        sock,
-        message,
-        context,
-        streamingReply as proto.IWebMessageInfo
-      );
-    } else {
+    if (llmModel === "bing") {
       const completion = await getCompletionWithBing(
-        sock,
         message,
         context,
         streamingReply as proto.IWebMessageInfo
@@ -58,7 +52,7 @@ export async function handleMessage(sock: WASocket, message: WAMessage) {
       response = completion.response;
 
       if (ENABLE_REMINDERS === "true") {
-        response = await handleReminderFor(message, completion.response, sock);
+        response = await handleReminderFor(message, completion.response);
       }
 
       if (ENABLE_SUGGESTIONS === "true") {
@@ -67,13 +61,25 @@ export async function handleMessage(sock: WASocket, message: WAMessage) {
       if (ENABLE_SOURCES === "true") {
         response = response + "\n\n" + getSources(completion);
       }
+    } else {
+      response = await getCompletionWithOpenRouter(
+        message,
+        context,
+        streamingReply as proto.IWebMessageInfo
+      );
     }
 
     if (!response) throw new Error("No response from LLM");
 
-    let finalReply = null;
-    while (finalReply === null) {
-      finalReply = await sock.sendMessage(chatId, { text: response });
+    try {
+      console.log("Editing message:", response);
+      await sock.sendMessage(
+        chatId,
+        { text: response, edit: streamingReply?.key },
+        { quoted: message }
+      );
+    } catch (error) {
+      console.error("Failed to edit message:", error);
     }
 
     await react(message, "done");
@@ -89,7 +95,5 @@ export async function handleMessage(sock: WASocket, message: WAMessage) {
 
   if (isGroup && llmModel === "bing" && streamingReply?.key?.id) {
     await updateWaMessageId(chatId, streamingReply.key.id);
-  } else {
-    console.error("Failed to update message ID");
   }
 }

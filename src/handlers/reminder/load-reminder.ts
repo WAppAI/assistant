@@ -1,23 +1,22 @@
-import { proto, WASocket } from "@whiskeysockets/baileys";
-import schedule from "node-schedule";
-import rrule from "rrule";
-import dayjs from "dayjs";
-import { REPLY_RRULES } from "../../constants";
-import utc from "dayjs/plugin/utc";
-import timezone from "dayjs/plugin/timezone";
-import { prisma } from "../../clients/prisma";
-import { parseReminderString, addOffset, scheduleReminderJob } from "./utils";
 import { Reminder } from "@prisma/client";
+import { proto } from "@whiskeysockets/baileys";
+import dayjs from "dayjs";
+import timezone from "dayjs/plugin/timezone";
+import utc from "dayjs/plugin/utc";
+import rrule from "rrule";
+import { prisma } from "../../clients/prisma";
+import { REPLY_RRULES } from "../../constants";
+import { addOffset, parseReminderString, scheduleReminderJob } from "./utils";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-export async function loadAllRemindersAndSchedule(sock: WASocket) {
+export async function loadAllRemindersAndSchedule() {
   try {
     const savedReminders = await prisma.reminder.findMany();
 
     for (const savedReminder of savedReminders) {
-      await scheduleSavedReminder(savedReminder, sock);
+      await scheduleSavedReminder(savedReminder);
     }
 
     console.log(`Scheduled ${savedReminders.length} reminders.`);
@@ -29,7 +28,7 @@ export async function loadAllRemindersAndSchedule(sock: WASocket) {
 }
 
 // Define a function to schedule a single reminder
-async function scheduleSavedReminder(savedReminder: Reminder, sock: WASocket) {
+async function scheduleSavedReminder(savedReminder: Reminder) {
   const reminder = parseReminderString(savedReminder.reminder);
   const message = JSON.parse(savedReminder.message) as proto.IWebMessageInfo;
   // Parse the recurrence rule using rrule library
@@ -58,7 +57,7 @@ async function scheduleSavedReminder(savedReminder: Reminder, sock: WASocket) {
     });
 
   console.log(`Next recurrence: ${recurrences[0]}`);
-  await scheduleReminderJob(savedReminder, message, recurrences, sock);
+  await scheduleReminderJob(savedReminder, message, recurrences);
 
   if (REPLY_RRULES === "true")
     return `${reminder.answer}\n\n${reminder.rrule}\nNext recurrence: ${recurrences[0]}`;

@@ -1,10 +1,8 @@
-import { WAProto, WASocket } from "@whiskeysockets/baileys";
+import { WAProto } from "@whiskeysockets/baileys";
 import { stripIndents } from "common-tags";
+import { sock } from "../../clients/new-whatsapp";
 
-export async function getChatContext(
-  message: WAProto.IWebMessageInfo,
-  sock: WASocket
-) {
+export async function getChatContext(message: WAProto.IWebMessageInfo) {
   let chatContext = "";
   let publicUserName = "";
 

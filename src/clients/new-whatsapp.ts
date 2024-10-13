@@ -19,34 +19,26 @@ import {
 const messageQueue: { [key: string]: proto.IWebMessageInfo[] } = {};
 let isProcessingMessage = false;
 
-async function processMessageQueue(chatId: string, sock: WASocket) {
+async function processMessageQueue(chatId: string) {
   isProcessingMessage = true;
 
   while (messageQueue[chatId] && messageQueue[chatId].length > 0) {
     const message = messageQueue[chatId].shift();
     if (message) {
-      await handleMessageWithQueue(message, sock);
+      await handleMessageWithQueue(message);
     }
   }
 
   isProcessingMessage = false;
 }
 
-async function handleMessageWithQueue(
-  message: proto.IWebMessageInfo,
-  sock: WASocket
-) {
-  const chatId = message.key.remoteJid!;
-  console.log(
-    "Handling message, content:",
-    message.message?.extendedTextMessage?.text
-  );
+async function handleMessageWithQueue(message: proto.IWebMessageInfo) {
   const isCommand =
     message.message?.extendedTextMessage?.text?.startsWith(CMD_PREFIX);
   if (isCommand) {
-    await handleCommand(sock, message);
+    await handleCommand(message);
   } else {
-    await handleMessage(sock, message);
+    await handleMessage(message);
   }
 }
 
@@ -98,13 +90,12 @@ sock.ev.process(async (events) => {
 
     if (upsert.type === "notify") {
       for (const message of upsert.messages) {
-        console.log("notify message", message);
         const chatId = message.key.remoteJid!;
         const unreadCount = unreadCounts[chatId] || 0;
 
-        if (await shouldIgnore(message, sock)) continue;
-        if (!(await shouldReply(message, sock))) continue;
-        if (await shouldIgnoreUnread(message, sock, unreadCount)) continue;
+        if (await shouldIgnore(message)) continue;
+        if (!(await shouldReply(message))) continue;
+        if (await shouldIgnoreUnread(message, unreadCount)) continue;
 
         // Add the message to the queue
         if (!messageQueue[chatId]) {
@@ -114,7 +105,7 @@ sock.ev.process(async (events) => {
 
         // Process the queue if not already processing
         if (!isProcessingMessage) {
-          await processMessageQueue(chatId, sock);
+          await processMessageQueue(chatId);
         }
       }
     }

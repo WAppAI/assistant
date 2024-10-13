@@ -111,7 +111,7 @@ async function createMemoryForOpenRouter(chat: string) {
       const pastMessages = parseMessageHistory(parsedMemory, coreMemory);
       memory.chatHistory = new ChatMessageHistory(pastMessages);
     } catch (error) {
-      //console.error("Failed to parse memoryString:", error);
+      console.error("Failed to parse memoryString:", error);
       memory.chatHistory = new ChatMessageHistory([]);
     }
   } else {

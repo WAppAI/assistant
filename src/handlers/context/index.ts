@@ -1,19 +1,16 @@
+import { proto } from "@whiskeysockets/baileys";
 import { stripIndents } from "common-tags";
-import { reminderContext } from "./reminder";
-import { getChatContext } from "./chat";
 import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone"; // dependent on utc plugin
+import utc from "dayjs/plugin/utc";
 import { getLLMModel } from "../../crud/conversation";
-import { proto, WASocket } from "@whiskeysockets/baileys";
+import { getChatContext } from "./chat";
+import { reminderContext } from "./reminder";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-export async function createContextFromMessage(
-  message: proto.IWebMessageInfo,
-  sock: WASocket
-) {
+export async function createContextFromMessage(message: proto.IWebMessageInfo) {
   const timezone = dayjs.tz.guess();
   const timestampUTC = dayjs().utc();
   const timestampLocal = timestampUTC.tz(timezone).format();
@@ -21,7 +18,7 @@ export async function createContextFromMessage(
   if (typeof chatId !== "string") throw new Error("Chat ID is not a string");
   const llmModel = await getLLMModel(chatId);
 
-  const chatContext = await getChatContext(message, sock);
+  const chatContext = await getChatContext(message);
 
   const context = stripIndents`[system](#context)
   - The chat ID is '${chatId}'

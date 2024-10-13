@@ -19,11 +19,11 @@ import {
   type proto,
   WASocket,
 } from "@whiskeysockets/baileys";
+import { sock } from "../../clients/new-whatsapp";
 
 // Function to handle audio messages
 export async function handleAudioMessage(
   message: proto.IWebMessageInfo,
-  sock: WASocket,
   media: Buffer
 ) {
   const messageContent = message.message?.audioMessage;

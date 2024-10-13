@@ -1,4 +1,5 @@
-import { proto, WASocket, downloadMediaMessage } from "@whiskeysockets/baileys";
+import { downloadMediaMessage, proto } from "@whiskeysockets/baileys";
+import { sock } from "../../clients/new-whatsapp";
 import { createExecutorForOpenRouter } from "../../clients/open-router";
 import {
   ASSISTANT_NAME,
@@ -18,7 +19,6 @@ import {
 import { handleAudioMessage } from "../audio-message";
 
 export async function getCompletionWithOpenRouter(
-  sock: WASocket,
   message: proto.IWebMessageInfo,
   context: string,
   streamingReply: proto.IWebMessageInfo
@@ -31,8 +31,6 @@ export async function getCompletionWithOpenRouter(
   const conversation = await getOpenRouterConversationFor(chatId);
   const pulseFrequencyInMinutes = PULSE_FREQUENCY / 60000;
   const executor = await createExecutorForOpenRouter(context, chatId);
-
-  console.log("Chegou aqui");
 
   if (message.message?.imageMessage || message.message?.audioMessage) {
     const media = await downloadMediaMessage(message, "buffer", {});
@@ -49,11 +47,7 @@ export async function getCompletionWithOpenRouter(
 
     if (isAudio) {
       if (TRANSCRIPTION_ENABLED === "true") {
-        message.message.conversation = await handleAudioMessage(
-          message,
-          sock,
-          media
-        );
+        message.message.conversation = await handleAudioMessage(message, media);
       } else {
         await sock.sendMessage(chatId, {
           text: BOT_PREFIX + "Transcription not enabled",
@@ -79,9 +73,14 @@ export async function getCompletionWithOpenRouter(
             tokenBuffer.push(token);
             const updatedMessage = tokenBuffer.join("");
 
-            await sock.sendMessage(chatId, {
-              text: updatedMessage,
-            });
+            await sock.sendMessage(
+              chatId,
+              {
+                text: updatedMessage,
+                edit: streamingReply.key,
+              },
+              { quoted: message }
+            );
           },
         },
       ],

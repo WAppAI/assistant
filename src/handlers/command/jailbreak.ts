@@ -1,11 +1,8 @@
+import { proto } from "@whiskeysockets/baileys";
 import { prisma } from "../../clients/prisma";
 import { BOT_PREFIX } from "../../constants";
-import { stripIndents } from "common-tags";
-import { handleReset } from "./reset";
-import { invalidArgumentMessage } from "../../helpers/command";
 import { createChat } from "../../crud/chat";
 import { getConversationFor } from "../../crud/conversation";
-import { proto, WASocket } from "@whiskeysockets/baileys";
 
 type JailbreakArgs = "enable" | "disable" | "on" | "off" | (string & {});
 
@@ -20,8 +17,7 @@ async function setChatJailbroken(chatId: string, jailbroken: boolean) {
 
 export async function handleJailbreak(
   message: proto.IWebMessageInfo,
-  args: JailbreakArgs,
-  sock: WASocket
+  args: JailbreakArgs
 ): Promise<string> {
   const chatId = message.key.remoteJid!;
 

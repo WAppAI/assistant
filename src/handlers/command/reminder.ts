@@ -1,4 +1,4 @@
-import { proto, WASocket } from "@whiskeysockets/baileys";
+import { proto } from "@whiskeysockets/baileys";
 import {
   deleteAllReminder,
   deleteReminderByIndex,
@@ -7,8 +7,7 @@ import {
 
 export async function handleReminderCommand(
   message: proto.IWebMessageInfo,
-  args: string,
-  sock: WASocket
+  args: string
 ): Promise<string> {
   const userCommand = args.split(" ");
   const command = userCommand[0];

@@ -1,5 +1,4 @@
-import { proto, WASocket } from "@whiskeysockets/baileys";
-import { prisma } from "../../clients/prisma";
+import { proto } from "@whiskeysockets/baileys";
 import { BOT_PREFIX } from "../../constants";
 import { deleteChat } from "../../crud/chat";
 import {
@@ -14,8 +13,7 @@ import { deleteAllReminder } from "../reminder/utils";
 
 export async function handleReset(
   message: proto.IWebMessageInfo,
-  args: string,
-  sock: WASocket
+  args: string
 ): Promise<string> {
   const chatId = message.key.remoteJid!;
 

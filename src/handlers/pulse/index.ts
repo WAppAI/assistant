@@ -1,4 +1,6 @@
+import { sock } from "../../clients/new-whatsapp";
 import { createExecutorForOpenRouter } from "../../clients/open-router";
+import { prisma } from "../../clients/prisma";
 import {
   ASSISTANT_NAME,
   DEBUG_SUMMARY,
@@ -6,19 +8,13 @@ import {
   PULSE_FREQUENCY,
   PULSE_LLM_MODEL,
 } from "../../constants";
-import { prisma } from "../../clients/prisma";
 import {
   createOpenRouterConversation,
   getOpenRouterConversationFor,
   updateOpenRouterConversation,
 } from "../../crud/conversation";
-import { WASocket } from "@whiskeysockets/baileys";
 
-export async function pulse(
-  chatId: string,
-  messageBody: string,
-  sock: WASocket
-) {
+export async function pulse(chatId: string, messageBody: string) {
   const pulseFrequencyInMinutes = PULSE_FREQUENCY / 60000;
   const executor = await createExecutorForOpenRouter(
     "",
@@ -90,12 +86,9 @@ export async function pulse(
   await sock.sendMessage(chatId, response.output);
 }
 
-export async function pulseForAllConversations(
-  messageBody: string,
-  sock: WASocket
-) {
+export async function pulseForAllConversations(messageBody: string) {
   const conversations = await prisma.openRouterConversation.findMany();
   for (const conversation of conversations) {
-    await pulse(conversation.waChatId, messageBody, sock);
+    await pulse(conversation.waChatId, messageBody);
   }
 }

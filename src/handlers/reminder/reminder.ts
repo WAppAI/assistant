@@ -1,11 +1,9 @@
 // @ts-ignore
-import { BingAIClientResponse } from "@waylaidwanderer/chatgpt-api";
-import { proto, WASocket } from "@whiskeysockets/baileys";
-import schedule from "node-schedule";
-import rrule from "rrule";
+import { proto } from "@whiskeysockets/baileys";
 import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
+import utc from "dayjs/plugin/utc";
+import rrule from "rrule";
 import { REPLY_RRULES } from "../../constants";
 import { createReminder } from "../../crud/reminder";
 import { addOffset, parseReminderString, scheduleReminderJob } from "./utils";
@@ -15,8 +13,7 @@ dayjs.extend(timezone);
 
 export async function handleReminderFor(
   message: proto.IWebMessageInfo,
-  llmAnswer: string,
-  sock: WASocket
+  llmAnswer: string
 ) {
   const isReminder = llmAnswer.startsWith("{") && llmAnswer.endsWith("}");
   if (!isReminder) return llmAnswer;
@@ -54,7 +51,7 @@ export async function handleReminderFor(
 
   const savedReminder = await createReminder(reminder, message); //saves reminder
 
-  await scheduleReminderJob(savedReminder, message, recurrences, sock);
+  await scheduleReminderJob(savedReminder, message, recurrences);
 
   if (REPLY_RRULES === "true")
     return `${reminder.answer}\n\n${reminder.rrule}\nNext recurrence: ${recurrences[0]}`;

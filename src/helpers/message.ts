@@ -1,4 +1,5 @@
-import { proto, WASocket } from "@whiskeysockets/baileys";
+import { proto } from "@whiskeysockets/baileys";
+import { sock } from "../clients/new-whatsapp";
 import {
   ALLOWED_USERS,
   BLOCKED_USERS,
@@ -15,7 +16,7 @@ export function getPhoneNumber(message: proto.IWebMessageInfo) {
   return message.key.remoteJid?.split("@")[0] ?? "";
 }
 
-async function getGroupName(sock: WASocket, groupJid: string): Promise<string> {
+async function getGroupName(groupJid: string): Promise<string> {
   try {
     const groupMetadata = await sock.groupMetadata(groupJid);
     return groupMetadata.subject || groupJid;
@@ -25,10 +26,7 @@ async function getGroupName(sock: WASocket, groupJid: string): Promise<string> {
   }
 }
 
-export async function shouldIgnore(
-  message: proto.IWebMessageInfo,
-  sock: WASocket
-) {
+export async function shouldIgnore(message: proto.IWebMessageInfo) {
   if (ALLOWED_USERS.length === 0 && BLOCKED_USERS.length === 0) {
     return false;
   }
@@ -81,10 +79,7 @@ export async function shouldIgnore(
   return false;
 }
 
-export async function shouldReply(
-  message: proto.IWebMessageInfo,
-  sock: WASocket
-) {
+export async function shouldReply(message: proto.IWebMessageInfo) {
   // Extract the message body from either conversation or extendedTextMessage
   const messageBody = message.message?.extendedTextMessage?.text;
 
@@ -118,7 +113,6 @@ export async function shouldReply(
 
 export async function shouldIgnoreUnread(
   message: proto.IWebMessageInfo,
-  sock: WASocket,
   unreadCount: number
 ) {
   if (unreadCount > 1) {
@@ -131,7 +125,7 @@ export async function shouldIgnoreUnread(
     let warningMessage = "";
 
     if (isGroup) {
-      const groupName = await getGroupName(sock, chatJid);
+      const groupName = await getGroupName(chatJid);
       console.warn(
         `Too many unread messages (${unreadCount}) for group chat "${groupName}". Ignoring...`
       );

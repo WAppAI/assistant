@@ -1,16 +1,15 @@
-// @ts-ignore
 import type {
   BingAIClientResponse,
   SourceAttribution,
   SuggestedResponse,
   // @ts-ignore
 } from "@waylaidwanderer/chatgpt-api";
-import { proto, WASocket } from "@whiskeysockets/baileys";
+import { proto } from "@whiskeysockets/baileys";
+import { sock } from "../../clients/new-whatsapp";
 import { STREAM_REMINDERS, STREAM_RESPONSES } from "../../constants";
 import { generateCompletionWithBing } from "./generate-completion-with-bing";
 
 export async function getCompletionWithBing(
-  sock: WASocket,
   message: proto.IWebMessageInfo,
   context: string,
   streamingReply: proto.IWebMessageInfo
@@ -67,8 +66,7 @@ export async function getCompletionWithBing(
   const completion = await generateCompletionWithBing(
     message,
     context,
-    onTokenStream,
-    sock
+    onTokenStream
   );
   completion.response = removeFootnotes(completion.response);
 

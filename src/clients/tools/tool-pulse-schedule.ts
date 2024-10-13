@@ -34,7 +34,7 @@ export class ScheduleHeartbeatTool extends StructuredTool {
     try {
       const triggerTime = new Date(Date.now() + delayInMinutes * 60000);
       schedule.scheduleJob(triggerTime, async () => {
-        await pulse(chatId, messageBody, sock);
+        await pulse(chatId, messageBody);
         await sock.sendMessage(chatId, { text: messageBody });
       });
       await sock.sendMessage(chatId, {

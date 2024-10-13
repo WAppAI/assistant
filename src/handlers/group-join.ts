@@ -1,10 +1,8 @@
 import { GroupMetadata, WASocket, proto } from "@whiskeysockets/baileys";
 import { ALLOWED_USERS, BLOCKED_USERS } from "../constants";
+import { sock } from "../clients/new-whatsapp";
 
-export async function handleGroupJoin(
-  sock: WASocket,
-  message: proto.IWebMessageInfo
-) {
+export async function handleGroupJoin(message: proto.IWebMessageInfo) {
   const adderId = message.key.participant || message.key.remoteJid;
   if (typeof adderId !== "string") throw new Error("Invalid adder ID");
   const adder = await sock.onWhatsApp(adderId);
