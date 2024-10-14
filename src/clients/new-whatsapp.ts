@@ -7,16 +7,17 @@ import {
   WASocket,
   type proto,
 } from "@whiskeysockets/baileys";
+import P from "pino";
 import { CMD_PREFIX } from "../constants";
 import { handleCommand } from "../handlers/command";
 import { handleMessage } from "../handlers/message";
+import { react } from "../handlers/reactions";
 import {
   isGroupMessage,
   shouldIgnore,
   shouldIgnoreUnread,
   shouldReply,
 } from "../helpers/message";
-import { react } from "../handlers/reactions";
 
 const messageQueue: { [key: string]: proto.IWebMessageInfo[] } = {};
 let isProcessingMessage = false;
@@ -55,8 +56,12 @@ const { state, saveCreds } = await useMultiFileAuthState("wa_auth");
 const { version, isLatest } = await fetchLatestBaileysVersion();
 console.log(`using WA v${version.join(".")}, isLatest: ${isLatest}`);
 
+// Create a custom logger with a higher log level
+const logger = P({ level: "info" }); // Set to 'warn' to ignore info and debug logs
+
 export const sock: WASocket = makeWASocket({
   version,
+  logger,
   printQRInTerminal: true,
   auth: state,
   generateHighQualityLinkPreview: true,

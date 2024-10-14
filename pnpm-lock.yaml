@@ -86,6 +86,9 @@ importers:
       openai:
         specifier: ^4.39.0
         version: 4.39.0(encoding@0.1.13)
+      pino:
+        specifier: ^7.0.0
+        version: 7.11.0
       qrcode:
         specifier: ^1.5.3
         version: 1.5.3
