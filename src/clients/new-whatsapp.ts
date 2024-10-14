@@ -11,6 +11,7 @@ import { CMD_PREFIX } from "../constants";
 import { handleCommand } from "../handlers/command";
 import { handleMessage } from "../handlers/message";
 import {
+  isGroupMessage,
   shouldIgnore,
   shouldIgnoreUnread,
   shouldReply,
@@ -34,8 +35,15 @@ async function processMessageQueue(chatId: string) {
 }
 
 async function handleMessageWithQueue(message: proto.IWebMessageInfo) {
-  const isCommand =
-    message.message?.extendedTextMessage?.text?.startsWith(CMD_PREFIX);
+  let messageBody;
+  if (isGroupMessage(message)) {
+    messageBody = message.message?.conversation || "";
+  } else {
+    messageBody = message.message?.extendedTextMessage?.text;
+  }
+
+  const isCommand = messageBody?.startsWith(CMD_PREFIX);
+
   if (isCommand) {
     await handleCommand(message);
   } else {
@@ -94,9 +102,9 @@ sock.ev.process(async (events) => {
         const chatId = message.key.remoteJid!;
         const unreadCount = unreadCounts[chatId] || 0;
 
-        if (await shouldIgnore(message)) continue;
-        if (!(await shouldReply(message))) continue;
-        if (await shouldIgnoreUnread(message, unreadCount)) continue;
+        if (await shouldIgnore(message)) return;
+        if (!(await shouldReply(message))) return;
+        if (await shouldIgnoreUnread(message, unreadCount)) return;
 
         await react(message, "queued");
 

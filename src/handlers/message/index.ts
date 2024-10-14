@@ -73,14 +73,11 @@ export async function handleMessage(message: WAMessage) {
 
     if (!response) throw new Error("No response from LLM");
 
-    console.log("Response:", response);
     await sock.sendMessage(
       chatId,
       { text: response, edit: streamingReply.key },
       { quoted: message }
     );
-
-    console.log("Sent message");
 
     await react(message, "done");
   } catch (error) {

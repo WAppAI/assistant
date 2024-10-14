@@ -17,6 +17,7 @@ import {
   updateOpenRouterConversation,
 } from "../../crud/conversation";
 import { handleAudioMessage } from "../audio-message";
+import { isGroupMessage } from "../../helpers/message";
 
 export async function getCompletionWithOpenRouter(
   message: proto.IWebMessageInfo,
@@ -70,7 +71,7 @@ export async function getCompletionWithOpenRouter(
       callbacks: [
         {
           async handleLLMNewToken(token: string) {
-            if (STREAM_RESPONSES !== "true") return;
+            if (STREAM_RESPONSES !== "true" || isGroupMessage(message)) return; //TODO: Re enable streaming responses for group messages
 
             tokenQueue.push(token);
 

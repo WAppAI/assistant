@@ -9,11 +9,22 @@ import { handleReminderCommand } from "./reminder";
 import { handleChangeLLM, LLM_OPTIONS } from "./change-llm";
 import { react } from "../reactions";
 import { sock } from "../../clients/new-whatsapp";
+import { isGroupMessage } from "../../helpers/message";
 
 const adminCommands = ["jailbreak", "reset", "change"];
 
 export async function handleCommand(message: proto.IWebMessageInfo) {
-  const messageBody = message.message?.extendedTextMessage?.text || "";
+  let messageBody;
+  if (isGroupMessage(message)) {
+    messageBody = message.message?.conversation || "";
+  } else {
+    messageBody = message.message?.extendedTextMessage?.text;
+  }
+
+  if (!messageBody) {
+    await react(message, "error");
+    return;
+  }
   const [command, ..._args] = messageBody.split(CMD_PREFIX)[1].split(" ");
 
   const args = _args.join(" ").toLowerCase();
