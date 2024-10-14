@@ -27,7 +27,6 @@ Welcome to the WhatsApp AI Assistant repository, where you'll find a remarkable 
 ### Prerequisites
 
 - Node.js >= 18.15.0
-- Node.js version >= 20.x.x users you should use `node --loader ts-node/esm src/index.ts` instead of `pnpm start`
 - A spare WhatsApp number
 
 ### Installation
