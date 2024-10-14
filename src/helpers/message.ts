@@ -81,7 +81,8 @@ export async function shouldIgnore(message: proto.IWebMessageInfo) {
 
 export async function shouldReply(message: proto.IWebMessageInfo) {
   // Extract the message body from either conversation or extendedTextMessage
-  const messageBody = message.message?.extendedTextMessage?.text;
+  const messageBody =
+    message.message?.conversation || message.message?.extendedTextMessage?.text;
 
   // Check if the message is a command
   const isCommand = (messageBody ?? "").startsWith(CMD_PREFIX);
@@ -90,12 +91,23 @@ export async function shouldReply(message: proto.IWebMessageInfo) {
     // Get mentions and check if the bot is mentioned
     const mentions =
       message.message?.extendedTextMessage?.contextInfo?.mentionedJid || [];
-    const isMentioned = mentions.includes(sock.user?.id || "");
 
-    if (!isMentioned) {
-      // Ignore if not mentioned or in thread
+    // Extract the core user ID without suffix for comparison
+    const userId = sock.user?.id?.split("@")[0].split(":")[0] || "";
+    const isMentioned = mentions.some(
+      (mention) => mention.split("@")[0] === userId || mention === sock.user?.id
+    );
+
+    // Check if the message is quoting the bot's message
+    const quotedParticipant =
+      message.message?.extendedTextMessage?.contextInfo?.participant;
+    const isQuotingBot =
+      quotedParticipant?.split("@")[0].split(":")[0] === userId;
+
+    if (!isMentioned && !isQuotingBot) {
+      // Ignore if not mentioned or not quoting the bot
       console.warn(
-        "Group message received, but the bot was not mentioned neither its last completion was quoted in a thread. Ignoring."
+        "Group message received, but the bot was not mentioned and its last completion was not quoted. Ignoring."
       );
       return false;
     }

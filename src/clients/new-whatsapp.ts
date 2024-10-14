@@ -91,13 +91,14 @@ sock.ev.process(async (events) => {
 
     if (upsert.type === "notify") {
       for (const message of upsert.messages) {
-        await react(message, "queued");
         const chatId = message.key.remoteJid!;
         const unreadCount = unreadCounts[chatId] || 0;
 
         if (await shouldIgnore(message)) continue;
         if (!(await shouldReply(message))) continue;
         if (await shouldIgnoreUnread(message, unreadCount)) continue;
+
+        await react(message, "queued");
 
         // Add the message to the queue
         if (!messageQueue[chatId]) {
