@@ -222,6 +222,6 @@ Your involvement is valued, and you're encouraged to contribute in the way that 
 
 ## Hire Us
 
-Both creators of this project, [Veigamann](https://github.com/veigamann) and [Luisotee](https://github.com/Luisotee), are currently seeking new job opportunities.
+I, [Luisotee](https://github.com/Luisotee) am currently open to new job opportunities, including freelance work, contract roles, or permanent positions.
 
-If you have any job opportunities, please feel free to contact us through the emails provided in our GitHub profiles.
+If you have any opportunities, feel free to contact me via the emails provided on my GitHub or LinkedIn profiles.
