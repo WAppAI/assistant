@@ -3,7 +3,7 @@ import { proto } from "@whiskeysockets/baileys";
 import dayjs from "dayjs";
 import schedule, { Job } from "node-schedule";
 import { z } from "zod";
-import { sock } from "../../clients/new-whatsapp";
+import { sock } from "../../clients/whatsapp";
 import { prisma } from "../../clients/prisma";
 import { ReminderI } from "../../types/reminder";
 

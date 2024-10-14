@@ -6,7 +6,7 @@ import { z } from "zod";
 import { BOT_PREFIX } from "../../constants";
 import { pulse } from "../../handlers/pulse";
 import { WASocket } from "@whiskeysockets/baileys";
-import { sock } from "../new-whatsapp";
+import { sock } from "../whatsapp";
 
 const ScheduleHeartbeatSchema = z.object({
   chatId: z

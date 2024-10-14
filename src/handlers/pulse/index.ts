@@ -1,4 +1,4 @@
-import { sock } from "../../clients/new-whatsapp";
+import { sock } from "../../clients/whatsapp";
 import { createExecutorForOpenRouter } from "../../clients/open-router";
 import { prisma } from "../../clients/prisma";
 import {

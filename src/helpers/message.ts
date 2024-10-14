@@ -1,5 +1,5 @@
 import { proto } from "@whiskeysockets/baileys";
-import { sock } from "../clients/new-whatsapp";
+import { sock } from "../clients/whatsapp";
 import {
   ALLOWED_USERS,
   BLOCKED_USERS,

@@ -1,4 +1,4 @@
-import { sock } from "./clients/new-whatsapp";
+import { sock } from "./clients/whatsapp";
 import { prisma } from "./clients/prisma";
 import { pulseForAllConversations } from "./handlers/pulse";
 import { checkEnv } from "./helpers/utils";

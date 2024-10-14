@@ -1,5 +1,5 @@
 import { proto } from "@whiskeysockets/baileys";
-import { sock } from "../clients/new-whatsapp";
+import { sock } from "../clients/whatsapp";
 import { ENABLE_REACTIONS } from "../constants";
 import { isGroupMessage } from "../helpers/message";
 

@@ -14,7 +14,7 @@ import {
   getConversationFor,
 } from "../../crud/conversation";
 import { handleAudioMessage } from "../audio-message";
-import { sock } from "../../clients/new-whatsapp";
+import { sock } from "../../clients/whatsapp";
 
 export async function generateCompletionWithBing(
   message: proto.IWebMessageInfo,

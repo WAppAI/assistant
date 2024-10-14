@@ -8,7 +8,7 @@ import { handleHelp } from "./help";
 import { handleReminderCommand } from "./reminder";
 import { handleChangeLLM, LLM_OPTIONS } from "./change-llm";
 import { react } from "../reactions";
-import { sock } from "../../clients/new-whatsapp";
+import { sock } from "../../clients/whatsapp";
 import { isGroupMessage } from "../../helpers/message";
 
 const adminCommands = ["jailbreak", "reset", "change"];

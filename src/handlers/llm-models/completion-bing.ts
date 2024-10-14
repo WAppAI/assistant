@@ -5,7 +5,7 @@ import type {
   // @ts-ignore
 } from "@waylaidwanderer/chatgpt-api";
 import { proto } from "@whiskeysockets/baileys";
-import { sock } from "../../clients/new-whatsapp";
+import { sock } from "../../clients/whatsapp";
 import { STREAM_REMINDERS, STREAM_RESPONSES } from "../../constants";
 import { generateCompletionWithBing } from "./generate-completion-with-bing";
 

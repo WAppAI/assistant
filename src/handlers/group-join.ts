@@ -1,6 +1,6 @@
 import { GroupMetadata, WASocket, proto } from "@whiskeysockets/baileys";
 import { ALLOWED_USERS, BLOCKED_USERS } from "../constants";
-import { sock } from "../clients/new-whatsapp";
+import { sock } from "../clients/whatsapp";
 
 export async function handleGroupJoin(message: proto.IWebMessageInfo) {
   const adderId = message.key.participant || message.key.remoteJid;

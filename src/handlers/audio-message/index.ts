@@ -19,7 +19,7 @@ import {
   type proto,
   WASocket,
 } from "@whiskeysockets/baileys";
-import { sock } from "../../clients/new-whatsapp";
+import { sock } from "../../clients/whatsapp";
 
 // Function to handle audio messages
 export async function handleAudioMessage(

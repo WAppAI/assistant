@@ -1,6 +1,6 @@
 import { WAProto } from "@whiskeysockets/baileys";
 import { stripIndents } from "common-tags";
-import { sock } from "../../clients/new-whatsapp";
+import { sock } from "../../clients/whatsapp";
 
 export async function getChatContext(message: WAProto.IWebMessageInfo) {
   let chatContext = "";

@@ -1,5 +1,5 @@
 import { proto, WAMessage } from "@whiskeysockets/baileys";
-import { sock } from "../../clients/new-whatsapp.ts";
+import { sock } from "../../clients/whatsapp.ts";
 import {
   BOT_PREFIX,
   DEFAULT_MODEL,
