@@ -47,6 +47,7 @@ export async function getCompletionWithBing(
           message.key.remoteJid!,
           {
             text: newReplyContent,
+            edit: streamingReply.key,
           },
           {
             quoted: message,

@@ -15,6 +15,7 @@ import {
   shouldIgnoreUnread,
   shouldReply,
 } from "../helpers/message";
+import { react } from "../handlers/reactions";
 
 const messageQueue: { [key: string]: proto.IWebMessageInfo[] } = {};
 let isProcessingMessage = false;
@@ -90,6 +91,7 @@ sock.ev.process(async (events) => {
 
     if (upsert.type === "notify") {
       for (const message of upsert.messages) {
+        await react(message, "queued");
         const chatId = message.key.remoteJid!;
         const unreadCount = unreadCounts[chatId] || 0;
 
