@@ -17,7 +17,7 @@ Welcome to the WhatsApp AI Assistant repository, where you'll find a remarkable 
 | Communication Capability    |            ✅             |    ✅     |
 | Group Chat Compatibility    |            ✅             |    ✅     |
 | Voice Message Capability    |            ✅             |    ✅     |
-| Create Basic Text Reminders |            ✅             |    ❌     |
+| Create Basic Text Reminders |            ✅             |    ✅     |
 | Image Recognition           |            ✅             |    ❌     |
 | Image Generation            |            ❌             |    ✅     |
 | PDF Reading                 |            ❌             |    ❌     |
