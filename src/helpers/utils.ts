@@ -1,7 +1,4 @@
-import { Message } from "whatsapp-web.js";
 import { REACTIONS } from "../handlers/reactions";
-import { whatsapp } from "../clients/whatsapp";
-import dayjs from "dayjs";
 
 export function checkEnv() {
   if (!process.env.DEFAULT_MODEL) {
@@ -160,25 +157,6 @@ if (
   throw new Error(
     `Invalid LOG_MESSAGES="${process.env.LOG_MESSAGES}" provided. Accepted values are "true" or "false". Please check the LOG_MESSAGES variable in your .env file.`
   );
-}
-
-export async function log(message: Message | null, isReply: boolean = false) {
-  if (process.env.LOG_MESSAGES !== "false" && message) {
-    const chat = await message.getChat();
-    const contact = await message.getContact();
-    const chatName = chat.isGroup ? `@${chat.name}` : "@dm";
-
-    const from = contact.pushname;
-    const to =
-      chat.isGroup && isReply
-        ? (await (await message.getQuotedMessage()).getContact()).pushname
-        : (await whatsapp.getContactById(message.to)).pushname;
-
-    const timestamp = dayjs();
-    const timestampStr = timestamp.format("HH:mm:ss");
-
-    console.log(`${timestampStr} [${from}->${to}${chatName}]: ${message.body}`);
-  }
 }
 
 export function isEmoji(str: string) {

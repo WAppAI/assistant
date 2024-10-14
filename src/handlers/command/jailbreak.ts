@@ -1,9 +1,6 @@
-import { Message } from "whatsapp-web.js";
+import { proto } from "@whiskeysockets/baileys";
 import { prisma } from "../../clients/prisma";
 import { BOT_PREFIX } from "../../constants";
-import { stripIndents } from "common-tags";
-import { handleReset } from "./reset";
-import { invalidArgumentMessage } from "../../helpers/command";
 import { createChat } from "../../crud/chat";
 import { getConversationFor } from "../../crud/conversation";
 
@@ -18,67 +15,45 @@ async function setChatJailbroken(chatId: string, jailbroken: boolean) {
   });
 }
 
-export async function handleJailbreak(message: Message, args: JailbreakArgs) {
-  let reply: Message;
-  const chat = await message.getChat();
+export async function handleJailbreak(
+  message: proto.IWebMessageInfo,
+  args: JailbreakArgs
+): Promise<string> {
+  const chatId = message.key.remoteJid!;
 
   if (!args.length) {
     const bingConversation = await prisma.bingConversation.findFirst({
-      where: { waChatId: chat.id._serialized },
+      where: { waChatId: chatId },
       select: { jailbroken: true },
     });
-    if (!bingConversation) await createChat(chat.id._serialized);
+    if (!bingConversation) await createChat(chatId);
 
     const state = bingConversation?.jailbroken ? "enabled" : "disabled";
-
-    return (reply = await message.reply(
-      stripIndents`${BOT_PREFIX}Jailbreak is currently *_${state}_* for this chat`
-    ));
+    return `${BOT_PREFIX}Jailbreak is currently *${state}* for this chat`;
   }
 
-  const conversation = await getConversationFor(chat.id._serialized);
+  const conversation = await getConversationFor(chatId);
 
   switch (args) {
-    // @ts-ignore
-    case "on" || "enable":
+    case "on":
+    case "enable":
       if (conversation && conversation.jailbroken) {
-        reply = await message.reply(
-          `${BOT_PREFIX}Jailbreak already *_enabled_* for this chat`
-        );
-        return reply;
+        return `${BOT_PREFIX}Jailbreak already *enabled* for this chat`;
       }
 
-      await setChatJailbroken(chat.id._serialized, true);
-      reply = await message.reply(
-        `${BOT_PREFIX}Jailbreak *_enabled_* for this chat`
-      );
-      break;
-      // @ts-ignore
-    case "off" || "disable":
-      /*if (conversation && conversation.jailbreakId) {         **NO IDEA WHY THIS IS HERE @veigamann go fuck yourself**
-        // await deleteConversation(chat.id._serialized);
-        // await message.reply(BOT_PREFIX + "deleted this conversation");
-        await handleReset(message);
-      }*/
+      await setChatJailbroken(chatId, true);
+      return `${BOT_PREFIX}Jailbreak *enabled* for this chat`;
 
+    case "off":
+    case "disable":
       if (conversation && conversation.jailbroken === false) {
-        reply = await message.reply(
-          `${BOT_PREFIX}Jailbreak already *_disabled_* for this chat`
-        );
-        return reply;
+        return `${BOT_PREFIX}Jailbreak already *_disabled_* for this chat`;
       }
 
-      await setChatJailbroken(chat.id._serialized, false);
-      reply = await message.reply(
-        `${BOT_PREFIX}Jailbreak *_disabled_* for this chat`
-      );
-      break;
-    default:
-      reply = await message.reply(
-        invalidArgumentMessage(args, "jailbreak <enable|disable|on|off>")
-      );
-      break;
-  }
+      await setChatJailbroken(chatId, false);
+      return `${BOT_PREFIX}Jailbreak *_disabled_* for this chat`;
 
-  return reply;
+    default:
+      return `${BOT_PREFIX}Invalid jailbreak command. Use \`jailbreak on\` or \`jailbreak off\` to change the jailbreak status for this chat.`;
+  }
 }

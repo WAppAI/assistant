@@ -1,102 +1,26 @@
-import qrcode from "qrcode";
-// @ts-ignore
-import WAWebJS, { Message } from "whatsapp-web.js";
+import { Boom } from "@hapi/boom";
+import {
+  DisconnectReason,
+  fetchLatestBaileysVersion,
+  makeWASocket,
+  useMultiFileAuthState,
+  WASocket,
+  type proto,
+} from "@whiskeysockets/baileys";
+import P from "pino";
 import { CMD_PREFIX } from "../constants";
 import { handleCommand } from "../handlers/command";
-import { handleGroupJoin } from "../handlers/group-join";
 import { handleMessage } from "../handlers/message";
+import { react } from "../handlers/reactions";
 import {
-  setStatusFor,
+  isGroupMessage,
   shouldIgnore,
   shouldIgnoreUnread,
   shouldReply,
 } from "../helpers/message";
 
-// Doing this for now because ts-node complains about commonjs modules, will fix later (later = never)
-const { Client, LocalAuth } = WAWebJS;
-
-export const whatsapp = new Client({
-  authStrategy: new LocalAuth(),
-  puppeteer: {
-    headless: true,
-    handleSIGTERM: false,
-    handleSIGINT: false,
-    executablePath: process.env.PUPPETEER_EXECUTABLE_PATH, // /snap/bin/chromium  for the gif tool to work (with chromium installed in ubuntu)
-    args: [
-      "--no-sandbox",
-      "--no-default-browser-check",
-      "--disable-dev-shm-usage",
-      "--disable-accelerated-2d-canvas",
-      "--no-first-run",
-      "--no-zygote",
-      "--single-process",
-      "--disable-gpu",
-    ],
-  },
-});
-
-// @ts-ignore
-whatsapp.on("qr", async (qr) => {
-  const code = await qrcode.toString(qr, { type: "terminal", small: true });
-  console.log(code);
-});
-
-// @ts-ignore
-whatsapp.on("loading_screen", (percent) => {
-  console.log(`Loading WhatsApp Web... ${percent}%`);
-});
-
-whatsapp.on("authenticated", () => {
-  console.log("Authenticated");
-});
-
-// @ts-ignore
-whatsapp.on("auth_failure", (message) => {
-  console.log("Authentication failure. Message:", message);
-});
-
-whatsapp.on("ready", async () => {
-  console.log("WhatsApp Web ready");
-  console.log("Bot is ready");
-});
-
-whatsapp.on("group_join", handleGroupJoin);
-
-const messageQueue: { [key: string]: Message[] } = {};
+const messageQueue: { [key: string]: proto.IWebMessageInfo[] } = {};
 let isProcessingMessage = false;
-
-// order matters here, do not mess with it
-whatsapp.on("message", async (message: Message) => {
-  const chat = await message.getChat();
-  const chatId = chat.id._serialized;
-
-  await chat.sendSeen();
-
-  // returns based on ALLOWED_USERS and BLOCKED_USERS
-  if (await shouldIgnore(message)) return;
-
-  // returns if it's a group message and the bot is not mentioned
-  if (!(await shouldReply(message))) return;
-
-  // returns if there too many are unread messages;
-  if (await shouldIgnoreUnread(chat)) return;
-
-  // Add the message to the queue
-  if (!messageQueue[chatId]) {
-    messageQueue[chatId] = [];
-  }
-  messageQueue[chatId].push(message);
-
-  // React with "queued" if there are other messages in the queue
-  if (messageQueue[chatId].length > 0) {
-    await setStatusFor(message, "queued");
-  }
-
-  // Process the queue if not already processing
-  if (!isProcessingMessage) {
-    await processMessageQueue(chatId);
-  }
-});
 
 async function processMessageQueue(chatId: string) {
   isProcessingMessage = true;
@@ -111,15 +35,100 @@ async function processMessageQueue(chatId: string) {
   isProcessingMessage = false;
 }
 
-async function handleMessageWithQueue(message: Message) {
-  const chat = await message.getChat();
-  const chatId = chat.id._serialized;
+async function handleMessageWithQueue(message: proto.IWebMessageInfo) {
+  let messageBody;
+  if (isGroupMessage(message)) {
+    messageBody = message.message?.conversation || "";
+  } else {
+    messageBody = message.message?.extendedTextMessage?.text;
+  }
 
-  // User exists and questionnaire is completed, proceed with normal message handling
-  const isCommand = message.body.startsWith(CMD_PREFIX);
+  const isCommand = messageBody?.startsWith(CMD_PREFIX);
+
   if (isCommand) {
     await handleCommand(message);
   } else {
     await handleMessage(message);
   }
 }
+
+const { state, saveCreds } = await useMultiFileAuthState("wa_auth");
+const { version, isLatest } = await fetchLatestBaileysVersion();
+console.log(`using WA v${version.join(".")}, isLatest: ${isLatest}`);
+
+// Create a custom logger with a higher log level
+const logger = P({ level: "info" }); // Set to 'warn' to ignore info and debug logs
+
+export const sock: WASocket = makeWASocket({
+  version,
+  logger,
+  printQRInTerminal: true,
+  auth: state,
+  generateHighQualityLinkPreview: true,
+});
+
+const unreadCounts: { [key: string]: number } = {};
+
+sock.ev.process(async (events) => {
+  if (events["connection.update"]) {
+    const update = events["connection.update"];
+    const { connection, lastDisconnect } = update;
+    if (connection === "close") {
+      if (
+        (lastDisconnect?.error as Boom)?.output?.statusCode !==
+        DisconnectReason.loggedOut
+      ) {
+        // You might want to handle reconnection here
+        console.log("Connection closed. Attempting to reconnect...");
+      } else {
+        console.log("Connection closed. You are logged out.");
+      }
+    }
+
+    console.log("connection update", update);
+  }
+
+  if (events["chats.update"]) {
+    for (const chat of events["chats.update"]) {
+      if (chat.id && chat.unreadCount !== undefined) {
+        if (chat.unreadCount !== null) {
+          unreadCounts[chat.id] = chat.unreadCount;
+        }
+      }
+    }
+  }
+
+  if (events["messages.upsert"]) {
+    const upsert = events["messages.upsert"];
+    //console.log("recv messages ", JSON.stringify(upsert, undefined, 2));
+
+    if (upsert.type === "notify") {
+      for (const message of upsert.messages) {
+        const chatId = message.key.remoteJid!;
+        const unreadCount = unreadCounts[chatId] || 0;
+
+        if (await shouldIgnore(message)) return;
+        if (!(await shouldReply(message))) return;
+        if (await shouldIgnoreUnread(message, unreadCount)) return;
+
+        await react(message, "queued");
+
+        // Add the message to the queue
+        if (!messageQueue[chatId]) {
+          messageQueue[chatId] = [];
+        }
+        messageQueue[chatId].push(message);
+
+        // Process the queue if not already processing
+        if (!isProcessingMessage) {
+          await processMessageQueue(chatId);
+        }
+      }
+    }
+  }
+
+  // Don't forget to save credentials whenever they are updated
+  if (events["creds.update"]) {
+    await saveCreds();
+  }
+});

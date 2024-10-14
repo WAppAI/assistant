@@ -92,7 +92,6 @@ export class WeatherTool extends Tool {
     Input should be the just city name, without any country, state, province, etc. names.`;
 
   async _call(city: string): Promise<string> {
-    console.log("Fetching weather data for city: ", city);
     const geocodeResponse = await fetch(
       `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=en&format=json`
     );

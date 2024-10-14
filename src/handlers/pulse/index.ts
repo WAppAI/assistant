@@ -1,4 +1,6 @@
+import { sock } from "../../clients/whatsapp";
 import { createExecutorForOpenRouter } from "../../clients/open-router";
+import { prisma } from "../../clients/prisma";
 import {
   ASSISTANT_NAME,
   DEBUG_SUMMARY,
@@ -6,8 +8,6 @@ import {
   PULSE_FREQUENCY,
   PULSE_LLM_MODEL,
 } from "../../constants";
-import { prisma } from "../../clients/prisma";
-import { whatsapp } from "../../clients/whatsapp";
 import {
   createOpenRouterConversation,
   getOpenRouterConversationFor,
@@ -83,7 +83,7 @@ export async function pulse(chatId: string, messageBody: string) {
     }
   }
 
-  whatsapp.sendMessage(chatId, response.output);
+  await sock.sendMessage(chatId, response.output);
 }
 
 export async function pulseForAllConversations(messageBody: string) {

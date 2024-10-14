@@ -4,9 +4,8 @@ import { TRANSCRIPTION_LANGUAGE } from "../../constants";
 import Groq from "groq-sdk";
 
 export async function handleAudioMessageWithGroqApi(wavPath: string) {
-  console.log("Transcribing audio with Groq API");
   try {
-    const groq = new Groq()
+    const groq = new Groq();
 
     const transcriptionOptions: any = {
       file: fs.createReadStream(wavPath),

@@ -3,9 +3,10 @@
 import { StructuredTool } from "langchain/tools";
 import schedule from "node-schedule";
 import { z } from "zod";
-import { pulse } from "../../handlers/pulse";
-import { whatsapp } from "../whatsapp";
 import { BOT_PREFIX } from "../../constants";
+import { pulse } from "../../handlers/pulse";
+import { WASocket } from "@whiskeysockets/baileys";
+import { sock } from "../whatsapp";
 
 const ScheduleHeartbeatSchema = z.object({
   chatId: z
@@ -21,6 +22,10 @@ export class ScheduleHeartbeatTool extends StructuredTool {
   description = "Schedules a one-time heartbeat for the LLM after a delay.";
   schema = ScheduleHeartbeatSchema;
 
+  constructor() {
+    super();
+  }
+
   async _call({
     chatId,
     delayInMinutes,
@@ -30,11 +35,11 @@ export class ScheduleHeartbeatTool extends StructuredTool {
       const triggerTime = new Date(Date.now() + delayInMinutes * 60000);
       schedule.scheduleJob(triggerTime, async () => {
         await pulse(chatId, messageBody);
+        await sock.sendMessage(chatId, { text: messageBody });
       });
-      whatsapp.sendMessage(
-        chatId,
-        `*${BOT_PREFIX}:* One-time heartbeat scheduled at ${triggerTime.toLocaleString()}`
-      );
+      await sock.sendMessage(chatId, {
+        text: `*${BOT_PREFIX}:* One-time heartbeat scheduled at ${triggerTime.toLocaleString()}`,
+      });
       return `One-time heartbeat scheduled for chat: ${chatId} at ${triggerTime}`;
     } catch (error) {
       console.error("Error scheduling one-time heartbeat:", error);

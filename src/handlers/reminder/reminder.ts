@@ -1,11 +1,9 @@
 // @ts-ignore
-import { BingAIClientResponse } from "@waylaidwanderer/chatgpt-api";
-import { Message } from "whatsapp-web.js";
-import schedule from "node-schedule";
-import rrule from "rrule";
+import { proto } from "@whiskeysockets/baileys";
 import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
+import utc from "dayjs/plugin/utc";
+import rrule from "rrule";
 import { REPLY_RRULES } from "../../constants";
 import { createReminder } from "../../crud/reminder";
 import { addOffset, parseReminderString, scheduleReminderJob } from "./utils";
@@ -13,7 +11,10 @@ import { addOffset, parseReminderString, scheduleReminderJob } from "./utils";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-export async function handleReminderFor(message: Message, llmAnswer: string) {
+export async function handleReminderFor(
+  message: proto.IWebMessageInfo,
+  llmAnswer: string
+) {
   const isReminder = llmAnswer.startsWith("{") && llmAnswer.endsWith("}");
   if (!isReminder) return llmAnswer;
 
@@ -44,7 +45,7 @@ export async function handleReminderFor(message: Message, llmAnswer: string) {
     });
 
   console.log(
-    `Scheduling ${recurrences.length} recurrences for "${message.body}"`
+    `Scheduling ${recurrences.length} recurrences for "${message.message?.extendedTextMessage?.text}"`
   );
   console.log(`Next recurrence: ${recurrences[0]}`);
 

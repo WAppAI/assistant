@@ -1,12 +1,11 @@
+import { sock } from "./clients/whatsapp";
 import { prisma } from "./clients/prisma";
-import { whatsapp } from "./clients/whatsapp";
-import { checkEnv } from "./helpers/utils";
 import { pulseForAllConversations } from "./handlers/pulse";
+import { checkEnv } from "./helpers/utils";
 import schedule from "node-schedule";
 
 async function main() {
   checkEnv();
-  whatsapp.initialize();
 
   const pulseTimes = process.env.PULSE_FREQUENCY?.split(",") || [];
   pulseTimes.forEach((time) => {
@@ -29,20 +28,6 @@ async function main() {
     }
   });
 }
-
-process.on("SIGINT", async () => {
-  console.warn("[SIGINT] Shutting down...");
-  // should react to every pending message and warn the user that the bot is shutting down
-  await whatsapp.destroy();
-  process.exit(0);
-});
-
-process.on("SIGTERM", async () => {
-  console.warn("[SIGTERM] Shutting down...");
-  // should react to every pending message and warn the user that the bot is shutting down
-  await whatsapp.destroy();
-  process.exit(0);
-});
 
 main()
   .then(async () => {

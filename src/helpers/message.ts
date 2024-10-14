@@ -1,5 +1,5 @@
-import { Chat, GroupChat, Message } from "whatsapp-web.js";
-import { Reaction, react } from "../handlers/reactions";
+import { proto } from "@whiskeysockets/baileys";
+import { sock } from "../clients/whatsapp";
 import {
   ALLOWED_USERS,
   BLOCKED_USERS,
@@ -7,123 +7,107 @@ import {
   CMD_PREFIX,
   IGNORE_MESSAGES_WARNING,
 } from "../constants";
-import { prisma } from "../clients/prisma";
 
-async function workingOn(message: Message) {
-  const chat = await message.getChat();
-  await chat.clearState();
-  await chat.sendSeen();
-
-  await react(message, "working");
-  chat.sendStateTyping();
+export function isGroupMessage(message: proto.IWebMessageInfo) {
+  return message.key.remoteJid?.endsWith("@g.us") ?? false;
 }
 
-async function doneWith(message: Message, reaction: Reaction = "done") {
-  const chat = await message.getChat();
-  await react(message, reaction);
-  await chat.clearState();
+export function getPhoneNumber(message: proto.IWebMessageInfo) {
+  return message.key.remoteJid?.split("@")[0] ?? "";
 }
 
-async function queuedMessage(message: Message, reaction: Reaction = "queued") {
-  const chat = await message.getChat();
-  await react(message, reaction);
-  await chat.clearState();
-}
-
-type Status = Reaction;
-
-export async function setStatusFor(message: Message, status: Status) {
-  switch (status) {
-    case "working":
-      await workingOn(message);
-      break;
-    case "done":
-      await doneWith(message);
-      break;
-    case "error":
-      await doneWith(message, "error");
-      break;
-    case "queued":
-      await queuedMessage(message);
-      break;
-    default:
-      break;
+async function getGroupName(groupJid: string): Promise<string> {
+  try {
+    const groupMetadata = await sock.groupMetadata(groupJid);
+    return groupMetadata.subject || groupJid;
+  } catch (error) {
+    console.error(`Error fetching group name for ${groupJid}:`, error);
+    return groupJid;
   }
 }
 
-export async function shouldIgnore(message: Message) {
+export async function shouldIgnore(message: proto.IWebMessageInfo) {
   if (ALLOWED_USERS.length === 0 && BLOCKED_USERS.length === 0) {
     return false;
   }
 
-  const contact = await message.getContact();
-  const chat = await message.getChat();
+  const senderNumber = getPhoneNumber(message);
 
-  if (chat.isGroup) {
-    const groupChat = chat as GroupChat;
-
+  if (isGroupMessage(message)) {
     // Check if this message came from a blocked user
-    if (BLOCKED_USERS.includes(contact.number)) {
+    if (BLOCKED_USERS.includes(senderNumber)) {
       console.warn(
-        `Ignoring message from blocked user "${contact.pushname}" <${contact.number}>`
+        `Ignoring message from blocked user "${message.pushName}" <${senderNumber}>`
       );
       return true;
     }
 
-    // Check if any allowed users are in the group
-    const allowedInGroup = groupChat.participants.some((p) => {
-      return ALLOWED_USERS.includes(p.id.user);
-    });
+    // Fetch group metadata
+    const groupJid = message.key.remoteJid!;
+    try {
+      const groupMetadata = await sock.groupMetadata(groupJid);
 
-    if (!allowedInGroup) {
-      console.warn(
-        `Ignoring message from group "${groupChat.name}" because no allowed users are in it`
-      );
-      return true;
+      // Check if any allowed users are in the group
+      const allowedInGroup = groupMetadata.participants.some((participant) => {
+        const participantNumber = participant.id.split("@")[0];
+        return ALLOWED_USERS.includes(participantNumber);
+      });
+
+      if (!allowedInGroup) {
+        console.warn(
+          `Ignoring message from group "${groupMetadata.subject}" because no allowed users are in it`
+        );
+        return true;
+      }
+    } catch (error) {
+      console.error("Error fetching group metadata:", error);
+      return true; // Ignore the message if we can't fetch group data
     }
-  } else if (
-    BLOCKED_USERS.includes(contact.number) ||
-    !ALLOWED_USERS.includes(contact.number)
-  ) {
+  } else {
     // It's a private message, so just check if the user is blocked or isn't in the allowed list
-    console.warn(
-      `Ignoring message from blocked/not allowed user "${contact.pushname}" <${contact.number}>`
-    );
-    return true;
+    if (
+      BLOCKED_USERS.includes(senderNumber) ||
+      !ALLOWED_USERS.includes(senderNumber)
+    ) {
+      console.warn(
+        `Ignoring message from blocked/not allowed user "${message.pushName}" <${senderNumber}>`
+      );
+      return true;
+    }
   }
 
   return false;
 }
 
-export async function shouldReply(message: Message) {
-  const isCommand = message.body.startsWith(CMD_PREFIX);
-  const chat = await message.getChat();
+export async function shouldReply(message: proto.IWebMessageInfo) {
+  // Extract the message body from either conversation or extendedTextMessage
+  const messageBody =
+    message.message?.conversation || message.message?.extendedTextMessage?.text;
 
-  if (chat.isGroup && !isCommand) {
-    const mentions = await message.getMentions();
+  // Check if the message is a command
+  const isCommand = (messageBody ?? "").startsWith(CMD_PREFIX);
+
+  if (isGroupMessage(message) && !isCommand) {
+    // Get mentions and check if the bot is mentioned
+    const mentions =
+      message.message?.extendedTextMessage?.contextInfo?.mentionedJid || [];
+
+    // Extract the core user ID without suffix for comparison
+    const userId = sock.user?.id?.split("@")[0].split(":")[0] || "";
     const isMentioned = mentions.some(
-      (mention) => mention.id._serialized === message.to
+      (mention) => mention.split("@")[0] === userId || mention === sock.user?.id
     );
 
-    const quotedMessage = await message.getQuotedMessage();
-    const lastWaReply = await prisma.bingConversation.findFirst({
-      where: { waChatId: chat.id._serialized },
-      select: { waMessageId: true },
-    });
-    const isInThread =
-      quotedMessage && quotedMessage.id._serialized == lastWaReply?.waMessageId;
+    // Check if the message is quoting the bot's message
+    const quotedParticipant =
+      message.message?.extendedTextMessage?.contextInfo?.participant;
+    const isQuotingBot =
+      quotedParticipant?.split("@")[0].split(":")[0] === userId;
 
-    if (isMentioned || isInThread) {
-      for (const mention of mentions) {
-        message.body = message.body.replace(
-          `@${mention.id.user}`,
-          mention.pushname
-        );
-        console.log(`Replaced "${mention.id.user}" with "${mention.pushname}"`);
-      }
-    } else {
+    if (!isMentioned && !isQuotingBot) {
+      // Ignore if not mentioned or not quoting the bot
       console.warn(
-        "Group message received, but the bot was not mentioned neither its last completion was quoted in a thread. Ignoring."
+        "Group message received, but the bot was not mentioned and its last completion was not quoted. Ignoring."
       );
       return false;
     }
@@ -132,32 +116,38 @@ export async function shouldReply(message: Message) {
   return true;
 }
 
-export async function shouldIgnoreUnread(chat: Chat) {
-  if (chat.unreadCount > 1) {
-    await chat.sendSeen();
-    if (chat.isGroup) {
+export async function shouldIgnoreUnread(
+  message: proto.IWebMessageInfo,
+  unreadCount: number
+) {
+  if (unreadCount > 1) {
+    const chatJid = message.key.remoteJid!;
+
+    // Mark messages as read
+    await sock.readMessages([message.key]);
+
+    const isGroup = chatJid.endsWith("@g.us");
+    let warningMessage = "";
+
+    if (isGroup) {
+      const groupName = await getGroupName(chatJid);
       console.warn(
-        `Too many unread messages (${chat.unreadCount}) for group chat "${chat.name}". Ignoring...`
+        `Too many unread messages (${unreadCount}) for group chat "${groupName}". Ignoring...`
       );
-      if (IGNORE_MESSAGES_WARNING === "true") {
-        await chat.sendMessage(
-          BOT_PREFIX +
-            `Too many unread messages (${chat.unreadCount}) since I've last seen this chat. I'm ignoring them. If you need me to respond, please @mention me or quote my last completion in this chat.`
-        );
-      }
+      warningMessage = `Too many unread messages (${unreadCount}) since I've last seen this chat. I'm ignoring them. If you need me to respond, please @mention me or quote my last completion in this chat.`;
     } else {
-      const contact = await chat.getContact();
       console.warn(
-        `Too many unread messages (${chat.unreadCount}) for chat with user "${contact.pushname}" <${contact.number}>. Ignoring...`
+        `Too many unread messages (${unreadCount}) for chat with user "${getPhoneNumber(message)}". Ignoring...`
       );
-      if (IGNORE_MESSAGES_WARNING === "true") {
-        await chat.sendMessage(
-          BOT_PREFIX +
-            `Too many unread messages (${chat.unreadCount}) since I've last seen this chat. I'm ignoring them. If you need me to respond, please message me again.`
-        );
-      }
+      warningMessage = `Too many unread messages (${unreadCount}) since I've last seen this chat. I'm ignoring them. If you need me to respond, please message me again.`;
+    }
+
+    if (IGNORE_MESSAGES_WARNING === "true") {
+      await sock.sendMessage(chatJid, { text: BOT_PREFIX + warningMessage });
     }
 
     return true;
   }
+
+  return false;
 }

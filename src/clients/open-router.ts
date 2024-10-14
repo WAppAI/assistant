@@ -30,10 +30,10 @@ import {
   SUMMARY_LLM_MODEL,
 } from "../constants";
 import {
+  getCoreMemoryFor,
   getLLMModel,
   getOpenRouterConversationFor,
   getOpenRouterMemoryFor,
-  getCoreMemoryFor,
 } from "../crud/conversation";
 import {
   anthropicToolCallingModels,
@@ -111,7 +111,7 @@ async function createMemoryForOpenRouter(chat: string) {
       const pastMessages = parseMessageHistory(parsedMemory, coreMemory);
       memory.chatHistory = new ChatMessageHistory(pastMessages);
     } catch (error) {
-      //console.error("Failed to parse memoryString:", error);
+      console.error("Failed to parse memoryString:", error);
       memory.chatHistory = new ChatMessageHistory([]);
     }
   } else {

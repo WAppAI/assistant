@@ -1,14 +1,17 @@
-import { Message } from "whatsapp-web.js";
+import { proto } from "@whiskeysockets/baileys";
 import { prisma } from "../clients/prisma";
 import { ReminderI } from "../types/reminder";
 
-export async function createReminder(reminder: ReminderI, message: Message) {
+export async function createReminder(
+  reminder: ReminderI,
+  message: proto.IWebMessageInfo
+) {
   try {
     return await prisma.reminder.create({
       data: {
         reminder: JSON.stringify(reminder),
         message: JSON.stringify(message),
-        waChatId: message.from,
+        waChatId: message.key.remoteJid!,
       },
     });
   } catch (error) {

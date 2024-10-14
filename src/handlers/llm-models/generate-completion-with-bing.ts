@@ -1,48 +1,54 @@
+// @ts-ignore
+import { BingAIClientResponse } from "@waylaidwanderer/chatgpt-api";
+import { downloadMediaMessage, proto } from "@whiskeysockets/baileys";
+import { bing } from "../../clients/bing";
 import {
-  BingAIClientResponse,
-  // @ts-ignore
-} from "@waylaidwanderer/chatgpt-api";
-import { Message } from "whatsapp-web.js";
+  BING_SYSTEM_MESSAGE,
+  BING_TONESTYLE,
+  BOT_PREFIX,
+  TRANSCRIPTION_ENABLED,
+} from "../../constants";
+import { createChat, getChatFor } from "../../crud/chat";
 import {
   createConversation,
   getConversationFor,
 } from "../../crud/conversation";
-import { createChat, getChatFor } from "../../crud/chat";
-import {
-  BING_TONESTYLE,
-  BOT_PREFIX,
-  BING_SYSTEM_MESSAGE,
-  TRANSCRIPTION_ENABLED,
-} from "../../constants";
 import { handleAudioMessage } from "../audio-message";
-import { bing } from "../../clients/bing";
+import { sock } from "../../clients/whatsapp";
 
 export async function generateCompletionWithBing(
-  message: Message,
+  message: proto.IWebMessageInfo,
   context: string,
   onProgress: (progress: string) => void
 ) {
   let completion: BingAIClientResponse;
 
-  const chat = await message.getChat();
-  const conversation = await getConversationFor(chat.id._serialized);
-  const waChat = await getChatFor(chat.id._serialized);
+  const chatId = message.key.remoteJid!;
+  const conversation = await getConversationFor(chatId);
+  const waChat = await getChatFor(chatId);
   let imageBase64: string | undefined;
 
-  if (message.hasMedia) {
-    const media = await message.downloadMedia();
-    const mimetype = media.mimetype;
+  if (message.message?.imageMessage || message.message?.audioMessage) {
+    const media = await downloadMediaMessage(message, "buffer", {});
+    const mimetype =
+      message.message?.imageMessage?.mimetype ||
+      message.message?.audioMessage?.mimetype;
 
     const isImage = mimetype?.includes("image");
     const isAudio = mimetype?.includes("audio");
 
-    if (isImage) imageBase64 = media.data;
+    if (isImage) {
+      imageBase64 = media.toString("base64"); // Ensure proper encoding
+    }
+
     if (isAudio) {
       if (TRANSCRIPTION_ENABLED === "true") {
-        message.body = await handleAudioMessage(media, message);
+        message.message.conversation = await handleAudioMessage(message, media);
       } else {
         // Handle the case when transcription is not enabled
-        message.reply(BOT_PREFIX + "Transcription not enabled");
+        await sock.sendMessage(chatId, {
+          text: BOT_PREFIX + "Transcription not enabled",
+        });
         throw new Error("Transcription not enabled");
       }
     }
@@ -52,42 +58,51 @@ export async function generateCompletionWithBing(
     // If the conversation already exists
     if (conversation?.jailbroken) {
       // If the conversation is jailbroken
-      completion = await bing.sendMessage(message.body, {
-        jailbreakConversationId: conversation.jailbreakId as string,
-        parentMessageId: conversation.parentMessageId as string,
+      completion = await bing.sendMessage(
+        message.message?.extendedTextMessage?.text || "",
+        {
+          jailbreakConversationId: conversation.jailbreakId as string,
+          parentMessageId: conversation.parentMessageId as string,
+          imageBase64,
+          toneStyle: BING_TONESTYLE,
+          context,
+          onProgress,
+        }
+      );
+    } else {
+      // If the conversation is not jailbroken
+      completion = await bing.sendMessage(
+        message.message?.extendedTextMessage?.text || "",
+        {
+          encryptedConversationSignature: conversation.encryptedSignature,
+          conversationId: conversation.waChatId,
+          clientId: conversation.clientId,
+          invocationId: conversation.invocationId,
+          imageBase64,
+          toneStyle: BING_TONESTYLE,
+          onProgress,
+          // apparently we can't give context to existing conversations when not jailbroken
+          // context,
+        }
+      );
+    }
+  } else {
+    // If the conversation doesn't exist yet
+    completion = await bing.sendMessage(
+      message.message?.extendedTextMessage?.text || "",
+      {
+        jailbreakConversationId: true,
+        systemMessage: BING_SYSTEM_MESSAGE,
         imageBase64,
         toneStyle: BING_TONESTYLE,
         context,
         onProgress,
-      });
-    }
-    // If the conversation is not jailbroken
-    else
-      completion = await bing.sendMessage(message.body, {
-        encryptedConversationSignature: conversation.encryptedSignature,
-        conversationId: conversation.waChatId,
-        clientId: conversation.clientId,
-        invocationId: conversation.invocationId,
-        imageBase64,
-        toneStyle: BING_TONESTYLE,
-        onProgress,
-        // apparently we can't give context to existing conversations when not jailbroken
-        // context,
-      });
-  } else {
-    // If the conversation doesn't exist yet
-    completion = await bing.sendMessage(message.body, {
-      jailbreakConversationId: true,
-      systemMessage: BING_SYSTEM_MESSAGE,
-      imageBase64,
-      toneStyle: BING_TONESTYLE,
-      context,
-      onProgress,
-    });
+      }
+    );
 
-    if (!waChat) await createChat(chat.id._serialized); // Creates the chat if it doesn't exist yet
+    if (!waChat) await createChat(chatId); // Creates the chat if it doesn't exist yet
 
-    await createConversation(completion, message.id.id, chat.id._serialized); // Creates the conversation
+    await createConversation(completion, message.key.id!, chatId); // Creates the conversation
   }
 
   return completion;

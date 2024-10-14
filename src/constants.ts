@@ -1,7 +1,5 @@
-import {
-  BingAIClientSendMessageOptions,
-  // @ts-ignore
-} from "@waylaidwanderer/chatgpt-api";
+// @ts-ignore
+import { BingAIClientSendMessageOptions } from "@waylaidwanderer/chatgpt-api";
 import dotenv from "dotenv";
 import dotenvExpand from "dotenv-expand";
 dotenvExpand.expand(dotenv.config());
