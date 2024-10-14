@@ -24,7 +24,7 @@ export async function getCompletionWithOpenRouter(
   streamingReply: proto.IWebMessageInfo
 ) {
   let tokenBuffer: string[] = ["..."];
-  let newTokenCount = 0;
+  let tokenQueue: string[] = [];
   let messageBody = message.message?.extendedTextMessage?.text || "";
 
   const chatId = message.key.remoteJid!;
@@ -71,19 +71,23 @@ export async function getCompletionWithOpenRouter(
         {
           async handleLLMNewToken(token: string) {
             if (STREAM_RESPONSES !== "true") return;
-            /* 
-            tokenBuffer.push(token);
-            newTokenCount++;
 
-            const updatedMessage = tokenBuffer.join("");
-            await sock.sendMessage(
-              chatId,
-              {
-                text: updatedMessage,
-                edit: streamingReply.key,
-              },
-              { quoted: message }
-            ); */
+            tokenQueue.push(token);
+
+            if (tokenQueue.length >= 3) {
+              tokenBuffer.push(...tokenQueue);
+              tokenQueue = [];
+
+              const updatedMessage = tokenBuffer.join("");
+              await sock.sendMessage(
+                chatId,
+                {
+                  text: updatedMessage,
+                  edit: streamingReply.key,
+                },
+                { quoted: message }
+              );
+            }
           },
         },
       ],
