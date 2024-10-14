@@ -5,8 +5,8 @@
   "module": "src/index.ts",
   "type": "module",
   "scripts": {
-    "start": "ts-node src/index.ts",
-    "dev": "nodemon src/index.ts",
+    "start": "tsx src/index.ts",
+    "dev": "tsx watch src/index.ts",
     "studio": "prisma studio",
     "docker:build": "docker build -t whatsapp-assistant .",
     "docker:start": "docker run -it -d --name whatsapp-assistant whatsapp-assistant",
@@ -25,6 +25,7 @@
     "prettier": "^3.2.5",
     "prisma": "^5.13.0",
     "ts-node": "^10.9.2",
+    "tsx": "^4.19.1",
     "typescript": "^5.4.5"
   },
   "dependencies": {
