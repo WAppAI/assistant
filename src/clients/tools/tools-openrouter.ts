@@ -1,7 +1,9 @@
+import { Calculator } from "@langchain/community/tools/calculator";
 import {
   GoogleCalendarCreateTool,
   GoogleCalendarViewTool,
 } from "@langchain/community/tools/google_calendar";
+import { GoogleRoutesAPI } from "@langchain/community/tools/google_routes";
 import { SearchApi } from "@langchain/community/tools/searchapi";
 import { WikipediaQueryRun } from "@langchain/community/tools/wikipedia_query_run";
 import {
@@ -10,13 +12,13 @@ import {
   OpenAI,
   OpenAIEmbeddings,
 } from "@langchain/openai";
-import { Calculator } from "@langchain/community/tools/calculator";
 import { WebBrowser } from "langchain/tools/webbrowser";
 import {
   DALLE_MODEL,
   ENABLE_DALLE_TOOL,
   ENABLE_GOOGLE_CALENDAR,
   ENABLE_GOOGLE_ROUTES,
+  ENABLE_MESSAGE_SENDING_TOOL,
   ENABLE_WEB_BROWSER_TOOL,
   GOOGLE_CALENDAR_CALENDAR_ID,
   GOOGLE_CALENDAR_CLIENT_EMAIL,
@@ -25,14 +27,14 @@ import {
   OPENROUTER_API_KEY,
   SEARCH_API,
 } from "../../constants";
-import { GoogleRoutesAPI } from "@langchain/community/tools/google_routes";
-import { WeatherTool } from "./tool-weather";
 import {
   AddToCoreMemoryTool,
   DeleteFromCoreMemoryTool,
   ReplaceInCoreMemoryTool,
 } from "./tool-core-memory";
 import { ScheduleHeartbeatTool } from "./tool-pulse-schedule";
+import { SendWhatsappMessageTool } from "./tool-send-whatsapp-messages";
+import { WeatherTool } from "./tool-weather";
 
 let googleCalendarCreateTool = null;
 let googleCalendarViewTool = null;
@@ -40,6 +42,7 @@ let searchTool = null;
 let webBrowserTool = null;
 let dalleTool = null;
 let googleRoutesTool = null;
+let sendWhatsappMessageTool = null;
 
 if (ENABLE_DALLE_TOOL === "true") {
   dalleTool = new DallEAPIWrapper({
@@ -47,6 +50,10 @@ if (ENABLE_DALLE_TOOL === "true") {
     modelName: DALLE_MODEL, // Default
     openAIApiKey: OPENAI_API_KEY, // Default
   });
+}
+
+if (ENABLE_MESSAGE_SENDING_TOOL === "true") {
+  sendWhatsappMessageTool = new SendWhatsappMessageTool();
 }
 
 if (ENABLE_GOOGLE_ROUTES === "true") {
@@ -113,6 +120,7 @@ export const tools = [
   ...(googleCalendarViewTool ? [googleCalendarViewTool] : []),
   ...(dalleTool ? [dalleTool] : []),
   ...(googleRoutesTool ? [googleRoutesTool] : []),
+  ...(sendWhatsappMessageTool ? [sendWhatsappMessageTool] : []),
   new AddToCoreMemoryTool(),
   new DeleteFromCoreMemoryTool(),
   new ReplaceInCoreMemoryTool(),
