@@ -17,7 +17,7 @@ Welcome to the WhatsApp AI Assistant repository, where you'll find a remarkable 
 | Communication Capability    |            ✅             |    ✅     |
 | Group Chat Compatibility    |            ✅             |    ✅     |
 | Voice Message Capability    |            ✅             |    ✅     |
-| Create Basic Text Reminders |            ✅             |    ❌     |
+| Create Basic Text Reminders |            ✅             |    ✅     |
 | Image Recognition           |            ✅             |    ❌     |
 | Image Generation            |            ❌             |    ✅     |
 | PDF Reading                 |            ❌             |    ❌     |
@@ -27,7 +27,6 @@ Welcome to the WhatsApp AI Assistant repository, where you'll find a remarkable 
 ### Prerequisites
 
 - Node.js >= 18.15.0
-- Node.js version >= 20.x.x users you should use `node --loader ts-node/esm src/index.ts` instead of `pnpm start`
 - A spare WhatsApp number
 
 ### Installation
@@ -222,6 +221,6 @@ Your involvement is valued, and you're encouraged to contribute in the way that 
 
 ## Hire Us
 
-Both creators of this project, [Veigamann](https://github.com/veigamann) and [Luisotee](https://github.com/Luisotee), are currently seeking new job opportunities.
+I, [Luisotee](https://github.com/Luisotee) am currently open to new job opportunities, including freelance work, contract roles, or permanent positions.
 
-If you have any job opportunities, please feel free to contact us through the emails provided in our GitHub profiles.
+If you have any opportunities, feel free to contact me via the emails provided on my GitHub or LinkedIn profiles.
