@@ -32,7 +32,7 @@ export class AddToCoreMemoryTool extends StructuredTool {
       return `Message added to core memory for chat: ${chat}`;
     } catch (error) {
       console.error("Error adding to core memory:", error);
-      throw error;
+      return `Error adding to core memory: ${(error as any).message}`;
     }
   }
 }
@@ -62,7 +62,7 @@ export class DeleteFromCoreMemoryTool extends StructuredTool {
       return `Part deleted from core memory for chat: ${chat}`;
     } catch (error) {
       console.error("Error deleting from core memory:", error);
-      throw error;
+      return `Error deleting from core memory: ${(error as any).message}`;
     }
   }
 }
@@ -100,7 +100,7 @@ export class ReplaceInCoreMemoryTool extends StructuredTool {
       return `Part replaced in core memory for chat: ${chat}`;
     } catch (error) {
       console.error("Error replacing in core memory:", error);
-      throw error;
+      return `Error replacing in core memory: ${(error as any).message}`;
     }
   }
 }

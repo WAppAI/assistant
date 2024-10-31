@@ -28,7 +28,7 @@ export async function handleAudioMessage(
 ) {
   const messageContent = message.message?.audioMessage;
   if (!messageContent) {
-    throw new Error("No audio message found in the provided message");
+    return `No audio message found in the provided message ${message}`;
   }
 
   const tempdir = os.tmpdir();
@@ -52,10 +52,7 @@ export async function handleAudioMessage(
     } else if (TRANSCRIPTION_METHOD === "whisper-groq") {
       transcribedAudio = await handleAudioMessageWithGroqApi(wavPath);
     } else {
-      throw new Error(
-        "Invalid transcription method, TRANSCRIPTION_METHOD: " +
-          TRANSCRIPTION_METHOD
-      );
+      return `Invalid transcription method, TRANSCRIPTION_METHOD: ${TRANSCRIPTION_METHOD}`;
     }
   } catch (error) {
     console.error(error);

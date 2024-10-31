@@ -15,7 +15,7 @@ export async function createContextFromMessage(message: proto.IWebMessageInfo) {
   const timestampUTC = dayjs().utc();
   const timestampLocal = timestampUTC.tz(timezone).format();
   const chatId = message.key.remoteJid;
-  if (typeof chatId !== "string") throw new Error("Chat ID is not a string");
+  if (typeof chatId !== "string") return `Invalid chat ID: ${chatId}`;
   const llmModel = await getLLMModel(chatId);
 
   const chatContext = await getChatContext(message);

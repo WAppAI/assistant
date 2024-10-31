@@ -23,7 +23,7 @@ export async function handleAudioMessageWithWhisperLocal(wavPath: string) {
     return transcription;
   } catch (error) {
     console.error("Error executing Whisper:", error);
-    throw new Error("Error executing Whisper");
+    return `Error executing Whisper: ${error}`;
   } finally {
     // Delete the WAV file in the finally block, ensuring it's deleted even on error
     try {

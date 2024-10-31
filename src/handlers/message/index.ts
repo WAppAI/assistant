@@ -23,7 +23,7 @@ export async function handleMessage(message: WAMessage) {
 
   const chatId = message.key.remoteJid;
   if (!chatId) {
-    throw new Error("Invalid chat ID");
+    return console.error("Invalid chat ID");
   }
 
   const isGroup = chatId.endsWith("@g.us");
@@ -34,7 +34,7 @@ export async function handleMessage(message: WAMessage) {
   );
   let llmModel = await getLLMModel(chatId);
 
-  if (!streamingReply) throw new Error("No streaming reply");
+  if (!streamingReply) return console.error("No streaming reply");
 
   if (!llmModel) {
     llmModel = DEFAULT_MODEL;
@@ -51,16 +51,20 @@ export async function handleMessage(message: WAMessage) {
         context,
         streamingReply as proto.IWebMessageInfo
       );
-      response = completion.response;
+      // @ts-ignore
+      response = (completion as BingAIClientResponse).response;
 
       if (ENABLE_REMINDERS === "true") {
+        // @ts-ignore
         response = await handleReminderFor(message, completion.response);
       }
 
       if (ENABLE_SUGGESTIONS === "true") {
+        // @ts-ignore
         response = response + "\n\n" + getSuggestions(completion);
       }
       if (ENABLE_SOURCES === "true") {
+        // @ts-ignore
         response = response + "\n\n" + getSources(completion);
       }
     } else {
@@ -71,7 +75,8 @@ export async function handleMessage(message: WAMessage) {
       );
     }
 
-    if (!response) throw new Error("No response from LLM");
+    if (!response)
+      return `No response from LL model: ${llmModel}. Please try again.`;
 
     await sock.sendMessage(
       chatId,

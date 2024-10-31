@@ -43,7 +43,7 @@ export class ScheduleHeartbeatTool extends StructuredTool {
       return `One-time heartbeat scheduled for chat: ${chatId} at ${triggerTime}`;
     } catch (error) {
       console.error("Error scheduling one-time heartbeat:", error);
-      throw error;
+      return `Error scheduling one-time heartbeat: ${(error as any).message}`;
     }
   }
 }

@@ -55,7 +55,7 @@ export async function getCompletionWithOpenRouter(
         await sock.sendMessage(chatId, {
           text: BOT_PREFIX + "Transcription not enabled",
         });
-        throw new Error("Transcription not enabled");
+        return `Transcription not enabled`;
       }
     }
   }
