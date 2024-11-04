@@ -170,7 +170,7 @@ export async function createExecutorForOpenRouter(
       llm = new ChatOpenAI(
         {
           modelName: azureModelName,
-          streaming: false,
+          streaming: true,
           temperature: MODEL_TEMPERATURE,
           apiKey: GITHUB_OPENAI_API_KEY,
         },
