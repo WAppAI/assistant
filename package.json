@@ -53,6 +53,7 @@
     "groq-sdk": "^0.7.0",
     "keyv": "^4.5.4",
     "langchain": "0.2.9",
+    "link-preview-js": "^3.0.12",
     "node-schedule": "^2.1.1",
     "openai": "^4.39.0",
     "pino": "^7.0.0",
