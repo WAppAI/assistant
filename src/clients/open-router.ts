@@ -143,7 +143,9 @@ export async function createExecutorForOpenRouter(
   const promptToUse = customPrompt || PROMPT_LANGCHAIN;
 
   switch (true) {
-    case openAIToolCallingModels.includes(llmModel) && OPENAI_API_KEY !== "":
+    case !llmModel.includes("github") &&
+      openAIToolCallingModels.includes(llmModel) &&
+      OPENAI_API_KEY !== "":
       prompt = await pull<ChatPromptTemplate>(promptToUse);
 
       llm = new ChatOpenAI({
@@ -163,12 +165,12 @@ export async function createExecutorForOpenRouter(
     case githubToolCallingModels.includes(llmModel) &&
       GITHUB_OPENAI_API_KEY !== "":
       prompt = await pull<ChatPromptTemplate>(promptToUse);
-      const azureModelName = llmModel.replace("-github", ""); // Remove the -azure flag
+      const azureModelName = llmModel.replace("-github", "");
 
       llm = new ChatOpenAI(
         {
           modelName: azureModelName,
-          streaming: true,
+          streaming: false,
           temperature: MODEL_TEMPERATURE,
           apiKey: GITHUB_OPENAI_API_KEY,
         },
